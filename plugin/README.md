@@ -30,7 +30,7 @@ Specs → Plans → Implementation → Tests → Validation
 
 2. **Initialize a new project**:
    ```
-   /project:init my-app
+   /project:init-project my-app
    ```
 
 3. **Create your first feature**:
@@ -93,7 +93,7 @@ your-project/
 
 ## Commands
 
-- `/project:init [name]` - Initialize new project
+- `/project:init-project [name]` - Initialize new project
 - `/project:new-feature [name]` - Start new feature
 - `/project:implement-spec [path]` - Implement a spec
 - `/project:verify-spec [path]` - Verify implementation

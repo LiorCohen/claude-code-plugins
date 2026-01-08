@@ -21,7 +21,7 @@
     "agents/reviewer.md"
   ],
   "commands": [
-    "commands/init.md",
+    "commands/init-project.md",
     "commands/new-feature.md",
     "commands/implement-spec.md",
     "commands/verify-spec.md",

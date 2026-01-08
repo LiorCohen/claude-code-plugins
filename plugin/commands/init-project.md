@@ -1,16 +1,16 @@
 ---
-name: init
+name: init-project
 description: Initialize a new project from the spec-driven template.
 ---
 
-# /project:init
+# /project:init-project
 
 Initialize a new spec-driven project.
 
 ## Usage
 
 ```
-/project:init [project-name]
+/project:init-project [project-name]
 ```
 
 ## What It Creates
