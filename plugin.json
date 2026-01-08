@@ -1,6 +1,6 @@
 {
   "name": "spec-driven",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Spec-driven development methodology for full-stack teams",
   "skills": [
     "skills/spec-writing.md",

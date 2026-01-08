@@ -35,7 +35,6 @@ Initialize a new spec-driven project.
 │   ├── webapp/
 │   ├── helm/
 │   └── testing/
-├── e2e/
 └── .github/
     └── workflows/
         └── ci.yaml

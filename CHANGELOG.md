@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.2] - 2026-01-07
+
+### Enhanced
+
+- **backend-dev agent**: Added comprehensive OpenTelemetry guidelines
+  - Structured logging with Pino and trace context injection
+  - Required log fields and security rules
+  - Standard metrics (HTTP, database, business operations)
+  - OpenTelemetry semantic conventions for metric naming
+  - Custom spans for business operations
+  - Span attributes following OTel standards
+  - Layer-specific telemetry responsibilities
+
+This ensures all backend implementations follow OpenTelemetry best practices with consistent, observable code.
+
 ## [1.0.1] - 2026-01-07
 
 ### Enhanced

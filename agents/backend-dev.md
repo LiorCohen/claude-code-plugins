@@ -259,6 +259,227 @@ async function createUser(deps: Dependencies, args: CreateUserArgs): Promise<Cre
 
 ---
 
+## Telemetry (OpenTelemetry)
+
+All observability follows OpenTelemetry standards for logs, metrics, and traces.
+
+### Initialization
+
+Create `src/telemetry/index.ts` and import it **first** in your entry point:
+
+```typescript
+// src/index.ts
+import './telemetry/index.js';  // MUST BE FIRST
+import { loadConfig } from './config/index.js';
+// ... rest of imports
+```
+
+### Structured Logging
+
+Use Pino with OpenTelemetry context injection:
+
+```typescript
+// src/telemetry/logger.ts
+import pino from 'pino';
+import { context, trace } from '@opentelemetry/api';
+
+const baseLogger = pino({
+  level: process.env.LOG_LEVEL ?? 'info',
+  formatters: {
+    level: (label) => ({ level: label }),
+  },
+  timestamp: pino.stdTimeFunctions.isoTime,
+});
+
+export const createLogger = (component: string) => {
+  return baseLogger.child({ component });
+};
+
+export const withTraceContext = <T extends Record<string, unknown>>(
+  obj: T
+): T & { traceId?: string; spanId?: string } => {
+  const span = trace.getSpan(context.active());
+  if (span) {
+    const spanContext = span.spanContext();
+    return {
+      ...obj,
+      traceId: spanContext.traceId,
+      spanId: spanContext.spanId,
+    };
+  }
+  return obj;
+};
+```
+
+### Log Levels
+
+| Level | When to use |
+|-------|-------------|
+| `debug` | Detailed debugging (disabled in production) |
+| `info` | Normal operations, state changes, requests |
+| `warn` | Recoverable issues, deprecations |
+| `error` | Failures requiring attention |
+
+### Required Log Fields
+
+All logs must include:
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `level` | Yes | Log level (debug, info, warn, error) |
+| `time` | Yes | ISO 8601 timestamp |
+| `component` | Yes | Source component (server, controller, dal) |
+| `msg` | Yes | Human-readable message |
+| `traceId` | Auto | OpenTelemetry trace ID |
+| `spanId` | Auto | OpenTelemetry span ID |
+| `userId` | Context | User ID if authenticated |
+| `requestId` | Context | Request correlation ID |
+| `error` | On error | Error object with stack |
+
+### Logging by Layer
+
+```typescript
+// In any layer
+import { createLogger, withTraceContext } from '../telemetry/logger.js';
+
+const logger = createLogger('controller');
+
+// Info log
+logger.info(
+  withTraceContext({ userId, action: 'createUser' }),
+  'User created'
+);
+
+// Error log
+logger.error(
+  withTraceContext({ userId, error }),
+  'Failed to create user'
+);
+
+// Debug log (include relevant context)
+logger.debug(
+  withTraceContext({ userId, email: user.email }),
+  'Checking for existing user'
+);
+```
+
+**Security Rule:** Never log sensitive data (passwords, tokens, credit cards, PII beyond IDs).
+
+### Metrics
+
+Define metrics in `src/telemetry/metrics.ts`:
+
+```typescript
+import { metrics } from '@opentelemetry/api';
+
+const meter = metrics.getMeter('myapp-server');
+
+// HTTP metrics (in Server layer)
+export const httpRequestDuration = meter.createHistogram('http.server.request.duration', {
+  description: 'HTTP request duration',
+  unit: 'ms',
+});
+
+export const httpRequestTotal = meter.createCounter('http.server.request.count', {
+  description: 'Total HTTP requests',
+});
+
+// Database metrics (in DAL layer)
+export const dbQueryDuration = meter.createHistogram('db.client.operation.duration', {
+  description: 'Database query duration',
+  unit: 'ms',
+});
+
+export const dbConnectionPoolSize = meter.createUpDownCounter('db.client.connection.pool.usage', {
+  description: 'Database connection pool usage',
+});
+
+// Business metrics (in Model layer)
+export const businessOperationTotal = meter.createCounter('business.operation.count', {
+  description: 'Business operation executions',
+});
+```
+
+### Required Metrics
+
+| Metric | Type | Labels | Layer |
+|--------|------|--------|-------|
+| `http.server.request.duration` | Histogram | method, route, status | Server |
+| `http.server.request.count` | Counter | method, route, status | Server |
+| `db.client.operation.duration` | Histogram | operation, table | DAL |
+| `db.client.connection.pool.usage` | UpDownCounter | state (active/idle) | DAL |
+| `business.operation.count` | Counter | operation, result | Model |
+
+### Metric Naming
+
+Follow OpenTelemetry semantic conventions:
+- Use `.` as separator (e.g., `http.server.request.duration`)
+- Prefix with namespace (`http`, `db`, `business`)
+- Include unit in name if not obvious (e.g., `duration`, `count`, `size`)
+
+### Custom Spans
+
+Wrap business operations with spans:
+
+```typescript
+// In Model use-cases
+import { trace } from '@opentelemetry/api';
+
+const tracer = trace.getTracer('myapp-server');
+
+const createUser = async (
+  deps: Dependencies,
+  args: CreateUserArgs
+): Promise<CreateUserResult> => {
+  return tracer.startActiveSpan('createUser', async (span) => {
+    try {
+      span.setAttributes({
+        'user.email': args.email,
+        'operation': 'createUser',
+      });
+
+      const result = await deps.insertUser(args);
+
+      span.setAttributes({ 'result.success': true });
+      return { success: true, user: result };
+    } catch (error) {
+      span.recordException(error as Error);
+      span.setAttributes({ 'result.success': false });
+      throw error;
+    } finally {
+      span.end();
+    }
+  });
+};
+```
+
+### Span Attributes
+
+Use OpenTelemetry semantic conventions for attributes:
+
+| Attribute | Type | Example |
+|-----------|------|---------|
+| `http.method` | string | `GET`, `POST` |
+| `http.route` | string | `/api/users/:id` |
+| `http.status_code` | int | `200`, `404` |
+| `db.system` | string | `postgresql` |
+| `db.operation` | string | `SELECT`, `INSERT` |
+| `db.statement` | string | SQL query (sanitized) |
+| `user.id` | string | User identifier |
+
+### Telemetry Rules
+
+1. **Initialize first**: Import telemetry before any other code
+2. **Structured logs only**: All logs must be JSON with required fields
+3. **Include trace context**: Use `withTraceContext()` for all logs
+4. **No sensitive data**: Never log passwords, tokens, or PII
+5. **Appropriate levels**: Use correct log level for each message
+6. **Custom spans for business ops**: Wrap use-cases with spans
+7. **Standard metric names**: Follow OpenTelemetry semantic conventions
+8. **Layer-specific metrics**: Each layer records its own metrics
+
+---
+
 ## Build Order
 
 When implementing a feature:
@@ -272,6 +493,10 @@ When implementing a feature:
    - Implement use-case in `use-cases/`
 5. Implement Controller (wire up use-cases)
 6. Wire up Server (new routes)
+7. Add telemetry:
+   - Logs at key decision points
+   - Metrics for operations
+   - Spans for business logic
 
 ---
 
@@ -285,3 +510,5 @@ When implementing a feature:
 - One use-case per file
 - Arrow functions only
 - Native JavaScript only—no utility libraries
+- **Telemetry is mandatory**: All operations must emit logs, metrics, and spans
+- Follow OpenTelemetry semantic conventions for all telemetry data
