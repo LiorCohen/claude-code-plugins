@@ -1,0 +1,8 @@
+{
+    "name": "sdd",
+    "version": "1.0.2",
+    "description": "Spec-driven development methodology for full-stack teams",
+    "author": {
+        "name": "Lior Cohen"
+    }
+}
