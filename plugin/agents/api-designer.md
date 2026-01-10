@@ -105,6 +105,16 @@ paths:
 | 409 | Conflict |
 | 500 | Server error |
 
+## Health Checks (NEVER in Contract)
+
+**CRITICAL:** Health check endpoints (`/health`, `/readiness`, `/liveness`) must NEVER be defined in the OpenAPI contract.
+
+- Health checks are infrastructure concerns, not API features
+- They are used exclusively by Kubernetes control plane (probes)
+- They should be implemented in the controller layer only
+- They are not part of the application's API contract
+- Frontend/clients should never call health check endpoints
+
 ## Rules
 
 - Spec first—never implement undocumented endpoints
@@ -114,3 +124,4 @@ paths:
 - Both server and webapp consume generated types
 - All error responses documented
 - Use `$ref` for reusable schemas
+- **Never include health check endpoints in the contract**

@@ -85,6 +85,8 @@ Request/response handling, creates Dependencies object for Model.
 
 **Handler Naming:** Use `operationId` from OpenAPI spec with `handle` prefix (e.g., `createUser` → `handleCreateUser`).
 
+**Health Check Endpoints:** Implement health checks (`/health`, `/readiness`, `/liveness`) directly in the controller without defining them in the OpenAPI contract. These are infrastructure endpoints for Kubernetes probes only.
+
 ```typescript
 const createController = (deps: ControllerDependencies): Controller => {
   // Create Dependencies object for Model use cases
@@ -510,5 +512,6 @@ When implementing a feature:
 - One use-case per file
 - Arrow functions only
 - Native JavaScript only—no utility libraries
+- **index.ts files**: Must only contain imports and exports, never actual code or logic
 - **Telemetry is mandatory**: All operations must emit logs, metrics, and spans
 - Follow OpenTelemetry semantic conventions for all telemetry data

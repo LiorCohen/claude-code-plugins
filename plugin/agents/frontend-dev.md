@@ -98,6 +98,7 @@ export const useUser = (id: string) => {
 - **No implicit globally running code**
 - TypeScript strict mode—no `any`
 - **Never hand-write API types**—use generated types from contract
+- **index.ts files**: Must only contain imports and exports, never actual code or logic
 - No business logic in components—use hooks
 - Test behavior, not implementation
 - Prefer `readonly` for props and state types
