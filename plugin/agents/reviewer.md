@@ -3,6 +3,7 @@ name: reviewer
 description: Reviews code and specs for quality, consistency, and spec compliance. Use after implementation or before merges.
 tools: Read, Grep, Glob, Bash
 model: opus
+color: "#EF4444"
 ---
 
 You are a senior code reviewer focused on spec compliance.

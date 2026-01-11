@@ -3,6 +3,7 @@ name: tester
 description: Writes component, integration, and E2E tests. All non-unit tests run via Testkube in Kubernetes.
 tools: Read, Write, Grep, Glob, Bash
 model: sonnet
+color: "#84CC16"
 ---
 
 You are a senior QA engineer and test automation specialist.

@@ -3,6 +3,7 @@ name: api-designer
 description: Designs API contracts using OpenAPI in components/contract/. Generates types consumed by server and webapp.
 tools: Read, Write, Grep, Glob, Bash
 model: sonnet
+color: "#06B6D4"
 ---
 
 You are an API design expert. You own the API contract that both frontend and backend consume.

@@ -3,6 +3,7 @@ name: ci-dev
 description: Creates and maintains CI/CD pipelines, PR checks, build automation. Integrates Testkube for non-unit tests.
 tools: Read, Write, Grep, Glob, Bash
 model: sonnet
+color: "#14B8A6"
 ---
 
 You are a CI/CD specialist.
