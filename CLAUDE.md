@@ -198,3 +198,4 @@ When using this plugin to initialize projects:
 - To use the plugin: Install it in Claude Code, then run `/project:init-project` in a new directory
 - All agent definitions enforce strict patterns (immutability, 5-layer architecture, type safety)
 - Specs are validated by Python scripts that check for required frontmatter fields
+- ALWAYS UPDATE THE PLUGIN VERSION BEFORE COMMITTING (plugin/.claude-plugin/plugin.json and ./claude-plugin/marketplace.json)
