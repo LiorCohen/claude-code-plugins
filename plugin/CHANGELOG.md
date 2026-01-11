@@ -1,5 +1,35 @@
 # Changelog
 
+## [1.5.0] - 2026-01-11
+
+### Changed
+
+- **Command renamed**: `/project:implement-spec` → `/project:implement-plan`
+  - Better reflects that the command implements from a plan (which references a spec)
+  - Command now takes path to PLAN.md instead of SPEC.md
+  - Example: `/project:implement-plan specs/features/2026/01/11/user-auth/PLAN.md`
+
+### Updated Files
+
+- **implement-plan command** (renamed from implement-spec.md):
+  - Updated command name, description, and usage examples
+  - Changed to read PLAN.md first, then SPEC.md from same directory
+  - Updated flow documentation to reflect plan-centric approach
+- **Documentation files**: Updated all references to use new command name
+  - CLAUDE.md
+  - plugin/README.md
+  - plugin/QUICKSTART.md
+  - plugin/templates/project/README.md
+  - plugin/templates/project/CLAUDE.md
+
+### Impact
+
+This change clarifies the implementation workflow:
+- Plans are the execution documents, specs are the requirements
+- Command name now matches what it operates on (plan, not spec)
+- Consistent with the pattern where plan references spec via `./SPEC.md`
+- More intuitive for users: "implement the plan" vs "implement the spec"
+
 ## [1.4.0] - 2026-01-11
 
 ### Changed

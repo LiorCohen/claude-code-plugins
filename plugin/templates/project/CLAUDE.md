@@ -47,6 +47,6 @@ Config → [All layers] → Dependencies
 
 - `/project:init` - Initialize new project
 - `/project:new-feature` - Start new feature
-- `/project:implement-spec` - Implement spec
+- `/project:implement-plan` - Implement plan
 - `/project:verify-spec` - Verify implementation
 - `/project:generate-snapshot` - Regenerate snapshot

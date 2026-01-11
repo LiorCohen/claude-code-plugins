@@ -30,7 +30,7 @@ sdd/
 ├── commands/                   # 5 slash commands
 │   ├── init-project.md
 │   ├── new-feature.md
-│   ├── implement-spec.md
+│   ├── implement-plan.md
 │   ├── verify-spec.md
 │   └── generate-snapshot.md
 ├── templates/                  # Project scaffolding
@@ -64,7 +64,7 @@ This plugin is designed to work with Claude Code. Once loaded, you'll have acces
 **Commands:**
 - `/project:init-project [name]` - Initialize new project
 - `/project:new-feature [name]` - Start new feature
-- `/project:implement-spec [path]` - Implement a spec
+- `/project:implement-plan [path]` - Implement a plan
 - `/project:verify-spec [path]` - Verify implementation
 - `/project:generate-snapshot` - Regenerate product snapshot
 
@@ -96,15 +96,15 @@ my-awesome-app/
 ```
 
 This will:
-1. Create a spec in `specs/features/user-authentication/SPEC.md`
-2. Create a plan in `specs/plans/YYYY/MM/DD/user-authentication/PLAN.md`
+1. Create a spec in `specs/features/YYYY/MM/DD/user-authentication/SPEC.md`
+2. Create a plan in `specs/features/YYYY/MM/DD/user-authentication/PLAN.md`
 3. Update `specs/INDEX.md`
 
 ### 4. Implement the Feature
 
 ```bash
 # In Claude Code
-/project:implement-spec specs/features/user-authentication/SPEC.md
+/project:implement-plan specs/features/YYYY/MM/DD/user-authentication/PLAN.md
 ```
 
 This orchestrates all agents to:

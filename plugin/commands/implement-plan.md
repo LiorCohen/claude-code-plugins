@@ -1,16 +1,21 @@
 ---
-name: implement-spec
-description: Implement a specification by executing its plan.
+name: implement-plan
+description: Implement a feature by executing its implementation plan.
 ---
 
-# /project:implement-spec
+# /project:implement-plan
 
-Implement a specification.
+Implement a feature by executing its implementation plan.
 
 ## Usage
 
 ```
-/project:implement-spec [path-to-spec]
+/project:implement-plan [path-to-plan]
+```
+
+Example:
+```
+/project:implement-plan specs/features/2026/01/11/user-auth/PLAN.md
 ```
 
 ## Flow
@@ -19,8 +24,8 @@ Implement a specification.
 
 **CRITICAL**: Before starting ANY implementation work, you MUST:
 
-- Read the ENTIRE SPEC.md from start to finish
-- Find and read the ENTIRE PLAN.md in `specs/plans/`
+- Read the ENTIRE PLAN.md from start to finish
+- Read the ENTIRE SPEC.md referenced in the plan (same directory: `./SPEC.md`)
 - Understand ALL requirements and acceptance criteria
 - Verify all prerequisites are met (dependencies, environment, etc.)
 - Create a mental model of the complete implementation
@@ -127,4 +132,4 @@ Before declaring implementation complete, you MUST:
 ## Example
 
 ```
-User: /project:implement-spec specs/features/user-auth/SPEC.md
+User: /project:implement-plan specs/features/2026/01/11/user-auth/PLAN.md

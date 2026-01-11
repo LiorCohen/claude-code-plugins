@@ -58,7 +58,7 @@ This plugin implements a **specification-driven workflow**:
 
 - `/project:init-project [name]` - Initialize new project structure
 - `/project:new-feature [name]` - Create spec and plan for new feature
-- `/project:implement-spec [path]` - Orchestrate implementation across agents
+- `/project:implement-plan [path]` - Orchestrate implementation across agents
 - `/project:verify-spec [path]` - Verify implementation matches spec
 - `/project:generate-snapshot` - Regenerate product state snapshot
 
