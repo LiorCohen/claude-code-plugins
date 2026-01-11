@@ -93,21 +93,6 @@ After making changes:
 3. Verify version numbers match across all files
 4. Commit with bumped version
 
-### Agent Colors
-
-Each agent has a unique color for visual identification:
-
-- spec-writer: Purple (#8B5CF6)
-- planner: Pink (#EC4899)
-- api-designer: Cyan (#06B6D4)
-- frontend-dev: Blue (#3B82F6)
-- backend-dev: Green (#10B981)
-- db-advisor: Amber (#F59E0B)
-- devops: Indigo (#6366F1)
-- ci-dev: Teal (#14B8A6)
-- tester: Lime (#84CC16)
-- reviewer: Red (#EF4444)
-
 ### Guidelines
 
 1. **Always bump version before committing**
