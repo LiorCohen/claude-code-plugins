@@ -42,15 +42,94 @@ Initialize a new spec-driven project.
 
 ## Implementation
 
+**CRITICAL:** You MUST complete ALL steps below. Do not stop until every single step is finished.
+
 When invoked:
 
-1. **Prompt for project name** (if not provided)
-2. **Create directory structure** from templates
-3. **Initialize git repository**
-4. **Set up npm workspaces** in root package.json
-5. **Copy template files** for each component
-6. **Initialize contract types** with basic OpenAPI spec
-7. **Create initial workflows** for CI/CD
+### Step 1: Prompt for project name (if not provided as argument)
+
+### Step 2: Create the complete directory structure
+
+Create ALL of these directories:
+
+```bash
+mkdir -p <project-name>/{specs/{domain/entities,architecture,features,plans},components/{contract,server/src/{server,config,controller,model/{definitions,use-cases},dal,telemetry},webapp/src,helm,testing},.github/workflows}
+```
+
+### Step 3: Copy ALL template files
+
+Copy every template file with variable substitution:
+
+**Root files:**
+- Copy `templates/project/README.md` → `<project-name>/README.md` (replace `{{PROJECT_NAME}}`)
+- Copy `templates/project/CLAUDE.md` → `<project-name>/CLAUDE.md` (replace `{{PROJECT_NAME}}`)
+- Copy `templates/project/package.json` → `<project-name>/package.json` (replace `{{PROJECT_NAME}}`)
+
+**Spec files:**
+- Copy `templates/specs/INDEX.md` → `<project-name>/specs/INDEX.md`
+- Copy `templates/specs/SNAPSHOT.md` → `<project-name>/specs/SNAPSHOT.md`
+- Copy `templates/specs/glossary.md` → `<project-name>/specs/domain/glossary.md`
+- Create `<project-name>/specs/architecture/overview.md` with basic architecture description
+
+**Contract component:**
+- Copy `templates/components/contract/package.json` → `<project-name>/components/contract/package.json` (replace `{{PROJECT_NAME}}`)
+- Copy `templates/components/contract/openapi.yaml` → `<project-name>/components/contract/openapi.yaml` (replace `{{PROJECT_NAME}}`)
+- Create `<project-name>/components/contract/.gitignore` with:
+  ```
+  node_modules/
+  generated/
+  ```
+
+**Server component:**
+- Copy `templates/components/server/package.json` → `<project-name>/components/server/package.json` (replace `{{PROJECT_NAME}}`)
+- Copy `templates/components/server/tsconfig.json` → `<project-name>/components/server/tsconfig.json`
+- Create `<project-name>/components/server/.gitignore` with:
+  ```
+  node_modules/
+  dist/
+  .env
+  ```
+- Create `<project-name>/components/server/src/index.ts` with minimal entry point
+
+**Webapp component:**
+- Copy `templates/components/webapp/package.json` → `<project-name>/components/webapp/package.json` (replace `{{PROJECT_NAME}}`)
+- Copy `templates/components/webapp/tsconfig.json` → `<project-name>/components/webapp/tsconfig.json`
+- Create `<project-name>/components/webapp/.gitignore` with:
+  ```
+  node_modules/
+  dist/
+  .env
+  ```
+- Create `<project-name>/components/webapp/src/App.tsx` with minimal React app
+- Create `<project-name>/components/webapp/index.html` with basic HTML template
+- Create `<project-name>/components/webapp/vite.config.ts` with basic Vite config
+
+### Step 4: Initialize git repository
+
+```bash
+cd <project-name> && git init && git add . && git commit -m "Initial project setup from spec-driven template"
+```
+
+### Step 5: Create .gitignore at root
+
+Create `<project-name>/.gitignore`:
+```
+node_modules/
+.env
+.DS_Store
+dist/
+*.log
+```
+
+### Step 6: Verify completion
+
+After ALL steps are done, list the created structure to confirm:
+
+```bash
+tree <project-name> -L 3 -I node_modules
+```
+
+**DO NOT STOP until you have completed every single step above and verified the structure.**
 
 ## Post-Init Instructions
 
