@@ -1,5 +1,80 @@
 # Changelog
 
+## [1.8.0] - 2026-01-12
+
+### Enhanced
+
+- **init command**: Added support for external specification files
+  - **New argument**: `--spec <path>` to initialize project from existing spec
+  - **Phase 0**: Parse and load external spec, extract project metadata
+  - **Smart defaults**: Use extracted values (name, description, domain) as defaults in prompts
+  - **Automatic integration**: External spec becomes initial feature specification
+  - **Plan generation**: Automatically creates implementation plan from external spec
+  - **Domain extraction**: Extracts key terms and adds to glossary
+  - **INDEX/SNAPSHOT updates**: Automatically registers imported spec
+
+### New Usage
+
+```bash
+# Initialize from external spec
+/project:init my-app --spec /path/to/requirements.md
+
+# Initialize from spec, will prompt for project name
+/project:init --spec /path/to/product-spec.md
+```
+
+### Workflow Changes
+
+1. **Phase 0 (New)**: Parse arguments and load external spec if provided
+   - Reads external spec file
+   - Extracts project name, description, domain, entities, requirements
+   - Validates spec file existence and readability
+
+2. **Phase 1 (Enhanced)**: Uses extracted values as defaults in prompts
+   - Prompts show: "Project name [<extracted-default>]: "
+   - Users can accept defaults or override
+
+3. **Step 3 (Enhanced)**: External spec integration after template copy
+   - Creates `specs/features/YYYY/MM/DD/initial-spec/SPEC.md` from external spec
+   - Adds proper frontmatter with source tracking
+   - Generates `PLAN.md` with implementation phases
+   - Updates INDEX.md and SNAPSHOT.md
+   - Extracts domain terms to glossary
+
+4. **Step 5 (Enhanced)**: Different completion messages
+   - External spec path: Shows plan review and implementation next steps
+   - Standard path: Shows feature creation next steps
+
+### Updated Files
+
+- `commands/init.md`: Added --spec argument, Phase 0, external spec integration workflow
+- `plugin/.claude-plugin/plugin.json`: Bumped to 1.8.0
+- `.claude-plugin/marketplace.json`: Bumped to 1.8.0
+
+### Impact
+
+This enhancement enables seamless project initialization from existing specifications:
+
+**Use Cases**:
+- **Product requirements**: Import PRD documents as initial specs
+- **Design documents**: Start implementation from design specs
+- **Migration projects**: Import legacy system specs
+- **Customer requirements**: Use client-provided specs directly
+- **RFP responses**: Initialize from RFP documents
+
+**Benefits**:
+- **Time savings**: No manual spec creation or copying
+- **Consistency**: Automatic formatting and structure
+- **Traceability**: Source tracking in frontmatter
+- **Immediate planning**: Auto-generated implementation plan
+- **Domain capture**: Automatic glossary population
+
+**Example workflow**:
+1. Receive product-requirements.md from product team
+2. Run: `/project:init my-product --spec product-requirements.md`
+3. Review generated plan: `specs/features/YYYY/MM/DD/initial-spec/PLAN.md`
+4. Start implementation: `/project:implement-plan specs/features/YYYY/MM/DD/initial-spec/PLAN.md`
+
 ## [1.7.1] - 2026-01-12
 
 ### Changed

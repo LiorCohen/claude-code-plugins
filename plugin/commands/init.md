@@ -1,38 +1,83 @@
 ---
 name: init
-description: Initialize a new project from the spec-driven template.
+description: Initialize a new project from the spec-driven template, optionally from an external spec.
 ---
 
 # /project:init
 
-Initialize a new spec-driven project.
+Initialize a new spec-driven project, optionally from an existing external specification.
 
 ## Usage
 
 ```
-/project:init [project-name]
+/project:init [project-name] [--spec <path-to-external-spec>]
+```
+
+**Arguments:**
+- `project-name` (optional): Name of the project directory to create
+- `--spec <path>` (optional): Path to an external specification file to use as the initial spec
+
+**Examples:**
+```bash
+# Standard initialization with prompts
+/project:init my-app
+
+# Initialize from existing spec
+/project:init my-app --spec /path/to/existing-spec.md
+
+# Initialize from external spec (will prompt for project name)
+/project:init --spec /path/to/product-requirements.md
 ```
 
 ## Workflow
 
 **CRITICAL**: This command follows an approval-based workflow. Do NOT create any files or directories until the user has approved the project configuration.
 
+### Phase 0: Parse Arguments and Load External Spec (if provided)
+
+1. **Parse command arguments:**
+   - Check if `--spec <path>` argument is provided
+   - Extract project name (if provided)
+   - Extract spec path (if provided)
+
+2. **If external spec is provided:**
+   - Read the external spec file from the provided path
+   - Parse the spec to extract:
+     - **Project Name**: Look for title/project name in spec
+     - **Description**: Look for description or summary
+     - **Domain**: Identify primary business domain from content
+     - **Key Entities**: Extract main entities/concepts mentioned
+     - **Requirements**: Parse functional and non-functional requirements
+   - Store this information for use in later phases
+   - Display: "✓ Loaded external spec from: <path>"
+
+3. **Validation:**
+   - If spec file doesn't exist, show error and exit
+   - If spec file is not readable, show error and exit
+   - If spec is empty or invalid, show warning and ask if user wants to continue with standard initialization
+
 ### Phase 1: Gather Information
 
-When invoked, prompt the user for the following information:
+When invoked, prompt the user for the following information (use extracted values from external spec as defaults if available):
 
 1. **Project Name** (if not provided as argument)
+   - If external spec provided: Use extracted project name as default
    - Must be valid directory name (lowercase, hyphens allowed)
+   - Prompt: "Project name [<default-if-any>]: "
    - Example: "my-saas-app"
 
 2. **Project Description**
+   - If external spec provided: Use extracted description as default
    - Brief one-line description of what this application does
    - Will be used in README.md and package.json
+   - Prompt: "Project description [<default-if-any>]: "
    - Example: "A task management SaaS application"
 
 3. **Primary Domain**
+   - If external spec provided: Use extracted domain as default
    - What is the main business domain?
    - Will be added to initial glossary
+   - Prompt: "Primary domain [<default-if-any>]: "
    - Example: "Task Management" or "E-commerce" or "Healthcare"
 
 4. **Tech Stack Confirmation**
@@ -238,6 +283,60 @@ Copy template files with variable substitution using gathered information.
 **CI/CD workflows (if selected):**
 - Create basic GitHub Actions workflow in `<project-name>/.github/workflows/ci.yaml`
 
+**External spec integration (if provided):**
+
+If an external spec was provided via `--spec` argument:
+
+1. **Create initial feature spec from external spec:**
+   - Generate today's date path: `YYYY/MM/DD`
+   - Create feature directory: `specs/features/YYYY/MM/DD/initial-spec/`
+   - Copy external spec to: `specs/features/YYYY/MM/DD/initial-spec/SPEC.md`
+   - Add frontmatter to the spec if not present:
+     ```yaml
+     ---
+     title: Initial Specification (from external source)
+     status: active
+     domain: {{PRIMARY_DOMAIN}}
+     issue: TBD
+     created: YYYY-MM-DD
+     updated: YYYY-MM-DD
+     source: {{EXTERNAL_SPEC_PATH}}
+     ---
+     ```
+   - Preserve all original content from external spec below frontmatter
+
+2. **Update INDEX.md:**
+   - Add entry for the initial spec:
+     ```markdown
+     ## Active Specifications
+
+     - [Initial Specification](features/YYYY/MM/DD/initial-spec/SPEC.md) - Imported from external source
+     ```
+
+3. **Update SNAPSHOT.md:**
+   - Add initial feature summary based on external spec content
+   - Extract key capabilities and list them
+
+4. **Update domain glossary:**
+   - Extract key terms from external spec
+   - Add them to `specs/domain/glossary.md` with definitions
+
+5. **Create initial plan:**
+   - Generate `specs/features/YYYY/MM/DD/initial-spec/PLAN.md`
+   - Break down external spec requirements into implementation phases
+   - Use the `planner` agent pattern for structure
+
+6. **Display confirmation:**
+   ```
+   ✓ External spec integrated as initial feature specification
+   ✓ Location: specs/features/YYYY/MM/DD/initial-spec/SPEC.md
+   ✓ Generated initial plan: specs/features/YYYY/MM/DD/initial-spec/PLAN.md
+   ✓ Updated INDEX.md and SNAPSHOT.md
+   ✓ Extracted domain terms to glossary
+
+   Next step: Review the generated plan and run /project:implement-plan specs/features/YYYY/MM/DD/initial-spec/PLAN.md
+   ```
+
 ### Step 4: Initialize git repository
 
 ```bash
@@ -254,6 +353,27 @@ After ALL steps are done:
    ```
 
 2. Display completion message with customized next steps:
+
+   **If external spec was provided:**
+   ```
+   ✓ Project initialized: <project-name>
+   ✓ Description: <project-description>
+   ✓ Primary Domain: <primary-domain>
+   ✓ Components created: <list of selected components>
+   ✓ External spec integrated: specs/features/YYYY/MM/DD/initial-spec/SPEC.md
+
+   Next steps:
+   1. cd <project-name>
+   2. npm install --workspaces
+   3. Review the imported spec and generated plan:
+      - specs/features/YYYY/MM/DD/initial-spec/SPEC.md (imported from external source)
+      - specs/features/YYYY/MM/DD/initial-spec/PLAN.md (generated implementation plan)
+      - specs/domain/glossary.md (extracted domain terms)
+   4. When ready to implement:
+      /project:implement-plan specs/features/YYYY/MM/DD/initial-spec/PLAN.md
+   ```
+
+   **If standard initialization (no external spec):**
    ```
    ✓ Project initialized: <project-name>
    ✓ Description: <project-description>
@@ -278,6 +398,12 @@ After ALL steps are done:
 - Users can customize which components to include
 - All template variables are populated from user-provided information
 - Project structure is created atomically (all or nothing)
+- **External spec support**: When `--spec` is provided, the external spec is:
+  - Parsed to extract defaults for project setup
+  - Integrated as the initial feature specification
+  - Used to generate an implementation plan
+  - Processed to extract domain terms for the glossary
+  - This allows seamless initialization from existing product requirements, design documents, or specifications
 
 ## Template Sources
 
