@@ -1,5 +1,6 @@
 {
   "name": "sdd",
+  "namespace": "sdd",
   "version": "1.7.0",
   "description": "Spec-driven development methodology for full-stack teams",
   "author": {
