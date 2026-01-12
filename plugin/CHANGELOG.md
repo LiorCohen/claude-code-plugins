@@ -1,5 +1,97 @@
 # Changelog
 
+## [1.7.0] - 2026-01-11
+
+### Enhanced
+
+- **frontend-dev agent**: Major architectural overhaul with MVVM, page-based organization, TanStack ecosystem, and TailwindCSS
+  - **MVVM Architecture (Mandatory)**:
+    - Strict separation: Model (business logic) → ViewModel (hooks) → View (React components)
+    - Page-based organization: `src/pages/<PageName>/` with index.ts, Page.tsx, usePageViewModel.ts
+    - ViewModels as hooks: One `useXViewModel.ts` per page that connects Model to View
+    - Model layer separation: Business logic in `src/models/`, API calls in `src/services/`
+  - **Directory Structure**:
+    - `src/pages/` - Page components with dedicated subdirectories
+    - `src/components/` - Shared presentational components
+    - `src/viewmodels/` - Shared ViewModel hooks
+    - `src/models/` - Business logic and domain models
+    - `src/services/` - API clients and external services
+    - `src/stores/` - Global state (Zustand)
+    - `src/types/` - Generated types from OpenAPI contract
+  - **TanStack Ecosystem (Mandatory)**:
+    - **TanStack Router**: All routing and navigation (replaces React Router)
+    - **TanStack Query**: All server state management (mandatory for API calls)
+    - **TanStack Table**: All tabular data display
+    - **TanStack Form**: Complex forms with validation
+  - **TailwindCSS (Mandatory)**:
+    - All styling MUST use Tailwind utility classes
+    - NO inline styles, NO CSS files (except Tailwind setup), NO CSS-in-JS libraries
+    - Responsive design with mobile-first approach
+    - Dark mode support with `dark:` variants
+    - Use `clsx` for conditional classes
+  - **State Management**:
+    - Server state: TanStack Query (all API data)
+    - Global client state: Zustand (auth, theme, preferences)
+    - Local client state: useState (forms, UI toggles)
+    - URL state: TanStack Router (pagination, filters)
+  - **Updated Rules**:
+    - Strict MVVM - Views never contain business logic
+    - Page-based organization - Every page in dedicated subdirectory
+    - ViewModels as hooks - One per page, handles all business logic
+    - TailwindCSS only - Utility-first styling approach
+    - TanStack ecosystem - All routing, state, tables, and forms
+
+### Updated Files
+
+- **frontend-dev agent**:
+  - Added comprehensive MVVM architecture section with layer responsibilities
+  - Added detailed directory structure with 9 subdirectories
+  - Added mandatory page structure with complete code examples
+  - Added TanStack ecosystem section (Router, Query, Table, Form)
+  - Added TailwindCSS section with styling rules and examples
+  - Updated component standards for presentational components
+  - Updated state management table with 4 state types and tools
+  - Added Zustand store example
+  - Reorganized and expanded Rules section into 4 categories
+  - Version bumped to 1.7.0 in plugin.json and marketplace.json
+
+### Impact
+
+This enhancement transforms frontend development with opinionated, modern architecture:
+
+**MVVM Benefits**:
+- **Clear separation of concerns**: Business logic isolated from UI
+- **Testability**: ViewModels and Models can be unit tested without UI
+- **Reusability**: Shared ViewModels and Models across pages
+- **Maintainability**: Easy to locate and modify logic by layer
+
+**Page-Based Organization**:
+- **Scalability**: Each page is self-contained with its ViewModel
+- **Discoverability**: Clear file structure, easy to find components
+- **Code colocation**: Related files grouped together
+- **Consistency**: Every page follows the same pattern
+
+**TanStack Ecosystem**:
+- **Modern routing**: Type-safe routes with TanStack Router
+- **Powerful state**: Server state management with caching, refetching
+- **Advanced tables**: Sorting, filtering, pagination out of the box
+- **Form validation**: Built-in validation with TanStack Form
+
+**TailwindCSS Benefits**:
+- **Rapid development**: No context switching between files
+- **Consistency**: Design system through configuration
+- **Performance**: Optimized with PurgeCSS in production
+- **Responsive**: Mobile-first utilities
+- **Dark mode**: Built-in support
+
+**Migration from 1.6.x**: Existing projects will need to:
+1. Restructure to MVVM with `src/pages/` and ViewModels
+2. Install TanStack packages (Router, Query, Table, Form)
+3. Install and configure TailwindCSS
+4. Migrate React Router to TanStack Router
+5. Convert inline styles and CSS files to Tailwind utilities
+6. Extract business logic from components to ViewModels
+
 ## [1.6.2] - 2026-01-11
 
 ### Fixed
