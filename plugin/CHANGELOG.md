@@ -1,5 +1,82 @@
 # Changelog
 
+## [1.8.1] - 2026-01-12
+
+### Enhanced
+
+- **typescript-standards skill**: Added three critical module system rules
+  - **Named exports only**: Prohibit default exports, enforce named exports for better IDE support and refactoring
+  - **ES modules only**: Prohibit CommonJS (`require`/`module.exports`), enforce ES module syntax (`import`/`export`)
+  - **Import through index.ts only**: Prohibit bypassing module public APIs, enforce importing only from `index.ts` files
+
+### New Rules
+
+1. **Named Exports Only:**
+   - ✅ `export const createUser = ...`
+   - ✅ `export interface User { ... }`
+   - ❌ `export default createUser` (NEVER)
+   - **Why**: Better IDE autocomplete, explicit imports, easier to find usages, no ambiguity
+
+2. **ES Modules Only:**
+   - ✅ `import { createUser } from './user.js'`
+   - ✅ `export { updateUser } from './user.js'`
+   - ❌ `const { createUser } = require('./user')` (NEVER)
+   - ❌ `module.exports = createUser` (NEVER)
+   - **Why**: Standard JavaScript, statically analyzable (tree-shaking), async by nature, modern tooling requirement
+
+3. **Import Through index.ts Only:**
+   - ✅ `import { createUser } from '../user'` (from module's public API)
+   - ❌ `import { createUser } from '../user/createUser.js'` (NEVER bypass index.ts)
+   - ❌ `import { helper } from '../user/internal/helper.js'` (NEVER access internals)
+   - **Why**: Module encapsulation, clean public APIs, easier refactoring, clear module boundaries
+
+### Updated Files
+
+- `skills/typescript-standards.md`: Added "Module System Rules" section with 3 subsections
+- Updated summary checklist with 3 new items
+- `plugin/.claude-plugin/plugin.json`: Bumped to 1.8.1
+- `.claude-plugin/marketplace.json`: Bumped to 1.8.1
+
+### Impact
+
+These rules strengthen code quality and maintainability:
+
+**Named Exports Benefits**:
+- IDE can autocomplete exact names
+- Refactoring tools work correctly
+- Easy to find all usages with search
+- Import statements are explicit and clear
+
+**ES Modules Benefits**:
+- Standard JavaScript module system
+- Tree-shaking works (reduces bundle size)
+- Static analysis possible (better tooling)
+- Async loading supported natively
+- TypeScript tooling expects ES modules
+
+**Index.ts Import Benefits**:
+- Modules control what's public vs private
+- Internal files can be refactored without breaking imports
+- Clear separation of public API from implementation
+- Better encapsulation (information hiding)
+- Easier to understand module boundaries
+
+**Example:**
+```typescript
+// Module structure
+user/
+├── index.ts           # Public API: export { createUser, User }
+├── createUser.ts      # Implementation (private)
+└── internal/          # Internal helpers (private)
+    └── validator.ts
+
+// Correct usage (imports from public API)
+import { createUser } from '../user';
+
+// Wrong usage (bypasses public API)
+import { createUser } from '../user/createUser.js';  // ❌ NEVER
+```
+
 ## [1.8.0] - 2026-01-12
 
 ### Enhanced

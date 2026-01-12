@@ -120,7 +120,61 @@ import * as R from 'ramda';        // Never
 
 ---
 
-## index.ts File Rules
+## Module System Rules
+
+### Named Exports Only
+
+**CRITICAL:** Never use default exports. Always use named exports.
+
+```typescript
+// ✅ GOOD: Named exports
+export const createUser = async (deps: Dependencies, args: CreateUserArgs): Promise<User> => {
+  // ...
+};
+
+export interface User {
+  readonly id: string;
+  readonly email: string;
+}
+
+export type UserRole = 'admin' | 'user' | 'guest';
+
+// ❌ BAD: Default exports
+export default createUser;           // NEVER
+export default function createUser() { /* ... */ }  // NEVER
+export default class User { /* ... */ }             // NEVER
+```
+
+**Why:** Named exports provide:
+- Better IDE autocomplete and refactoring
+- Explicit imports that show exactly what's being used
+- Easier to find all usages across the codebase
+- No ambiguity about what's being imported
+
+### ES Modules Only
+
+**CRITICAL:** Never use CommonJS modules. Always use ES module syntax.
+
+```typescript
+// ✅ GOOD: ES modules
+import { createUser } from './user.js';
+import type { User } from './types.js';
+export { updateUser } from './user.js';
+
+// ❌ BAD: CommonJS
+const { createUser } = require('./user');           // NEVER
+module.exports = createUser;                         // NEVER
+exports.createUser = createUser;                     // NEVER
+module.exports.createUser = createUser;              // NEVER
+```
+
+**Why:** ES modules are:
+- The standard JavaScript module system
+- Statically analyzable (enables tree-shaking)
+- Async by nature (better for lazy loading)
+- Required for modern TypeScript and tooling
+
+### index.ts File Rules
 
 **CRITICAL:** All `index.ts` files must contain ONLY imports and exports. Never put actual code or logic in index files.
 
@@ -142,6 +196,38 @@ const helper = () => { /* ... */ }; // WRONG!
 ```
 
 **Why:** Index files should be pure re-export modules for clean public APIs. Logic belongs in dedicated files.
+
+### Import Through index.ts Only
+
+**CRITICAL:** Never bypass a module's `index.ts` file. Always import from the module's public API.
+
+```typescript
+// ✅ GOOD: Import from module's public API
+import { createUser, updateUser } from '../user';
+import type { User, UserRole } from '../user';
+
+// ❌ BAD: Bypassing index.ts
+import { createUser } from '../user/createUser.js';      // NEVER
+import { User } from '../user/types.js';                 // NEVER
+import { helper } from '../user/internal/helper.js';     // NEVER
+```
+
+**Why:** This enforces:
+- Module encapsulation (only exported items are accessible)
+- Clean public APIs (implementation details stay private)
+- Easier refactoring (internal files can be reorganized without breaking imports)
+- Clear module boundaries (what's in `index.ts` is the public contract)
+
+**Example module structure:**
+```
+user/
+├── index.ts           # Public API - import from here
+├── createUser.ts      # Implementation - don't import directly
+├── updateUser.ts      # Implementation - don't import directly
+├── types.ts           # Types - don't import directly
+└── internal/          # Internal helpers - definitely don't import directly
+    └── validator.ts
+```
 
 ---
 
@@ -178,6 +264,9 @@ Before committing TypeScript code, verify:
 - [ ] All functions use arrow syntax (no `function` keyword)
 - [ ] No mutations anywhere (use spread operators for updates)
 - [ ] No utility libraries (lodash, ramda, immer)
-- [ ] All `index.ts` files contain only imports/exports
+- [ ] **No default exports** - only named exports (`export const`, `export interface`, etc.)
+- [ ] **No CommonJS** - only ES modules (`import`/`export`, never `require`/`module.exports`)
+- [ ] All `index.ts` files contain only imports/exports (no logic)
+- [ ] **All imports go through `index.ts`** - never import implementation files directly
 - [ ] No `any` types without justification
 - [ ] All `const` declarations (no `let` unless absolutely necessary, never `var`)
