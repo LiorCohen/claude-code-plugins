@@ -1,7 +1,7 @@
 {
   "name": "sdd",
   "namespace": "sdd",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Spec-driven development methodology for full-stack teams",
   "author": {
     "name": "Lior Cohen"

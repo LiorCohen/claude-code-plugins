@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.7.1] - 2026-01-12
+
+### Changed
+
+- **init command**: Renamed from `init-project` to `init` for brevity
+  - Command file: `commands/init-project.md` → `commands/init.md`
+  - Command name: `/project:init-project` → `/project:init`
+  - Updated all documentation references (README.md, QUICKSTART.md, CLAUDE.md)
+  - Added `namespace: "sdd"` to plugin manifest
+
+### Updated Files
+
+- `commands/init.md`: Updated command name and frontmatter
+- `plugin/.claude-plugin/plugin.json`: Added namespace, bumped to 1.7.1
+- `.claude-plugin/marketplace.json`: Bumped to 1.7.1
+- `README.md`: Updated command references
+- `QUICKSTART.md`: Updated command references and file tree
+- `CLAUDE.md`: Updated command references
+
+### Impact
+
+This change simplifies the command interface:
+- **Shorter command**: `/project:init` vs `/project:init-project`
+- **More intuitive**: Common convention (like `git init`, `npm init`)
+- **Consistent naming**: Aligns with industry standards
+- **Namespace added**: Ensures plugin uniqueness in marketplace
+
+**Migration**: Users should update any scripts or documentation that reference `/project:init-project` to use `/project:init` instead.
+
 ## [1.7.0] - 2026-01-11
 
 ### Enhanced

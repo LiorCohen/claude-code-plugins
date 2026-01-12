@@ -12,7 +12,7 @@ This is a **Claude Code plugin** for spec-driven development methodology. It pro
 sdd/
 ├── plugin/
 │   ├── agents/          # 10 specialized agents (spec-writer, backend-dev, etc.)
-│   ├── commands/        # 5 slash commands (/project:init-project, /project:new-feature, etc.)
+│   ├── commands/        # 5 slash commands (/project:init, /project:new-feature, etc.)
 │   ├── skills/          # 4 reusable skills
 │   ├── templates/       # Project scaffolding (contract, server, webapp, helm)
 │   ├── scripts/         # Python validation utilities
@@ -56,7 +56,7 @@ This plugin implements a **specification-driven workflow**:
 
 5 slash commands for project lifecycle:
 
-- `/project:init-project [name]` - Initialize new project structure
+- `/project:init [name]` - Initialize new project structure
 - `/project:new-feature [name]` - Create spec and plan for new feature
 - `/project:implement-plan [path]` - Orchestrate implementation across agents
 - `/project:verify-spec [path]` - Verify implementation matches spec
@@ -196,7 +196,7 @@ When using this plugin to initialize projects:
 
 - This is a **plugin repository**, not a project using the plugin
 - The plugin files define agents, commands, and templates
-- To use the plugin: Install it in Claude Code, then run `/project:init-project` in a new directory
+- To use the plugin: Install it in Claude Code, then run `/project:init` in a new directory
 - All agent definitions enforce strict patterns (immutability, 5-layer architecture, type safety)
 - Specs are validated by Python scripts that check for required frontmatter fields
 

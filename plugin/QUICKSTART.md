@@ -28,7 +28,7 @@ sdd/
 │   ├── testing.md
 │   └── spec-index.md
 ├── commands/                   # 5 slash commands
-│   ├── init-project.md
+│   ├── init.md
 │   ├── new-feature.md
 │   ├── implement-plan.md
 │   ├── verify-spec.md
@@ -62,7 +62,7 @@ This plugin is designed to work with Claude Code. Once loaded, you'll have acces
 - `/agent reviewer` - Code review
 
 **Commands:**
-- `/project:init-project [name]` - Initialize new project
+- `/project:init [name]` - Initialize new project
 - `/project:new-feature [name]` - Start new feature
 - `/project:implement-plan [path]` - Implement a plan
 - `/project:verify-spec [path]` - Verify implementation
@@ -72,7 +72,7 @@ This plugin is designed to work with Claude Code. Once loaded, you'll have acces
 
 ```bash
 # In Claude Code
-/project:init-project my-awesome-app
+/project:init my-awesome-app
 ```
 
 This creates:
@@ -189,7 +189,7 @@ python scripts/generate-snapshot.py --specs-dir specs/
 1. Read the full methodology in the original spec document
 2. Explore agent definitions in `agents/`
 3. Review templates in `templates/`
-4. Initialize your first project with `/project:init-project`
+4. Initialize your first project with `/project:init`
 
 ## Support
 
