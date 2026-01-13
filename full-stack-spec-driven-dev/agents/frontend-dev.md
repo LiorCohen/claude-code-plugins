@@ -25,26 +25,26 @@ This project follows strict MVVM architecture for frontend development:
 ```
 src/
 ├── pages/                    # Page components (Views)
-│   ├── HomePage/
+│   ├── home_page/
 │   │   ├── index.ts         # Exports only
-│   │   ├── HomePage.tsx     # View component
-│   │   ├── useHomeViewModel.ts  # ViewModel hook
-│   │   └── HomePage.test.tsx
-│   ├── UserProfile/
+│   │   ├── home_page.tsx     # View component
+│   │   ├── use_home_view_model.ts  # ViewModel hook
+│   │   └── home_page.test.tsx
+│   ├── user_profile/
 │   │   ├── index.ts
-│   │   ├── UserProfile.tsx
-│   │   ├── useUserProfileViewModel.ts
-│   │   └── UserProfile.test.tsx
+│   │   ├── user_profile.tsx
+│   │   ├── use_user_profile_view_model.ts
+│   │   └── user_profile.test.tsx
 │   └── ...
 ├── components/              # Shared presentational components
-│   ├── Button/
+│   ├── button/
 │   │   ├── index.ts
-│   │   ├── Button.tsx
-│   │   └── Button.test.tsx
+│   │   ├── button.tsx
+│   │   └── button.test.tsx
 │   └── ...
 ├── viewmodels/             # Shared ViewModel hooks
-│   ├── useAuth.ts
-│   ├── useUserData.ts
+│   ├── use_auth.ts
+│   ├── use_user_data.ts
 │   └── ...
 ├── models/                 # Business logic and data models
 │   ├── user.ts
@@ -58,7 +58,7 @@ src/
 ├── types/                 # Generated types from OpenAPI
 │   └── generated.ts       # Auto-generated from contract
 ├── stores/                # Global state (Zustand)
-│   ├── authStore.ts
+│   ├── auth_store.ts
 │   └── ...
 └── utils/                 # Pure utility functions
     └── ...
@@ -72,7 +72,7 @@ src/
 - API communication
 - No UI concerns, no React dependencies
 
-**ViewModel Layer** (`src/viewmodels/`, page-specific `useXViewModel.ts`):
+**ViewModel Layer** (`src/viewmodels/`, page-specific `use_*_view_model.ts`):
 - React hooks that connect Model to View
 - State management (local and global)
 - Side effects (data fetching, subscriptions)
@@ -93,11 +93,11 @@ src/
 Every page MUST follow this structure:
 
 ```typescript
-// src/pages/UserProfile/index.ts
-export { UserProfile } from './UserProfile';
+// src/pages/user_profile/index.ts
+export { UserProfile } from './user_profile';
 
-// src/pages/UserProfile/UserProfile.tsx (View)
-import { useUserProfileViewModel } from './useUserProfileViewModel';
+// src/pages/user_profile/user_profile.tsx (View)
+import { useUserProfileViewModel } from './use_user_profile_view_model';
 
 interface UserProfileProps {
   readonly userId: string;
@@ -124,7 +124,7 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
   );
 };
 
-// src/pages/UserProfile/useUserProfileViewModel.ts (ViewModel)
+// src/pages/user_profile/use_user_profile_view_model.ts (ViewModel)
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import type { User } from '../../types/generated';
@@ -169,7 +169,7 @@ This project uses the TanStack ecosystem for all frontend infrastructure:
 ```typescript
 // src/routes/index.tsx
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
-import { UserProfile } from '../pages/UserProfile';
+import { UserProfile } from '../pages/user_profile';
 
 const rootRoute = createRootRoute();
 
@@ -209,7 +209,7 @@ export const fetchUser = async (id: string): Promise<User> => {
   return response.json();
 };
 
-// src/pages/UserProfile/useUserProfileViewModel.ts (ViewModel layer)
+// src/pages/user_profile/use_user_profile_view_model.ts (ViewModel layer)
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useUserProfileViewModel = (userId: string) => {
@@ -380,7 +380,7 @@ This ensures:
 Shared components go in `src/components/`:
 
 ```typescript
-// src/components/UserCard/UserCard.tsx
+// src/components/user_card/user_card.tsx
 import type { User } from '../../types/generated';
 
 interface UserCardProps {
@@ -416,7 +416,7 @@ export const UserCard = ({ user, onEdit }: UserCardProps) => {
 ### Zustand Store Example
 
 ```typescript
-// src/stores/authStore.ts
+// src/stores/auth_store.ts
 import { create } from 'zustand';
 import type { User } from '../types/generated';
 
@@ -439,8 +439,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 **Architecture:**
 - **Strict MVVM** - Views never contain business logic
-- **Page-based organization** - Every page in `src/pages/<PageName>/`
-- **ViewModels as hooks** - One `useXViewModel.ts` per page
+- **Page-based organization** - Every page in `src/pages/<page_name>/`
+- **ViewModels as hooks** - One `use_*_view_model.ts` per page
 - **Model layer separation** - Business logic in `src/models/`, API calls in `src/services/`
 
 **TanStack Ecosystem:**
@@ -459,6 +459,21 @@ export const useAuthStore = create<AuthState>((set) => ({
 - **Follow all `typescript-standards` skill requirements** (strict mode, immutability, arrow functions, native JS, index.ts rules)
 - **Never hand-write API types** - Use generated types from contract
 - **Prefer `readonly`** for all props and state types
+
+**File Naming:**
+- **CRITICAL: Use lowercase_with_underscores for ALL filenames** (directories, .ts, .tsx, .test.tsx files)
+- **Never use PascalCase** for filenames (e.g., `UserProfile.tsx` is WRONG, `user_profile.tsx` is CORRECT)
+- **Never use camelCase** for filenames (e.g., `useViewModel.ts` is WRONG, `use_view_model.ts` is CORRECT)
+- **Never use kebab-case** for filenames (e.g., `user-profile.tsx` is WRONG, `user_profile.tsx` is CORRECT)
+- **Component names in code remain PascalCase** (e.g., `export const UserProfile = ...` is still correct)
+- **Examples:**
+  - ✅ `src/pages/user_profile/user_profile.tsx`
+  - ✅ `src/components/button/button.tsx`
+  - ✅ `src/viewmodels/use_auth.ts`
+  - ✅ `src/stores/auth_store.ts`
+  - ❌ `src/pages/UserProfile/UserProfile.tsx` (PascalCase - WRONG)
+  - ❌ `src/pages/user-profile/user-profile.tsx` (kebab-case - WRONG)
+  - ❌ `src/viewmodels/useAuth.ts` (camelCase - WRONG)
 
 **Code Quality:**
 - **No implicit globally running code**

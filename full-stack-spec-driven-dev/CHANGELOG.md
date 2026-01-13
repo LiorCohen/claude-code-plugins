@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.9.1] - 2026-01-13
+
+### Enhanced
+
+- **File naming conventions enforced**: All agents now enforce `lowercase_with_underscores` for filenames
+  - `frontend-dev` agent: Updated all examples and added explicit file naming rules
+    - Directory names: `home_page/`, `user_profile/`, `button/` (not `HomePage/`, `UserProfile/`, `Button/`)
+    - Component files: `user_profile.tsx`, `button.tsx` (not `UserProfile.tsx`, `Button.tsx`)
+    - ViewModel hooks: `use_user_profile_view_model.ts` (not `useUserProfileViewModel.ts`)
+    - Store files: `auth_store.ts` (not `authStore.ts`)
+  - `backend-dev` agent: Updated use-case examples and added explicit file naming rules
+    - Use-case files: `create_user.ts`, `update_user.ts` (not `createUser.ts`, `updateUser.ts`)
+  - `api-designer` agent: Added file naming rule for schema files (already using correct convention)
+  - Added clear examples with ✅ correct and ❌ incorrect patterns
+  - Component names in code remain PascalCase (e.g., `export const UserProfile = ...`)
+
+### Rationale
+
+Lowercase_with_underscores provides:
+- **Consistency**: Same convention across frontend, backend, and infrastructure files
+- **Portability**: No case-sensitivity issues across operating systems
+- **Readability**: Clear word separation without relying on case
+- **Best practice**: Common convention in Python, SQL, and many infrastructure tools
+
 ## [1.9.0] - 2026-01-13
 
 ### Changed

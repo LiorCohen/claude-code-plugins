@@ -126,3 +126,4 @@ paths:
 - All error responses documented
 - Use `$ref` for reusable schemas
 - **Never include health check endpoints in the contract**
+- **Use lowercase_with_underscores for schema filenames**: `user.yaml`, `error.yaml`, `common.yaml` (already correct in examples above)

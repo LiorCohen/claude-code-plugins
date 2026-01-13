@@ -160,8 +160,8 @@ src/model/
 │   ├── user.ts
 │   └── index.ts
 ├── use-cases/          # One function per file
-│   ├── createUser.ts
-│   ├── updateUser.ts
+│   ├── create_user.ts
+│   ├── update_user.ts
 │   └── index.ts
 ├── dependencies.ts     # Dependencies interface
 └── index.ts
@@ -170,7 +170,7 @@ src/model/
 **Use Case Pattern (Mandatory):**
 
 ```typescript
-// src/model/use-cases/createUser.ts
+// src/model/use-cases/create_user.ts
 
 type CreateUserArgs = {
   readonly email: string;
@@ -523,6 +523,9 @@ When implementing a feature:
 - Model never imports from outside its module
 - All external needs provided through Dependencies
 - One use-case per file
+- **CRITICAL: Use lowercase_with_underscores for ALL filenames** (use-case files, model files, DAL files, etc.)
+  - ✅ `create_user.ts`, `update_user.ts`, `user_repository.ts`
+  - ❌ `createUser.ts` (camelCase), `CreateUser.ts` (PascalCase), `create-user.ts` (kebab-case)
 - **dotenv is mandatory**: Use `dotenv.config()` in src/config/index.ts
 - **NO direct process.env access**: ONLY allowed in Config layer (src/config/)
 - **Type-safe configuration**: All layers receive typed Config object, never raw env vars
