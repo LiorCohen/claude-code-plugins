@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.8.3] - 2026-01-13
+
+### Added
+
+- **plugin manifest**: Added commands array to plugin.json for command discovery
+  - References all 5 command files with relative paths:
+    - `./commands/init.md`
+    - `./commands/new-feature.md`
+    - `./commands/implement-plan.md`
+    - `./commands/verify-spec.md`
+    - `./commands/generate-snapshot.md`
+  - Enables Claude Code to automatically discover and register plugin commands
+  - Uses relative paths with `./` prefix for portability
+
+### Updated Files
+
+- `plugin/.claude-plugin/plugin.json`: Added commands array, bumped to 1.8.3
+- `.claude-plugin/marketplace.json`: Bumped to 1.8.3
+
+### Impact
+
+This enhancement improves plugin command registration:
+- **Automatic discovery**: Claude Code can now discover commands from manifest
+- **Better UX**: Commands appear in autocomplete and help documentation
+- **Standards compliance**: Follows Claude Code plugin manifest specification
+- **Maintainability**: Single source of truth for command references
+
+**Technical Note**: The commands array contains file path references (strings) rather than command metadata objects. Each path points to a command markdown file with frontmatter containing the command's name and description.
+
 ## [1.8.2] - 2026-01-12
 
 ### Fixed
