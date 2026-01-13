@@ -15,18 +15,18 @@ A plugin marketplace is a directory structure that organizes multiple Claude Cod
 ```
 .
 ├── .claude-plugin/
-│   └── marketplace.json          # Marketplace manifest
-└── plugin/                        # Individual plugin directory
+│   └── marketplace.json                # Marketplace manifest
+└── full-stack-spec-driven-dev/         # Individual plugin directory
     ├── .claude-plugin/
-    │   └── plugin.json           # Plugin manifest
-    ├── agents/                   # Specialized agents
-    ├── commands/                 # Slash commands
-    ├── skills/                   # Reusable knowledge modules
-    ├── templates/                # Project scaffolding
-    ├── scripts/                  # Utility scripts
-    ├── README.md                 # Plugin documentation
-    ├── QUICKSTART.md            # Getting started guide
-    └── CHANGELOG.md             # Version history
+    │   └── plugin.json                 # Plugin manifest
+    ├── agents/                         # Specialized agents
+    ├── commands/                       # Slash commands
+    ├── skills/                         # Reusable knowledge modules
+    ├── templates/                      # Project scaffolding
+    ├── scripts/                        # Utility scripts
+    ├── README.md                       # Plugin documentation
+    ├── QUICKSTART.md                  # Getting started guide
+    └── CHANGELOG.md                   # Version history
 ```
 
 ## Plugins in this Marketplace
@@ -53,9 +53,9 @@ A comprehensive plugin for spec-driven development methodology, designed for ful
 - `/sdd-generate-snapshot` - Regenerate product snapshot
 
 **Documentation:**
-- [Plugin README](./plugin/README.md) - Complete feature overview
-- [Quick Start Guide](./plugin/QUICKSTART.md) - Getting started tutorial
-- [Changelog](./plugin/CHANGELOG.md) - Version history and updates
+- [Plugin README](./full-stack-spec-driven-dev/README.md) - Complete feature overview
+- [Quick Start Guide](./full-stack-spec-driven-dev/QUICKSTART.md) - Getting started tutorial
+- [Changelog](./full-stack-spec-driven-dev/CHANGELOG.md) - Version history and updates
 
 ## Installation
 
@@ -127,7 +127,7 @@ Each plugin in this marketplace follows Claude Code's plugin specification:
   "plugins": [
     {
       "name": "plugin-name",
-      "source": "./plugin",
+      "source": "./your-plugin-directory",
       "description": "Plugin description",
       "version": "1.0.0"
     }

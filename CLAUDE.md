@@ -10,9 +10,9 @@ This is a **Claude Code plugin** for spec-driven development methodology. It pro
 
 ```
 sdd/
-├── plugin/
+├── full-stack-spec-driven-dev/
 │   ├── agents/          # 10 specialized agents (spec-writer, backend-dev, etc.)
-│   ├── commands/        # 5 slash commands (/project:init, /project:new-feature, etc.)
+│   ├── commands/        # 5 slash commands (/sdd-init, /sdd-new-feature, etc.)
 │   ├── skills/          # 4 reusable skills
 │   ├── templates/       # Project scaffolding (contract, server, webapp, helm)
 │   ├── scripts/         # Python validation utilities
@@ -35,7 +35,7 @@ This plugin implements a **specification-driven workflow**:
 
 ## Key Components
 
-### Agents (`plugin/agents/`)
+### Agents (`full-stack-spec-driven-dev/agents/`)
 
 10 specialized agents, each with specific roles and model assignments:
 
@@ -52,17 +52,17 @@ This plugin implements a **specification-driven workflow**:
 | `tester` | sonnet | Test automation via Testkube |
 | `reviewer` | opus | Code review and spec compliance |
 
-### Commands (`plugin/commands/`)
+### Commands (`full-stack-spec-driven-dev/commands/`)
 
 5 slash commands for project lifecycle:
 
-- `/project:init [name]` - Initialize new project structure
-- `/project:new-feature [name]` - Create spec and plan for new feature
-- `/project:implement-plan [path]` - Orchestrate implementation across agents
-- `/project:verify-spec [path]` - Verify implementation matches spec
-- `/project:generate-snapshot` - Regenerate product state snapshot
+- `/sdd-init [name]` - Initialize new project structure
+- `/sdd-new-feature [name]` - Create spec and plan for new feature
+- `/sdd-implement-plan [path]` - Orchestrate implementation across agents
+- `/sdd-verify-spec [path]` - Verify implementation matches spec
+- `/sdd-generate-snapshot` - Regenerate product state snapshot
 
-### Validation Scripts (`plugin/scripts/`)
+### Validation Scripts (`full-stack-spec-driven-dev/scripts/`)
 
 Python utilities for spec management:
 
@@ -178,7 +178,7 @@ updated: YYYY-MM-DD
 6. Implement frontend with `frontend-dev` agent (consume generated types)
 7. Add tests with `tester` agent (Testkube)
 8. Review with `reviewer` and `db-advisor` agents
-9. Validate spec compliance with `/project:verify-spec`
+9. Validate spec compliance with `/sdd-verify-spec`
 
 ## Important Files
 
@@ -196,7 +196,7 @@ When using this plugin to initialize projects:
 
 - This is a **plugin repository**, not a project using the plugin
 - The plugin files define agents, commands, and templates
-- To use the plugin: Install it in Claude Code, then run `/project:init` in a new directory
+- To use the plugin: Install it in Claude Code, then run `/sdd-init` in a new directory
 - All agent definitions enforce strict patterns (immutability, 5-layer architecture, type safety)
 - Specs are validated by Python scripts that check for required frontmatter fields
 
@@ -206,7 +206,7 @@ When making changes to the plugin, you MUST follow this exact sequence:
 
 1. **Make your code changes** to agents, commands, skills, templates, etc.
 2. **Bump the version** in both:
-   - `plugin/.claude-plugin/plugin.json`
+   - `full-stack-spec-driven-dev/.claude-plugin/plugin.json`
    - `.claude-plugin/marketplace.json`
 3. **Update CHANGELOG.md** with a new version entry that includes:
    - Version number and date
@@ -218,8 +218,8 @@ When making changes to the plugin, you MUST follow this exact sequence:
 
 Example workflow:
 ```
-1. Edit plugin/agents/backend-dev.md (add new feature)
+1. Edit full-stack-spec-driven-dev/agents/backend-dev.md (add new feature)
 2. Update version 1.1.0 → 1.1.1 in both plugin.json files
-3. Add [1.1.1] entry to plugin/CHANGELOG.md describing the feature
+3. Add [1.1.1] entry to full-stack-spec-driven-dev/CHANGELOG.md describing the feature
 4. git commit -am "Add feature X, bump to 1.1.1"
 ```
