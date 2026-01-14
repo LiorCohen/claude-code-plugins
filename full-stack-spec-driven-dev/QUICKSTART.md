@@ -1,5 +1,21 @@
 # Quick Start Guide
 
+## Installation
+
+Install the plugin using the Claude CLI:
+
+```bash
+claude-code plugin install https://github.com/LiorCohen/claude-code-plugins
+```
+
+Or inside Claude Code:
+
+```
+/plugin install https://github.com/LiorCohen/claude-code-plugins
+```
+
+The plugin will be automatically loaded and all commands will be available.
+
 ## Plugin Overview
 
 This plugin implements a complete spec-driven development methodology for full-stack teams.
@@ -62,17 +78,17 @@ This plugin is designed to work with Claude Code. Once loaded, you'll have acces
 - `/agent reviewer` - Code review
 
 **Commands:**
-- `/project:init [name]` - Initialize new project
-- `/project:new-feature [name]` - Start new feature
-- `/project:implement-plan [path]` - Implement a plan
-- `/project:verify-spec [path]` - Verify implementation
-- `/project:generate-snapshot` - Regenerate product snapshot
+- `/sdd-init [name]` - Initialize new project
+- `/sdd-new-feature [name]` - Start new feature
+- `/sdd-implement-plan [path]` - Implement a plan
+- `/sdd-verify-spec [path]` - Verify implementation
+- `/sdd-generate-snapshot` - Regenerate product snapshot
 
 ### 2. Initialize a New Project
 
 ```bash
 # In Claude Code
-/project:init my-awesome-app
+/sdd-init my-awesome-app
 ```
 
 This creates:
@@ -92,7 +108,7 @@ my-awesome-app/
 
 ```bash
 # In Claude Code
-/project:new-feature user-authentication
+/sdd-new-feature user-authentication
 ```
 
 This will:
@@ -104,7 +120,7 @@ This will:
 
 ```bash
 # In Claude Code
-/project:implement-plan specs/features/YYYY/MM/DD/user-authentication/PLAN.md
+/sdd-implement-plan specs/features/YYYY/MM/DD/user-authentication/PLAN.md
 ```
 
 This orchestrates all agents to:
@@ -118,7 +134,7 @@ This orchestrates all agents to:
 
 ```bash
 # In Claude Code
-/project:verify-spec specs/features/user-authentication/SPEC.md
+/sdd-verify-spec specs/features/user-authentication/SPEC.md
 ```
 
 ## Core Principles
@@ -189,7 +205,7 @@ python scripts/generate-snapshot.py --specs-dir specs/
 1. Read the full methodology in the original spec document
 2. Explore agent definitions in `agents/`
 3. Review templates in `templates/`
-4. Initialize your first project with `/project:init`
+4. Initialize your first project with `/sdd-init`
 
 ## Support
 

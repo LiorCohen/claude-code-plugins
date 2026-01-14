@@ -52,15 +52,19 @@ Project lifecycle automation:
 
 ### Installation
 
-1. Clone the marketplace repository:
-   ```bash
-   git clone https://github.com/LiorCohen/claude-code-plugins.git
-   cd claude-code-plugins
-   ```
+Install the plugin using the Claude CLI:
 
-2. Configure Claude Code to use this marketplace (add to settings)
+```bash
+claude-code plugin install https://github.com/LiorCohen/claude-code-plugins
+```
 
-3. The plugin will be automatically discovered and available
+Or inside Claude Code:
+
+```
+/plugin install https://github.com/LiorCohen/claude-code-plugins
+```
+
+The plugin will be automatically loaded and all commands will be available.
 
 ### Usage
 
