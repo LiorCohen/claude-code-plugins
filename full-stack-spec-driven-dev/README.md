@@ -12,6 +12,41 @@ Specs → Plans → Implementation → Tests → Validation
   └───────────── Feedback Loop ───────────────┘
 ```
 
+### Core Methodology
+
+**Specifications are Truth**: Every feature starts with a spec in `specs/features/YYYY/MM/DD/<feature-name>/SPEC.md` before any code is written. Specs include:
+- Frontmatter with metadata (title, status, domain, issue tracking)
+- Acceptance criteria (Given/When/Then format)
+- Domain concepts and constraints
+- References to related specs and glossary terms
+
+**Git as State Machine**: Pull requests represent draft specs. Merging to main activates them. No separate "draft" status field needed.
+
+**Issue Tracking Required**: Every spec must reference a tracking issue (JIRA, GitHub, etc.) in the frontmatter `issue` field.
+
+### Key Files in `specs/`
+
+| File | Purpose |
+|------|---------|
+| `INDEX.md` | Registry of all specifications - automatically updated when specs are created/modified |
+| `SNAPSHOT.md` | Current state of the product - living document that describes all active features and capabilities |
+| `domain/glossary.md` | Domain terminology dictionary - single source of truth for business terms |
+| `domain/entities/` | Domain entity definitions - core business objects |
+| `architecture/` | Architecture decision records and overviews |
+| `features/YYYY/MM/DD/<name>/` | Feature specifications organized by date |
+| `external/` | Original external specifications (when imported) |
+
+**INDEX.md** lists all specifications in the project, making it easy to discover what exists:
+- Active specifications (currently implemented)
+- Deprecated specifications (superseded or no longer used)
+- External specifications (imported from external sources)
+
+**SNAPSHOT.md** provides a high-level view of the product's current state:
+- What features exist
+- What capabilities the product has
+- How everything fits together
+- Regenerated using `/sdd-generate-snapshot` when features change
+
 ## Key Features
 
 ### 10 Specialized Agents
