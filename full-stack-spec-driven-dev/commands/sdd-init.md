@@ -138,7 +138,8 @@ Display a summary of what will be created:
 │   ├── external/           # Original external specs (if imported)
 │   ├── domain/
 │   │   ├── glossary.md (with <domain> as primary domain)
-│   │   └── entities/
+│   │   ├── entities/
+│   │   └── use-cases/
 │   ├── architecture/
 │   └── features/
 │       └── YYYY/MM/DD/<feature-name>/
@@ -198,7 +199,7 @@ Create directories based on selected components:
 
 **Always create:**
 ```bash
-mkdir -p ${TARGET_DIR}/specs/{domain/entities,architecture,features,external}
+mkdir -p ${TARGET_DIR}/specs/{domain/{entities,use-cases},architecture,features,external}
 mkdir -p ${TARGET_DIR}/components/contract
 ```
 

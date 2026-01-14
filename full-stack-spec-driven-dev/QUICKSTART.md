@@ -182,6 +182,7 @@ This orchestrates all agents to:
 | `specs/INDEX.md` | Registry of all specs |
 | `specs/SNAPSHOT.md` | Current product state |
 | `specs/domain/glossary.md` | Domain terminology |
+| `specs/domain/use-cases/` | Business use case definitions |
 | `components/contract/openapi.yaml` | API contract |
 
 ## Validation

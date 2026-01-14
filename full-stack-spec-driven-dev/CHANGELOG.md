@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.10.0] - 2026-01-14
+
+### Added
+
+- **specs/domain/use-cases/ directory**: New directory for business use case definitions
+  - Added to sdd-init command directory creation
+  - Documented in README "Key Files in specs/" table
+  - Documented in QUICKSTART "Key Files" table
+  - Added to spec-writer agent Location Rules table
+  - Use cases provide a structured location for documenting key business workflows and scenarios
+
+### Rationale
+
+The use-cases directory provides:
+- **Structured Documentation**: Dedicated location for business workflows and scenarios
+- **Domain Clarity**: Separates use cases from entities and glossary for better organization
+- **Spec Coverage**: Ensures business logic and user journeys are explicitly documented
+- **Consistency**: Follows the same domain-driven structure as entities and glossary
+
+**Version Note**: This is a minor version bump (1.9.x → 1.10.0) because it adds a new feature (directory structure) that extends functionality without breaking existing behavior.
+
 ## [1.9.3] - 2026-01-13
 
 ### Fixed

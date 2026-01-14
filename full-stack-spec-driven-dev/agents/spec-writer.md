@@ -19,6 +19,7 @@ Use the `spec-writing` skill for templates and validation.
 | Feature specs | `specs/features/YYYY/MM/DD/<feature-name>/SPEC.md` |
 | Implementation plans | `specs/features/YYYY/MM/DD/<feature-name>/PLAN.md` |
 | Domain entities | `specs/domain/entities/<entity-name>.md` |
+| Business use cases | `specs/domain/use-cases/<use-case-name>.md` |
 | Glossary | `specs/domain/glossary.md` |
 
 **Date Format:**

@@ -32,6 +32,7 @@ Specs → Plans → Implementation → Tests → Validation
 | `SNAPSHOT.md` | Current state of the product - living document that describes all active features and capabilities |
 | `domain/glossary.md` | Domain terminology dictionary - single source of truth for business terms |
 | `domain/entities/` | Domain entity definitions - core business objects |
+| `domain/use-cases/` | Business use case definitions - key workflows and scenarios |
 | `architecture/` | Architecture decision records and overviews |
 | `features/YYYY/MM/DD/<name>/` | Feature specifications organized by date |
 | `external/` | Original external specifications (when imported) |
