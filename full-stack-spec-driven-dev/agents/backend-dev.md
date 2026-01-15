@@ -348,6 +348,47 @@ const loadConfig = (): Config => {
 | `warn` | Recoverable issues, deprecations |
 | `error` | Failures requiring attention |
 
+### When to Use Info Logging
+
+**CRITICAL:** Log **before** and **after** every domain action or permanent state change:
+
+- **Before**: Log `info` that the action is starting
+- **After success**: Log `info` with the result
+- **After failure**: Log `error` with the error details
+
+**Actions requiring before/after logging:**
+- Database write operations (create, update, delete)
+- User actions (login, logout, password change)
+- Outgoing calls (HTTP requests to external services)
+- State transitions (order placed, payment processed)
+- Business events (subscription activated, invoice generated)
+
+```typescript
+// ✅ GOOD: Log before and after domain actions
+logger.info(withTraceContext({ userId, email }), 'Creating user');
+try {
+  const user = await db.insert(userData);
+  logger.info(withTraceContext({ userId: user.id }), 'User created');
+} catch (error) {
+  logger.error(withTraceContext({ email, error }), 'Failed to create user');
+  throw error;
+}
+
+// ✅ GOOD: External service call
+logger.info(withTraceContext({ orderId, amount }), 'Processing payment');
+try {
+  const charge = await stripeClient.charge(amount);
+  logger.info(withTraceContext({ orderId, chargeId: charge.id }), 'Payment processed');
+} catch (error) {
+  logger.error(withTraceContext({ orderId, error }), 'Payment failed');
+  throw error;
+}
+
+// ❌ BAD: No before/after logging
+await db.insert(user);
+await stripeClient.charge(amount);
+```
+
 ### Required Log Fields
 
 All logs must include:

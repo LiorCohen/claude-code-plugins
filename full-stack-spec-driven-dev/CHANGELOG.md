@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.10.3] - 2026-01-15
+
+### Enhanced
+
+- **backend-dev agent**: Added explicit info logging guidelines for telemetry
+  - Log **before** starting a domain action (`info`)
+  - Log **after** success (`info`) or failure (`error`)
+  - Applies to: database writes, user actions, outgoing calls, state transitions, business events
+  - Added code examples showing proper before/after logging pattern
+
+### Rationale
+
+Consistent info logging enables:
+- **Observability**: Track all significant operations in production
+- **Debugging**: Trace the path of requests through the system
+- **Auditing**: Record business-relevant events for compliance
+- **Monitoring**: Alert on missing expected logs
+
 ## [1.10.2] - 2026-01-15
 
 ### Changed
