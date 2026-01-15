@@ -98,6 +98,75 @@ function handleClick() {
 
 ---
 
+## No Classes or Inheritance
+
+**CRITICAL:** Never use classes or inheritance unless creating a subclass of Error.
+
+```typescript
+// ✅ GOOD: Types and functions
+type User = {
+  readonly id: string;
+  readonly email: string;
+  readonly createdAt: Date;
+};
+
+const createUser = (args: CreateUserArgs): User => ({
+  id: generateId(),
+  email: args.email,
+  createdAt: new Date(),
+});
+
+// ✅ GOOD: Error subclass (only valid use of class)
+class ValidationError extends Error {
+  constructor(
+    message: string,
+    readonly field: string,
+    readonly code: string
+  ) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
+class NotFoundError extends Error {
+  constructor(resource: string, id: string) {
+    super(`${resource} with id ${id} not found`);
+    this.name = 'NotFoundError';
+  }
+}
+
+// ❌ BAD: Classes for domain objects
+class User {
+  constructor(
+    public id: string,
+    public email: string
+  ) {}
+
+  updateEmail(email: string) {
+    this.email = email;  // Mutation!
+  }
+}
+
+// ❌ BAD: Inheritance hierarchies
+class Animal { /* ... */ }
+class Dog extends Animal { /* ... */ }
+
+// ❌ BAD: Service classes
+class UserService {
+  constructor(private db: Database) {}
+
+  async createUser(args: CreateUserArgs) { /* ... */ }
+}
+```
+
+**Why:**
+- Classes encourage mutation (methods that modify `this`)
+- Inheritance creates tight coupling and fragile hierarchies
+- Functions with explicit dependencies are easier to test and reason about
+- Error subclasses are the exception because they integrate with JavaScript's error handling (`instanceof`, stack traces)
+
+---
+
 ## Native JavaScript Only
 
 ```typescript
@@ -262,6 +331,7 @@ Before committing TypeScript code, verify:
 - [ ] All arrays use `ReadonlyArray<T>`
 - [ ] All objects/maps/sets use `Readonly<T>`, `ReadonlyMap`, `ReadonlySet`
 - [ ] All functions use arrow syntax (no `function` keyword)
+- [ ] **No classes or inheritance** (except Error subclasses)
 - [ ] No mutations anywhere (use spread operators for updates)
 - [ ] No utility libraries (lodash, ramda, immer)
 - [ ] **No default exports** - only named exports (`export const`, `export interface`, etc.)

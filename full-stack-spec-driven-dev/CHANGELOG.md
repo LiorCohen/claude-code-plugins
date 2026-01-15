@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.10.5] - 2026-01-15
+
+### Added
+
+- **typescript-standards skill**: Added "No Classes or Inheritance" rule
+  - CRITICAL: Never use classes or inheritance unless creating a subclass of Error
+  - Classes encourage mutation and tight coupling
+  - Inheritance creates fragile hierarchies
+  - Functions with explicit dependencies are easier to test and reason about
+  - Error subclasses are the only exception (for `instanceof` checks and stack traces)
+  - Added code examples showing correct patterns (types + functions) vs incorrect (classes, inheritance, service classes)
+  - Updated Summary Checklist with new rule
+
+### Rationale
+
+Avoiding classes and inheritance provides:
+- **Immutability**: Functions don't have `this` to mutate
+- **Simplicity**: No inheritance hierarchies to navigate
+- **Testability**: Pure functions with explicit dependencies are trivial to test
+- **Clarity**: Data flows through function parameters, not hidden state
+
 ## [1.10.4] - 2026-01-15
 
 ### Changed
