@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.10.4] - 2026-01-15
+
+### Changed
+
+- **backend-dev agent**: Model definitions must use TypeScript types only
+  - NO Zod, Yup, io-ts, or similar validation libraries in `model/definitions/`
+  - Definitions are compile-time type constructs, not runtime validators
+  - Validation belongs in Controller layer (input) or Server layer (middleware)
+  - Added code examples showing correct TypeScript types vs incorrect Zod usage
+
+### Rationale
+
+Keeping model definitions as pure TypeScript types:
+- **Separation of concerns**: Validation is an infrastructure concern, not domain logic
+- **Simplicity**: Types are sufficient for domain modeling
+- **No runtime overhead**: Compile-time checks only
+- **Cleaner imports**: Model layer stays dependency-free
+
 ## [1.10.3] - 2026-01-15
 
 ### Enhanced

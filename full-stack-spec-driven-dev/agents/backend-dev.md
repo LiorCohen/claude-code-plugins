@@ -156,7 +156,7 @@ Business logic via definitions + use-cases. Model **never imports from outside i
 
 ```
 src/model/
-├── definitions/         # Type definitions only
+├── definitions/         # TypeScript types ONLY (no Zod/validation)
 │   ├── user.ts
 │   └── index.ts
 ├── use-cases/          # One function per file
@@ -165,6 +165,31 @@ src/model/
 │   └── index.ts
 ├── dependencies.ts     # Dependencies interface
 └── index.ts
+```
+
+**Definitions Rules:**
+- Use **TypeScript types only** (`type` or `interface`)
+- **NO Zod, Yup, io-ts, or similar validation libraries**
+- Validation belongs in the Controller layer (input) or Server layer (middleware)
+- Definitions are compile-time constructs, not runtime validators
+
+```typescript
+// ✅ GOOD: TypeScript types in definitions/
+type User = {
+  readonly id: string;
+  readonly email: string;
+  readonly name: string;
+  readonly createdAt: Date;
+};
+
+type CreateUserInput = {
+  readonly email: string;
+  readonly name: string;
+};
+
+// ❌ BAD: Zod schemas in model/definitions/
+import { z } from 'zod';
+const UserSchema = z.object({ ... });  // NEVER in model layer
 ```
 
 **Use Case Pattern (Mandatory):**
