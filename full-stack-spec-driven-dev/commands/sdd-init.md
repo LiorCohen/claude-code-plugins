@@ -275,88 +275,12 @@ Copy template files with variable substitution using gathered information.
 - Copy `templates/components/server/package.json` → `${TARGET_DIR}/components/server/package.json`
   - Replace `{{PROJECT_NAME}}`
 - Copy `templates/components/server/tsconfig.json` → `${TARGET_DIR}/components/server/tsconfig.json`
-- Create `${TARGET_DIR}/components/server/.gitignore`:
-  ```
-  node_modules/
-  dist/
-  .env
-  ```
-- Create `${TARGET_DIR}/components/server/src/index.ts` with minimal entry point:
-  ```typescript
-  // src/index.ts - THE ONLY FILE WITH SIDE EFFECTS (exception to index.ts rule for entry points)
-  import { createServer } from './server';
-  import { loadConfig } from './config';
-
-  const main = async (): Promise<void> => {
-    const config = loadConfig();
-    const server = createServer({ config });
-    await server.start();
-  };
-
-  main().catch((error) => {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-  });
-  ```
-- Create `${TARGET_DIR}/components/server/src/config/load_config.ts` with config loader:
-  ```typescript
-  import dotenv from 'dotenv';
-
-  export type Config = Readonly<{
-    readonly port: number;
-    readonly nodeEnv: string;
-    readonly logLevel: string;
-  }>;
-
-  export const loadConfig = (): Config => {
-    // Load .env file when config is requested (not on module import)
-    dotenv.config();
-
-    const port = parseInt(process.env.PORT ?? '3000', 10);
-    const nodeEnv = process.env.NODE_ENV ?? 'development';
-    const logLevel = process.env.LOG_LEVEL ?? 'info';
-
-    return { port, nodeEnv, logLevel };
-  };
-  ```
-- Create `${TARGET_DIR}/components/server/src/config/index.ts` with exports only:
-  ```typescript
-  export { loadConfig } from './load_config';
-  export type { Config } from './load_config';
-  ```
-- Create `${TARGET_DIR}/components/server/src/server/create_server.ts` with server factory:
-  ```typescript
-  import type { Config } from '../config';
-
-  type ServerDependencies = Readonly<{
-    readonly config: Config;
-  }>;
-
-  type Server = Readonly<{
-    readonly start: () => Promise<void>;
-    readonly stop: () => Promise<void>;
-  }>;
-
-  export const createServer = (deps: ServerDependencies): Server => {
-    const { config } = deps;
-
-    const start = async (): Promise<void> => {
-      console.log(`Server starting on port ${config.port}...`);
-      // TODO: Initialize Express app, middleware, routes
-    };
-
-    const stop = async (): Promise<void> => {
-      console.log('Server stopping...');
-      // TODO: Graceful shutdown
-    };
-
-    return { start, stop };
-  };
-  ```
-- Create `${TARGET_DIR}/components/server/src/server/index.ts` with exports only:
-  ```typescript
-  export { createServer } from './create_server';
-  ```
+- Copy `templates/components/server/.gitignore` → `${TARGET_DIR}/components/server/.gitignore`
+- Copy `templates/components/server/src/index.ts` → `${TARGET_DIR}/components/server/src/index.ts`
+- Copy `templates/components/server/src/config/load_config.ts` → `${TARGET_DIR}/components/server/src/config/load_config.ts`
+- Copy `templates/components/server/src/config/index.ts` → `${TARGET_DIR}/components/server/src/config/index.ts`
+- Copy `templates/components/server/src/server/create_server.ts` → `${TARGET_DIR}/components/server/src/server/create_server.ts`
+- Copy `templates/components/server/src/server/index.ts` → `${TARGET_DIR}/components/server/src/server/index.ts`
 
 **Webapp component (if selected):**
 
@@ -365,50 +289,15 @@ Copy template files with variable substitution using gathered information.
 - Copy `templates/components/webapp/package.json` → `${TARGET_DIR}/components/webapp/package.json`
   - Replace `{{PROJECT_NAME}}`
 - Copy `templates/components/webapp/tsconfig.json` → `${TARGET_DIR}/components/webapp/tsconfig.json`
-- Create `${TARGET_DIR}/components/webapp/.gitignore`:
-  ```
-  node_modules/
-  dist/
-  .env
-  ```
+- Copy `templates/components/webapp/.gitignore` → `${TARGET_DIR}/components/webapp/.gitignore`
 - Create MVVM directory structure:
   ```bash
   mkdir -p ${TARGET_DIR}/components/webapp/src/{pages,components,viewmodels,models,services,stores,types,utils}
   ```
-- Create `${TARGET_DIR}/components/webapp/src/main.tsx` (entry point):
-  ```typescript
-  import { StrictMode } from 'react';
-  import { createRoot } from 'react-dom/client';
-  import { App } from './App';
-  import './index.css';
-
-  const root = document.getElementById('root');
-  if (!root) throw new Error('Root element not found');
-
-  createRoot(root).render(
-    <StrictMode>
-      <App />
-    </StrictMode>
-  );
-  ```
-- Create `${TARGET_DIR}/components/webapp/src/App.tsx` with minimal React app:
-  ```typescript
-  export const App = (): JSX.Element => {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <h1 className="text-2xl font-bold text-gray-800">
-          {{PROJECT_NAME}}
-        </h1>
-      </div>
-    );
-  };
-  ```
-- Create `${TARGET_DIR}/components/webapp/src/index.css` with Tailwind setup:
-  ```css
-  @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
-  ```
+- Copy `templates/components/webapp/src/main.tsx` → `${TARGET_DIR}/components/webapp/src/main.tsx`
+- Copy `templates/components/webapp/src/app.tsx` → `${TARGET_DIR}/components/webapp/src/app.tsx`
+  - Replace `{{PROJECT_NAME}}`
+- Copy `templates/components/webapp/src/index.css` → `${TARGET_DIR}/components/webapp/src/index.css`
 - Create `${TARGET_DIR}/components/webapp/index.html` with basic HTML template
 - Create `${TARGET_DIR}/components/webapp/vite.config.ts` with basic Vite config
 - Create `${TARGET_DIR}/components/webapp/tailwind.config.js` with Tailwind config

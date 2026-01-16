@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.10.13] - 2026-01-17
+
+### Changed
+
+- **Extracted inline templates to templates/ directory**: Code templates now live in separate files
+  - Server templates: `src/index.ts`, `src/config/load_config.ts`, `src/config/index.ts`, `src/server/create_server.ts`, `src/server/index.ts`, `.gitignore`
+  - Webapp templates: `src/main.tsx`, `src/app.tsx`, `src/index.css`, `.gitignore`
+  - sdd-init.md now references template files instead of inline code blocks
+  - Renamed `App.tsx` to `app.tsx` to follow lowercase naming convention
+
+### Rationale
+
+Extracting templates to separate files provides:
+- **Maintainability**: Templates can be edited as real TypeScript files with IDE support
+- **Testability**: Template files can be validated independently
+- **Clarity**: sdd-init.md is more concise and easier to read
+
 ## [1.10.12] - 2026-01-17
 
 ### Fixed
