@@ -90,16 +90,7 @@ When invoked, prompt the user for the following information (use extracted value
    - Prompt: "Primary domain [<default-if-any>]: "
    - Example: "Task Management" or "E-commerce" or "Healthcare"
 
-4. **Tech Stack Confirmation**
-   - Frontend: React 18 + TypeScript 5 + Vite
-   - Backend: Node.js 20 + TypeScript 5 + Express
-   - Database: PostgreSQL 15
-   - Deployment: Kubernetes + Helm
-   - Testing: Vitest + Testkube + Playwright
-   - Ask: "Does this tech stack work for your project? (yes/no)"
-   - If no, inform user they'll need to customize after initialization
-
-5. **Initial Components**
+4. **Initial Components**
    - Ask which components to include:
      - [ ] Contract (OpenAPI spec) - Always included
      - [ ] Server (Node.js backend) - Recommended

@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.10.11] - 2026-01-17
+
+### Removed
+
+- **sdd-init command**: Removed tech stack confirmation prompt
+  - The tech stack is fixed (React, Node.js, TypeScript, PostgreSQL, Kubernetes)
+  - No need to ask for confirmation since it cannot be changed during init
+  - Streamlines the initialization flow
+
 ## [1.10.10] - 2026-01-17
 
 ### Changed
