@@ -59,8 +59,8 @@ Deliverables:
 **Duration:** [X hours/days]
 
 Tasks:
-- [ ] Add model definitions
-- [ ] Implement use-cases
+- [ ] Add domain definitions to `model/definitions/`
+- [ ] Implement use-cases in `model/use-cases/`
 - [ ] Add DAL methods
 - [ ] Wire up controller
 

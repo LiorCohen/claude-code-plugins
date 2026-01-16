@@ -46,7 +46,7 @@ src/
 │   ├── use_auth.ts
 │   ├── use_user_data.ts
 │   └── ...
-├── models/                 # Business logic and data models
+├── models/                 # Domain logic (the "M" in MVVM)
 │   ├── user.ts
 │   ├── auth.ts
 │   └── ...

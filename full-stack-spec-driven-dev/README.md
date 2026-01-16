@@ -210,7 +210,7 @@ src/
 │       └── useUserProfileViewModel.ts  # ViewModel hook
 ├── components/              # Shared presentational components
 ├── viewmodels/             # Shared ViewModel hooks
-├── models/                 # Business logic and data models
+├── models/                 # Domain logic (the "M" in MVVM)
 ├── services/               # API clients
 ├── types/                  # Generated types from OpenAPI
 ├── stores/                 # Global state (Zustand)

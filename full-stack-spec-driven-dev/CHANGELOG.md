@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.10.6] - 2026-01-16
+
+### Changed
+
+- **Terminology clarification**: "Model" always refers to Domain Model layer, never database models
+  - Updated `frontend-dev` agent: `src/models/` description changed from "Business logic and data models" to "Domain logic (the 'M' in MVVM)"
+  - Updated `README.md`: Same clarification for frontend directory structure
+  - Updated `planning.md` skill: Backend tasks now specify "Add domain definitions to `model/definitions/`" instead of ambiguous "Add model definitions"
+  - Updated historical CHANGELOG entry for v1.7.0 to use consistent terminology
+
+### Rationale
+
+The term "Model" in this plugin exclusively refers to:
+- **Backend**: The Model layer containing domain definitions and use-cases (`src/model/`)
+- **Frontend**: The Model layer in MVVM containing domain/business logic (`src/models/`)
+
+The term "data model" was removed as it could be confused with database models. This plugin does not use "Model" to refer to database-related concepts.
+
 ## [1.10.5] - 2026-01-15
 
 ### Added
@@ -483,7 +501,7 @@ This change simplifies the command interface:
     - `src/pages/` - Page components with dedicated subdirectories
     - `src/components/` - Shared presentational components
     - `src/viewmodels/` - Shared ViewModel hooks
-    - `src/models/` - Business logic and domain models
+    - `src/models/` - Domain logic (the "M" in MVVM)
     - `src/services/` - API clients and external services
     - `src/stores/` - Global state (Zustand)
     - `src/types/` - Generated types from OpenAPI contract
