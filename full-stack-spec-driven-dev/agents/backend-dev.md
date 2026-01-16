@@ -46,6 +46,33 @@ Config → [All layers] → Dependencies (injected by Controller)
 | **Model** | `src/model/` | Business logic (definitions + use-cases), receives Dependencies |
 | **DAL** | `src/dal/` | Data access, queries, mapping DB ↔ domain objects |
 
+### Entry Point: src/index.ts
+
+**CRITICAL:** The root `src/index.ts` is the ONLY file with side effects. It must be minimal:
+
+```typescript
+// src/index.ts - THE ONLY FILE WITH SIDE EFFECTS
+import { createServer } from './server';
+import { loadConfig } from './config';
+
+const main = async (): Promise<void> => {
+  const config = loadConfig();
+  const server = createServer({ config });
+  await server.start();
+};
+
+main().catch((error) => {
+  console.error('Failed to start server:', error);
+  process.exit(1);
+});
+```
+
+**Rules:**
+- `src/index.ts` is the ONLY file that runs code on import
+- All other files export functions/types with NO side effects when imported
+- NO logic in `src/index.ts` beyond importing and starting the server
+- NO configuration loading, validation, or setup logic in `src/index.ts`
+
 ### Layer 1: Server
 
 HTTP lifecycle, middleware, routes, graceful shutdown.
@@ -615,6 +642,7 @@ When implementing a feature:
 
 - Spec is truth—implement exactly what's specified
 - Follow all `typescript-standards` skill requirements (immutability, arrow functions, native JS, index.ts rules)
+- **src/index.ts is the ONLY file with side effects**: All other files must be pure exports with no side effects on import
 - Separation of concerns is absolute
 - Model never imports from outside its module
 - All external needs provided through Dependencies

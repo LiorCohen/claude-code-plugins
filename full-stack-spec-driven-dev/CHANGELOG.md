@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.10.7] - 2026-01-16
+
+### Added
+
+- **backend-dev agent**: Entry point rules for `src/index.ts`
+  - `src/index.ts` is the ONLY file with side effects when imported
+  - All other files must be pure exports with no side effects on import
+  - `src/index.ts` must be minimal: import server, start server, nothing else
+  - NO logic, configuration loading, or setup in the root index file
+  - Added code example showing the correct minimal entry point pattern
+  - Added corresponding rule to Rules section
+
+### Rationale
+
+Isolating side effects to `src/index.ts` provides:
+- **Testability**: All modules can be imported in tests without triggering side effects
+- **Clarity**: Easy to understand what runs at startup vs what's pure code
+- **Modularity**: Each module is self-contained and doesn't depend on import order
+- **Debugging**: Side effects are predictable and traceable to one location
+
 ## [1.10.6] - 2026-01-16
 
 ### Changed
