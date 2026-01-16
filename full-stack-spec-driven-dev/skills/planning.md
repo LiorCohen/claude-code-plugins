@@ -41,6 +41,28 @@ created: YYYY-MM-DD
 
 ## Phases
 
+### Phase 0: Domain Documentation (Prerequisite)
+**Agent:** `spec-writer`
+**Duration:** [X hours]
+
+**CRITICAL:** This phase MUST be completed before any code implementation begins.
+
+Tasks:
+- [ ] Update `specs/domain/glossary.md` with new/modified terms
+- [ ] Create/update definition specs in `specs/domain/definitions/`
+- [ ] Document use cases in `specs/domain/use-cases/` (if applicable)
+- [ ] Update `specs/architecture/` if architectural changes needed
+
+Deliverables:
+- Updated domain glossary
+- Definition specifications for all new domain concepts
+- Use case documentation (if applicable)
+
+**Verification:**
+- [ ] All new terms from the feature spec are in the glossary
+- [ ] All new domain concepts have definition specs
+- [ ] Existing definitions updated if behavior changes
+
 ### Phase 1: API Contract
 **Agent:** `api-designer`
 **Duration:** [X hours/days]

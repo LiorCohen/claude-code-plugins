@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.10.8] - 2026-01-16
+
+### Added
+
+- **planning skill**: Added Phase 0 (Domain Documentation) as mandatory prerequisite
+  - Phase 0 MUST be completed before any code implementation begins
+  - Tasks: Update glossary, create/update definition specs, document use cases, update architecture docs
+  - Includes verification checklist to ensure all domain concepts are documented
+  - Phases renumbered: Domain Documentation (0) → API Contract (1) → Backend (2) → Frontend (3) → Testing (4) → Review (5)
+
+- **sdd-implement-plan command**: Updated to explicitly reference Phase 0
+  - Step 2 now titled "Execute Phase 0: Domain Documentation"
+  - Clear blocking requirement: Cannot proceed to Phase 1 until Phase 0 is complete
+  - Updated example to show Phase 0 execution flow
+
+### Rationale
+
+Domain documentation as a prerequisite ensures:
+- **Shared understanding**: All domain concepts documented before implementation
+- **No drift**: Code implementation follows documented domain model
+- **Traceability**: Clear path from spec → domain docs → implementation
+- **Quality**: Forces thinking through domain model before writing code
+
 ## [1.10.7] - 2026-01-16
 
 ### Added

@@ -34,9 +34,9 @@ Example:
 
 **DO NOT proceed to Phase 2 until you fully understand the complete scope.**
 
-### 2. Update Domain Documentation (REQUIRED BEFORE IMPLEMENTATION)
+### 2. Execute Phase 0: Domain Documentation (REQUIRED BEFORE IMPLEMENTATION)
 
-**CRITICAL**: Before implementing ANY code, you MUST update the domain documentation to reflect the feature's impact:
+**CRITICAL**: Phase 0 from the plan MUST be completed before ANY code implementation. This ensures domain knowledge is documented before implementation begins:
 
 1. **Glossary Updates** (`specs/domain/glossary.md`):
    - Read the spec's "Domain Concepts" section
@@ -66,9 +66,9 @@ Example:
 - [ ] Updated architecture docs if needed
 - [ ] Confirmed all domain changes from spec are documented
 
-**DO NOT proceed to Phase 3 until domain documentation is complete and verified.**
+**DO NOT proceed to Phase 1 (API Contract) until Phase 0 is complete and verified.**
 
-### 3. Execute Implementation Phases
+### 3. Execute Implementation Phases (Phases 1-5)
 
 For each phase in the plan:
 
@@ -181,7 +181,7 @@ Agent: ✓ Read PLAN.md
 Agent: ✓ Read SPEC.md
 Agent: [Displays comprehensive summary of work]
 
-Agent: Step 2: Updating domain documentation...
+Agent: Step 2: Executing Phase 0 (Domain Documentation)...
 Agent: Reading spec's "Domain Concepts" section...
 Agent: Found new concepts: User, Session, AuthToken
 Agent:
@@ -201,15 +201,16 @@ Agent: - Feature adds new authentication service
 Agent: - Updated specs/architecture/overview.md with auth service
 Agent: ✓ Architecture docs updated
 Agent:
-Agent: Domain documentation verification:
+Agent: Phase 0 verification:
 Agent: ✓ Read spec's "Domain Concepts" section
 Agent: ✓ Updated specs/domain/glossary.md with new terms
 Agent: ✓ Created definition specs in specs/domain/definitions/
 Agent: ✓ Updated architecture docs
 Agent: ✓ All domain changes from spec are documented
+Agent: ✓ Phase 0 complete
 Agent:
-Agent: Step 3: Beginning implementation phases...
-Agent: Phase: API Contract
+Agent: Step 3: Beginning implementation phases (Phases 1-5)...
+Agent: Phase 1: API Contract
 Agent: [Invokes api-designer agent...]
 
 [Implementation continues...]
