@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.10.18] - 2026-01-17
+
+### Changed
+
+- **Simplified plugin.json**: Removed explicit commands, agents, and skills arrays - Claude Code auto-discovers these from directory structure
+
 ## [1.10.17] - 2026-01-17
 
 ### Added
