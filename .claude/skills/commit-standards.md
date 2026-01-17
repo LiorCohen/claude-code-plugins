@@ -155,7 +155,7 @@ Changes to ANY of these require version bump + CHANGELOG:
 - Root `README.md`
 - Root `CLAUDE.md`
 - Root `CONTRIBUTING.md`
-- Root `skills/` (marketplace-level skills)
+- `.claude/skills/` (marketplace-level skills)
 - `.gitignore`
 
 ---

@@ -16,6 +16,7 @@ This is a **Claude Code plugin marketplace** that contains a collection of plugi
 claude-code-plugins/
 ├── .claude/
 │   └── skills/
+│       ├── commit.md              # Commit workflow with version/changelog
 │       └── commit-standards.md    # MANDATORY commit guidelines
 ├── .claude-plugin/
 │   └── marketplace.json           # Marketplace manifest
@@ -121,7 +122,7 @@ Each plugin manages its own version independently:
 
 ### Commit Standards (ALWAYS USE)
 
-**CRITICAL:** Before making ANY commit, you MUST follow the `commit-standards` skill located at `skills/commit-standards.md`.
+**CRITICAL:** Before making ANY commit, you MUST follow the `commit-standards` skill located at `.claude/skills/commit-standards.md`.
 
 This skill ensures:
 - Version bumps in both `plugin.json` and `marketplace.json`
