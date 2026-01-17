@@ -10,7 +10,7 @@ Regenerate product snapshot.
 ## Usage
 
 ```
-/project:generate-snapshot
+/sdd-generate-snapshot
 ```
 
 ## Flow

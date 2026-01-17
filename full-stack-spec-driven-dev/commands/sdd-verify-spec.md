@@ -10,7 +10,7 @@ Verify implementation matches spec.
 ## Usage
 
 ```
-/project:verify-spec [path-to-spec]
+/sdd-verify-spec [path-to-spec]
 ```
 
 ## Flow
@@ -103,4 +103,4 @@ Generate verification report:
 ## Example
 
 ```
-User: /project:verify-spec specs/features/user-auth/SPEC.md
+User: /sdd-verify-spec specs/features/user-auth/SPEC.md

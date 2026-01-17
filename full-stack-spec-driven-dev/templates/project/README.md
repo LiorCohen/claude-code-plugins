@@ -46,11 +46,11 @@ cd components/webapp && npm run dev
 
 | Command | Purpose |
 |---------|---------|
-| `/project:init [name]` | Initialize new project |
-| `/project:new-feature [name]` | Start new feature |
-| `/project:implement-plan [path]` | Implement a plan |
-| `/project:verify-spec [path]` | Verify implementation |
-| `/project:generate-snapshot` | Regenerate snapshot |
+| `/sdd-init [name]` | Initialize new project |
+| `/sdd-new-feature [name]` | Start new feature |
+| `/sdd-implement-plan [path]` | Implement a plan |
+| `/sdd-verify-spec [path]` | Verify implementation |
+| `/sdd-generate-snapshot` | Regenerate snapshot |
 
 ## Tech Stack
 

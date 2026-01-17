@@ -10,12 +10,12 @@ Implement a feature by executing its implementation plan.
 ## Usage
 
 ```
-/project:implement-plan [path-to-plan]
+/sdd-implement-plan [path-to-plan]
 ```
 
 Example:
 ```
-/project:implement-plan specs/features/2026/01/11/user-auth/PLAN.md
+/sdd-implement-plan specs/features/2026/01/11/user-auth/PLAN.md
 ```
 
 ## Flow
@@ -174,7 +174,7 @@ Before declaring implementation complete, you MUST:
 ## Example
 
 ```
-User: /project:implement-plan specs/features/2026/01/11/user-auth/PLAN.md
+User: /sdd-implement-plan specs/features/2026/01/11/user-auth/PLAN.md
 
 Agent: Step 1: Loading spec and plan...
 Agent: ✓ Read PLAN.md

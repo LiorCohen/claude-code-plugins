@@ -10,7 +10,7 @@ Start a new feature.
 ## Usage
 
 ```
-/project:new-feature [feature-name]
+/sdd-new-feature [feature-name]
 ```
 
 ## Flow
@@ -88,7 +88,7 @@ Start a new feature.
 ### Example 1: Feature name provided, on main branch (creates feature branch)
 
 ```
-User: /project:new-feature user-authentication
+User: /sdd-new-feature user-authentication
 
 Agent: ✓ Feature name: user-authentication
 
@@ -122,7 +122,7 @@ Agent: [Creates spec and plan...]
 ### Example 2: Feature name not provided, already on feature branch
 
 ```
-User: /project:new-feature
+User: /sdd-new-feature
 
 Agent: What is the feature name?
 
@@ -145,7 +145,7 @@ User: PROJ-456
 ### Example 3: On main branch (user declines branch creation)
 
 ```
-User: /project:new-feature quick-fix
+User: /sdd-new-feature quick-fix
 
 Agent: ✓ Feature name: quick-fix
 

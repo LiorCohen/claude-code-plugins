@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.10.14] - 2026-01-17
+
+### Changed
+
+- **Renamed commands from `/project:<command>` to `/sdd-<command>`**: Updated all command references
+  - `/project:init` → `/sdd-init`
+  - `/project:new-feature` → `/sdd-new-feature`
+  - `/project:implement-plan` → `/sdd-implement-plan`
+  - `/project:verify-spec` → `/sdd-verify-spec`
+  - `/project:generate-snapshot` → `/sdd-generate-snapshot`
+  - Updated command files and project templates
+
 ## [1.10.13] - 2026-01-17
 
 ### Changed

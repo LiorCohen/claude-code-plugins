@@ -45,8 +45,8 @@ Config → [All layers] → Dependencies
 
 ## Claude Code Commands
 
-- `/project:init` - Initialize new project
-- `/project:new-feature` - Start new feature
-- `/project:implement-plan` - Implement plan
-- `/project:verify-spec` - Verify implementation
-- `/project:generate-snapshot` - Regenerate snapshot
+- `/sdd-init` - Initialize new project
+- `/sdd-new-feature` - Start new feature
+- `/sdd-implement-plan` - Implement plan
+- `/sdd-verify-spec` - Verify implementation
+- `/sdd-generate-snapshot` - Regenerate snapshot
