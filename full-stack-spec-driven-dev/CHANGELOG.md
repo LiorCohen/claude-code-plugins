@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.10.17] - 2026-01-17
+
+### Added
+
+- **Explicit agents and skills paths in plugin.json**: Added `agents` and `skills` directory references to plugin manifest for better plugin discovery
+
 ## [1.10.16] - 2026-01-17
 
 ### Changed
