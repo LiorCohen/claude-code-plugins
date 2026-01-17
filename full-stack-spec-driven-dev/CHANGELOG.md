@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.10.16] - 2026-01-17
+
+### Changed
+
+- **Reorganized skills into dedicated folders**: Each skill now has its own directory
+  - `skills/<skill-name>.md` → `skills/<skill-name>/SKILL.md`
+  - Prepares for skills to have additional resources (templates, examples)
+
 ## [1.10.15] - 2026-01-17
 
 ### Added
