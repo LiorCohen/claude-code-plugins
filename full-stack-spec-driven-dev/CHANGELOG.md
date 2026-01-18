@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.10.24] - 2026-01-18
+
+### Changed
+
+- **Refined backend-dev.md**: Keep explanations, remove inline code examples (305 lines)
+  - Preserved all verbal explanations, rules, and guidelines
+  - Removed inline code examples (now in template files)
+  - Each layer section points to its template for code patterns
+  - Kept directory structure diagrams (not code)
+  - Kept all tables (log levels, metrics, span attributes, etc.)
+
 ## [1.10.23] - 2026-01-18
 
 ### Changed

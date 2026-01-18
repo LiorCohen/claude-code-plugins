@@ -19,11 +19,7 @@ Use the `typescript-standards` skill for coding standards (strict typing, immuta
 
 ## Type Consumption
 
-Consume generated types from contract:
-
-```typescript
-import type { User, CreateUserRequest } from '../types/generated';
-```
+Consume generated types from contract via `import type { User, CreateUserRequest } from '../types/generated';`
 
 ---
 
@@ -49,36 +45,20 @@ Config → [All layers] → Dependencies (injected by Controller)
 | **DAL** | `src/dal/` | `templates/components/server/src/dal/` | Data access, queries, mapping DB ↔ domain objects |
 | **Telemetry** | `src/telemetry/` | `templates/components/server/src/telemetry/` | Logging, metrics, tracing |
 
+---
+
 ### Entry Point: src/index.ts
 
 **Template:** `templates/components/server/src/index.ts`
 
-**CRITICAL:** The root `src/index.ts` is the ONLY file with side effects. It must be minimal:
-
-```typescript
-// src/index.ts - THE ONLY FILE WITH SIDE EFFECTS (exception to index.ts rule for entry points)
-// IMPORTANT: Telemetry must be imported FIRST before any other imports
-import './telemetry/index.js';
-import { createServer } from './server';
-import { loadConfig } from './config';
-
-const main = async (): Promise<void> => {
-  const config = loadConfig();
-  const server = createServer({ config });
-  await server.start();
-};
-
-main().catch((error) => {
-  console.error('Failed to start server:', error);
-  process.exit(1);
-});
-```
-
 **Rules:**
 - `src/index.ts` is the ONLY file that runs code on import (exception to the "index.ts exports only" rule for application entry points)
+- Telemetry must be imported FIRST before any other imports
 - All other files export functions/types with NO side effects when imported
-- NO logic in `src/index.ts` beyond importing and starting the server
-- NO configuration loading, validation, or setup logic in `src/index.ts`
+- NO logic beyond importing and starting the server
+- NO configuration loading, validation, or setup logic
+
+---
 
 ### Layer 1: Server
 
@@ -86,19 +66,9 @@ main().catch((error) => {
 
 HTTP lifecycle, middleware, routes, graceful shutdown.
 
-```typescript
-interface ServerDependencies {
-  readonly config: Config;
-  readonly controller: Controller;
-}
-
-const createServer = (deps: ServerDependencies): Readonly<{
-  readonly start: () => Promise<void>;
-  readonly stop: () => Promise<void>;
-}> => { /* ... */ };
-```
-
 **What it does NOT contain:** Business logic, configuration values, database connections.
+
+---
 
 ### Layer 2: Config
 
@@ -107,46 +77,6 @@ const createServer = (deps: ServerDependencies): Readonly<{
 Environment parsing, validation, type-safe config objects.
 
 **CRITICAL: Use dotenv for ALL environment variable access.** Direct `process.env` access is FORBIDDEN outside the Config layer.
-
-```typescript
-// src/config/load_config.ts
-import dotenv from 'dotenv';
-
-export type Config = Readonly<{
-  readonly server: Readonly<{
-    readonly port: number;
-    readonly host: string;
-  }>;
-  readonly database: Readonly<{
-    readonly url: string;
-  }>;
-}>;
-
-export const loadConfig = (): Config => {
-  // Load .env file when config is requested (not on module import)
-  dotenv.config();
-
-  // Read from process.env ONLY in this layer
-  const port = parseInt(process.env.PORT ?? '3000', 10);
-  const host = process.env.HOST ?? 'localhost';
-  const databaseUrl = process.env.DATABASE_URL;
-
-  if (!databaseUrl) {
-    throw new Error('DATABASE_URL is required');
-  }
-
-  return {
-    server: { port, host },
-    database: { url: databaseUrl },
-  };
-};
-```
-
-```typescript
-// src/config/index.ts - exports only
-export { loadConfig } from './load_config';
-export type { Config } from './load_config';
-```
 
 **Environment Variable Rules:**
 1. **dotenv is mandatory**: Always use `dotenv.config()` inside `loadConfig()` (not at module level)
@@ -158,6 +88,8 @@ export type { Config } from './load_config';
 
 **What it does NOT contain:** Business logic, database queries.
 
+---
+
 ### Layer 3: Controller
 
 **Template:** `templates/components/server/src/controller/`
@@ -168,30 +100,9 @@ Request/response handling, creates Dependencies object for Model.
 
 **Health Check Endpoints:** Implement health checks (`/health`, `/readiness`, `/liveness`) directly in the controller without defining them in the OpenAPI contract. These are infrastructure endpoints for Kubernetes probes only.
 
-```typescript
-const createController = (deps: ControllerDependencies): Controller => {
-  // Create Dependencies object for Model use cases
-  const modelDeps: Dependencies = {
-    findUserByEmail: deps.dal.findUserByEmail,
-    insertUser: deps.dal.insertUser,
-  };
-
-  return {
-    // Handler name comes from OpenAPI operationId: "createUser"
-    handleCreateUser: async (req) => {
-      const result = await createUser(modelDeps, {
-        email: req.body.email,
-        name: req.body.name,
-      });
-      return result.success
-        ? { status: 201, body: result.user }
-        : { status: 409, body: { error: 'User exists' } };
-    },
-  };
-};
-```
-
 **What it does NOT contain:** Database queries, business logic (delegates to Model).
+
+---
 
 ### Layer 4: Model
 
@@ -199,15 +110,11 @@ const createController = (deps: ControllerDependencies): Controller => {
 
 Business logic via definitions + use-cases. Model **never imports from outside its module**.
 
+**Structure:**
 ```
 src/model/
 ├── definitions/         # TypeScript types ONLY (no Zod/validation)
-│   ├── user.ts
-│   └── index.ts
 ├── use-cases/          # One function per file
-│   ├── create_user.ts
-│   ├── update_user.ts
-│   └── index.ts
 ├── dependencies.ts     # Dependencies interface
 └── index.ts
 ```
@@ -218,62 +125,14 @@ src/model/
 - Validation belongs in the Controller layer (input) or Server layer (middleware)
 - Definitions are compile-time constructs, not runtime validators
 
-```typescript
-// ✅ GOOD: TypeScript types in definitions/
-type User = {
-  readonly id: string;
-  readonly email: string;
-  readonly name: string;
-  readonly createdAt: Date;
-};
-
-type CreateUserInput = {
-  readonly email: string;
-  readonly name: string;
-};
-
-// ❌ BAD: Zod schemas in model/definitions/
-import { z } from 'zod';
-const UserSchema = z.object({ ... });  // NEVER in model layer
-```
-
-**Use Case Pattern (Mandatory):**
-
-```typescript
-// src/model/use-cases/create_user.ts
-
-type CreateUserArgs = {
-  readonly email: string;
-  readonly name: string;
-};
-
-type CreateUserResult =
-  | { readonly success: true; readonly user: User }
-  | { readonly success: false; readonly error: 'email_exists' };
-
-const createUser = async (
-  deps: Dependencies,
-  args: CreateUserArgs
-): Promise<CreateUserResult> => {
-  const existingUser = await deps.findUserByEmail(args.email);
-
-  if (existingUser) {
-    return { success: false, error: 'email_exists' };
-  }
-
-  const newUser = await deps.insertUser({
-    email: args.email,
-    name: args.name,
-  });
-
-  return { success: true, user: newUser };
-};
-
-export { createUser };
-export type { CreateUserArgs, CreateUserResult };
-```
+**Use Case Rules:**
+- One use-case per file
+- Each use-case receives Dependencies as first argument
+- Return discriminated unions for success/failure (e.g., `{ success: true, user } | { success: false, error: 'email_exists' }`)
 
 **What it does NOT contain:** HTTP handling, direct database queries, external imports.
+
+---
 
 ### Layer 5: DAL
 
@@ -281,35 +140,12 @@ export type { CreateUserArgs, CreateUserResult };
 
 Data access functions that directly handle database queries. **No repository pattern** - use simple, focused functions instead.
 
+**Structure:**
 ```
 src/dal/
 ├── find_user_by_id.ts
 ├── insert_user.ts
 └── index.ts
-```
-
-**Data Access Function Pattern:**
-
-```typescript
-// src/dal/find_user_by_id.ts
-import type { User } from '../types/generated';
-
-type FindUserByIdDeps = {
-  readonly db: DatabaseClient;
-};
-
-const findUserById = async (
-  deps: FindUserByIdDeps,
-  id: string
-): Promise<User | null> => {
-  const result = await deps.db.query(
-    'SELECT id, email, name FROM users WHERE id = $1',
-    [id]
-  );
-  return result.rows[0] ?? null;
-};
-
-export { findUserById };
 ```
 
 **DAL Rules:**
@@ -324,17 +160,6 @@ export { findUserById };
 
 ---
 
-## TypeScript Standards
-
-**CRITICAL:** Follow all standards from the `typescript-standards` skill:
-- Strict TypeScript configuration
-- Immutability everywhere (readonly, ReadonlyArray, no mutations)
-- Arrow functions only (no `function` keyword)
-- Native JavaScript only (no lodash, ramda, immer)
-- index.ts files contain only imports/exports
-
----
-
 ## Telemetry (OpenTelemetry)
 
 **Template:** `templates/components/server/src/telemetry/`
@@ -343,77 +168,13 @@ All observability follows OpenTelemetry standards for logs, metrics, and traces.
 
 ### Initialization
 
-Create `src/telemetry/index.ts` and import it **first** in your entry point:
+Import telemetry **first** in entry point before any other imports. See entry point template.
 
-```typescript
-// src/index.ts
-import './telemetry/index.js';  // MUST BE FIRST
-import { loadConfig } from './config/index.js';
-// ... rest of imports
-```
-
-### Structured Logging
+### Logging
 
 Use Pino with OpenTelemetry context injection. **NEVER access process.env directly** - receive config from Config layer.
 
-```typescript
-// src/telemetry/logger.ts
-import pino from 'pino';
-import { context, trace } from '@opentelemetry/api';
-import type { Config } from '../config/index.js';
-
-// Logger must receive log level from Config, not process.env
-export const createBaseLogger = (config: Config) => {
-  return pino({
-    level: config.logging.level, // From Config layer, NOT process.env
-    formatters: {
-      level: (label) => ({ level: label }),
-    },
-    timestamp: pino.stdTimeFunctions.isoTime,
-  });
-};
-
-export const createLogger = (baseLogger: pino.Logger, component: string) => {
-  return baseLogger.child({ component });
-};
-
-export const withTraceContext = <T extends Record<string, unknown>>(
-  obj: T
-): T & { traceId?: string; spanId?: string } => {
-  const span = trace.getSpan(context.active());
-  if (span) {
-    const spanContext = span.spanContext();
-    return {
-      ...obj,
-      traceId: spanContext.traceId,
-      spanId: spanContext.spanId,
-    };
-  }
-  return obj;
-};
-```
-
-**Config example for logging:**
-```typescript
-// In src/config/index.ts
-interface Config {
-  readonly logging: Readonly<{
-    readonly level: 'debug' | 'info' | 'warn' | 'error';
-  }>;
-  // ... other config
-}
-
-const loadConfig = (): Config => {
-  const logLevel = (process.env.LOG_LEVEL ?? 'info') as Config['logging']['level'];
-
-  return {
-    logging: { level: logLevel },
-    // ... other config
-  };
-};
-```
-
-### Log Levels
+**Log Levels:**
 
 | Level | When to use |
 |-------|-------------|
@@ -422,10 +183,9 @@ const loadConfig = (): Config => {
 | `warn` | Recoverable issues, deprecations |
 | `error` | Failures requiring attention |
 
-### When to Use Info Logging
+**When to Use Info Logging:**
 
-**CRITICAL:** Log **before** and **after** every domain action or permanent state change:
-
+Log **before** and **after** every domain action or permanent state change:
 - **Before**: Log `info` that the action is starting
 - **After success**: Log `info` with the result
 - **After failure**: Log `error` with the error details
@@ -437,35 +197,7 @@ const loadConfig = (): Config => {
 - State transitions (order placed, payment processed)
 - Business events (subscription activated, invoice generated)
 
-```typescript
-// ✅ GOOD: Log before and after domain actions
-logger.info(withTraceContext({ userId, email }), 'Creating user');
-try {
-  const user = await db.insert(userData);
-  logger.info(withTraceContext({ userId: user.id }), 'User created');
-} catch (error) {
-  logger.error(withTraceContext({ email, error }), 'Failed to create user');
-  throw error;
-}
-
-// ✅ GOOD: External service call
-logger.info(withTraceContext({ orderId, amount }), 'Processing payment');
-try {
-  const charge = await stripeClient.charge(amount);
-  logger.info(withTraceContext({ orderId, chargeId: charge.id }), 'Payment processed');
-} catch (error) {
-  logger.error(withTraceContext({ orderId, error }), 'Payment failed');
-  throw error;
-}
-
-// ❌ BAD: No before/after logging
-await db.insert(user);
-await stripeClient.charge(amount);
-```
-
-### Required Log Fields
-
-All logs must include:
+**Required Log Fields:**
 
 | Field | Required | Description |
 |-------|----------|-------------|
@@ -479,84 +211,13 @@ All logs must include:
 | `requestId` | Context | Request correlation ID |
 | `error` | On error | Error object with stack |
 
-### Logging by Layer
-
-Loggers must be passed down from the Server layer (which receives Config):
-
-```typescript
-// In Server layer (receives Config)
-import { createBaseLogger } from '../telemetry/logger.js';
-
-const baseLogger = createBaseLogger(config);
-
-// Pass baseLogger to controller, dal, etc.
-const controller = createController({ baseLogger, ...otherDeps });
-```
-
-```typescript
-// In any layer (receives baseLogger via dependencies)
-import { createLogger, withTraceContext } from '../telemetry/logger.js';
-
-// Logger created from passed baseLogger
-const logger = createLogger(deps.baseLogger, 'controller');
-
-// Info log
-logger.info(
-  withTraceContext({ userId, action: 'createUser' }),
-  'User created'
-);
-
-// Error log
-logger.error(
-  withTraceContext({ userId, error }),
-  'Failed to create user'
-);
-
-// Debug log (include relevant context)
-logger.debug(
-  withTraceContext({ userId, email: user.email }),
-  'Checking for existing user'
-);
-```
+**Logging by Layer:** Loggers must be passed down from the Server layer (which receives Config). Each layer creates a child logger with its component name.
 
 **Security Rule:** Never log sensitive data (passwords, tokens, credit cards, PII beyond IDs).
 
 ### Metrics
 
-Define metrics in `src/telemetry/metrics.ts`:
-
-```typescript
-import { metrics } from '@opentelemetry/api';
-
-const meter = metrics.getMeter('myapp-server');
-
-// HTTP metrics (in Server layer)
-export const httpRequestDuration = meter.createHistogram('http.server.request.duration', {
-  description: 'HTTP request duration',
-  unit: 'ms',
-});
-
-export const httpRequestTotal = meter.createCounter('http.server.request.count', {
-  description: 'Total HTTP requests',
-});
-
-// Database metrics (in DAL layer)
-export const dbQueryDuration = meter.createHistogram('db.client.operation.duration', {
-  description: 'Database query duration',
-  unit: 'ms',
-});
-
-export const dbConnectionPoolSize = meter.createUpDownCounter('db.client.connection.pool.usage', {
-  description: 'Database connection pool usage',
-});
-
-// Business metrics (in Model layer)
-export const businessOperationTotal = meter.createCounter('business.operation.count', {
-  description: 'Business operation executions',
-});
-```
-
-### Required Metrics
+**Required Metrics:**
 
 | Metric | Type | Labels | Layer |
 |--------|------|--------|-------|
@@ -566,52 +227,16 @@ export const businessOperationTotal = meter.createCounter('business.operation.co
 | `db.client.connection.pool.usage` | UpDownCounter | state (active/idle) | DAL |
 | `business.operation.count` | Counter | operation, result | Model |
 
-### Metric Naming
-
-Follow OpenTelemetry semantic conventions:
+**Metric Naming:** Follow OpenTelemetry semantic conventions:
 - Use `.` as separator (e.g., `http.server.request.duration`)
 - Prefix with namespace (`http`, `db`, `business`)
 - Include unit in name if not obvious (e.g., `duration`, `count`, `size`)
 
-### Custom Spans
+### Spans
 
-Wrap business operations with spans:
+Wrap business operations with spans using `@opentelemetry/api`.
 
-```typescript
-// In Model use-cases
-import { trace } from '@opentelemetry/api';
-
-const tracer = trace.getTracer('myapp-server');
-
-const createUser = async (
-  deps: Dependencies,
-  args: CreateUserArgs
-): Promise<CreateUserResult> => {
-  return tracer.startActiveSpan('createUser', async (span) => {
-    try {
-      span.setAttributes({
-        'user.email': args.email,
-        'operation': 'createUser',
-      });
-
-      const result = await deps.insertUser(args);
-
-      span.setAttributes({ 'result.success': true });
-      return { success: true, user: result };
-    } catch (error) {
-      span.recordException(error as Error);
-      span.setAttributes({ 'result.success': false });
-      throw error;
-    } finally {
-      span.end();
-    }
-  });
-};
-```
-
-### Span Attributes
-
-Use OpenTelemetry semantic conventions for attributes:
+**Span Attributes:** Use OpenTelemetry semantic conventions:
 
 | Attribute | Type | Example |
 |-----------|------|---------|
