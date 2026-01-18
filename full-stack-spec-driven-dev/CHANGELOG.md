@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.10.21] - 2026-01-18
+
+### Added
+
+- **Server templates**: Added comprehensive template files for all 5 backend layers
+  - `model/` - definitions, dependencies, use-cases with example user CRUD
+  - `dal/` - data access functions (find_user_by_id, find_user_by_email, insert_user)
+  - `controller/` - request/response handling with health check endpoints
+  - `telemetry/` - OpenTelemetry logging and metrics setup
+  - Updated `index.ts` to import telemetry first
+
 ## [1.10.20] - 2026-01-18
 
 ### Removed
