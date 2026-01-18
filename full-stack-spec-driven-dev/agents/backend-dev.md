@@ -96,6 +96,19 @@ Environment parsing, validation, type-safe config objects.
 
 Request/response handling, creates Dependencies object for Model.
 
+**Structure:**
+```
+src/controller/
+├── http_handlers/       # One file per API namespace
+│   ├── users.ts         # Exports usersRouter
+│   ├── orders.ts        # Exports ordersRouter
+│   └── index.ts         # Re-exports all routers
+├── create_controller.ts # Assembles routers, creates Dependencies for Model
+└── index.ts
+```
+
+**HTTP Handlers:** Each file in `http_handlers/` corresponds to an API namespace (e.g., `/users`, `/orders`) and exports a router. The `create_controller.ts` imports these routers and wires them together with the Dependencies object for Model use-cases.
+
 **Handler Naming:** Use `operationId` from OpenAPI spec with `handle` prefix (e.g., `createUser` → `handleCreateUser`).
 
 **Health Check Endpoints:** Implement health checks (`/health`, `/readiness`, `/liveness`) directly in the controller without defining them in the OpenAPI contract. These are infrastructure endpoints for Kubernetes probes only.

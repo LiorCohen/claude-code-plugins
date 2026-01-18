@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.10.25] - 2026-01-18
+
+### Added
+
+- **Controller http_handlers structure**: Clarified controller layer organization
+  - Added `http_handlers/` directory with one file per API namespace
+  - Each handler file exports a router (e.g., `usersRouter`)
+  - `create_controller.ts` assembles routers and creates Dependencies for Model
+  - Added template files: `http_handlers/users.ts`, `http_handlers/index.ts`
+  - Updated `create_controller.ts` to use the new structure
+
 ## [1.10.24] - 2026-01-18
 
 ### Changed

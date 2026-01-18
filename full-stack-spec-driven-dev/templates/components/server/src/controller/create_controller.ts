@@ -1,8 +1,9 @@
-// Controller: Request/response handling
-// Creates Dependencies object for Model use cases
-// Handler names come from OpenAPI operationId with 'handle' prefix
+// Controller: Assembles routers and creates Dependencies for Model
+// Imports routers from http_handlers and wires them together
+import type { Router, Application } from 'express';
+import { Router as createRouter } from 'express';
 import type { Dependencies } from '../model';
-import { createUser } from '../model';
+import { createUsersRouter } from './http_handlers';
 
 export type ControllerDependencies = {
   readonly dal: {
@@ -11,24 +12,12 @@ export type ControllerDependencies = {
   };
 };
 
-export type Request<T = unknown> = {
-  readonly body: T;
-  readonly params: Record<string, string>;
-  readonly query: Record<string, string>;
-};
-
-export type Response<T = unknown> = {
-  readonly status: number;
-  readonly body: T;
-};
-
 export type Controller = {
-  // Handler name comes from OpenAPI operationId: "createUser" -> handleCreateUser
-  readonly handleCreateUser: (req: Request<{ readonly email: string; readonly name: string }>) => Promise<Response>;
+  readonly router: Router;
   // Health checks - infrastructure endpoints, not in OpenAPI contract
-  readonly handleHealth: () => Response<{ readonly status: string }>;
-  readonly handleReadiness: () => Response<{ readonly status: string }>;
-  readonly handleLiveness: () => Response<{ readonly status: string }>;
+  readonly handleHealth: () => { readonly status: string };
+  readonly handleReadiness: () => { readonly status: string };
+  readonly handleLiveness: () => { readonly status: string };
 };
 
 export const createController = (deps: ControllerDependencies): Controller => {
@@ -38,20 +27,18 @@ export const createController = (deps: ControllerDependencies): Controller => {
     insertUser: deps.dal.insertUser,
   };
 
-  return {
-    handleCreateUser: async (req) => {
-      const result = await createUser(modelDeps, {
-        email: req.body.email,
-        name: req.body.name,
-      });
-      return result.success
-        ? { status: 201, body: { data: result.user } }
-        : { status: 409, body: { error: { code: 'email_exists', message: 'User with this email already exists' } } };
-    },
+  // Create main router and mount namespace routers
+  const router = createRouter();
 
+  // Mount namespace routers from http_handlers
+  const usersRouter = createUsersRouter({ modelDeps });
+  router.use('/users', usersRouter);
+
+  return {
+    router,
     // Health check endpoints - infrastructure only, not in OpenAPI contract
-    handleHealth: () => ({ status: 200, body: { status: 'healthy' } }),
-    handleReadiness: () => ({ status: 200, body: { status: 'ready' } }),
-    handleLiveness: () => ({ status: 200, body: { status: 'alive' } }),
+    handleHealth: () => ({ status: 'healthy' }),
+    handleReadiness: () => ({ status: 'ready' }),
+    handleLiveness: () => ({ status: 'alive' }),
   };
 };
