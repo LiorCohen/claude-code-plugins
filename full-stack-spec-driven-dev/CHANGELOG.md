@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.10.26] - 2026-01-18
+
+### Changed
+
+- **Server layer owns DB connections**: Clarified database connection handling
+  - Server layer creates connection pool on startup using Config values
+  - Passes database client to Controller (which passes to DAL via Dependencies)
+  - Closes connections on graceful shutdown
+
 ## [1.10.25] - 2026-01-18
 
 ### Added

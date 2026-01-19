@@ -64,9 +64,14 @@ Config → [All layers] → Dependencies (injected by Controller)
 
 **Template:** `templates/components/server/src/server/`
 
-HTTP lifecycle, middleware, routes, graceful shutdown.
+HTTP lifecycle, middleware, routes, graceful shutdown, database connection management.
 
-**What it does NOT contain:** Business logic, configuration values, database connections.
+**Database Connections:** The Server layer owns database connection lifecycle:
+- Creates connection pool on startup using Config values
+- Passes database client to Controller (which passes to DAL via Dependencies)
+- Closes connections on graceful shutdown
+
+**What it does NOT contain:** Business logic, direct configuration values (receives typed Config).
 
 ---
 
