@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.10.28] - 2026-01-18
+
+### Fixed
+
+- **QUICKSTART.md installation commands**: Use correct Claude Code plugin syntax
+  - Step 1: `/plugin marketplace add LiorCohen/claude-code-plugins`
+  - Step 2: `/plugin install sdd@lior-cohen-cc-plugins`
+
 ## [1.10.27] - 2026-01-18
 
 ### Changed
