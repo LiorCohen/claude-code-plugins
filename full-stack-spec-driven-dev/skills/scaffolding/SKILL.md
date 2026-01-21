@@ -1,9 +1,9 @@
 ---
-name: scaffold
+name: scaffolding
 description: Fast project scaffolding using Python script instead of file-by-file creation.
 ---
 
-# Scaffold Skill
+# Scaffolding Skill
 
 Create project structure quickly using the Python scaffold script.
 
@@ -29,7 +29,7 @@ cat > /tmp/sdd-scaffold-config.json << 'EOF'
 EOF
 
 # 2. Run the scaffold script
-python3 <path-to-plugin>/skills/scaffold/scaffold.py --config /tmp/sdd-scaffold-config.json
+python3 <path-to-plugin>/skills/scaffolding/scaffolding.py --config /tmp/sdd-scaffold-config.json
 
 # 3. Clean up config file
 rm /tmp/sdd-scaffold-config.json
@@ -88,7 +88,7 @@ cat > /tmp/sdd-scaffold-config.json << 'EOF'
 }
 EOF
 
-python3 /Users/dev/.claude-code/plugins/sdd/scripts/scaffold.py \
+python3 /Users/dev/.claude-code/plugins/sdd/skills/scaffolding/scaffolding.py \
     --config /tmp/sdd-scaffold-config.json
 
 rm /tmp/sdd-scaffold-config.json

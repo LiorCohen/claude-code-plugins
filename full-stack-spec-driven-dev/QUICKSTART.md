@@ -45,8 +45,8 @@ sdd/
 ├── skills/                     # Reusable skills
 │   ├── change-creation/
 │   ├── planning/
-│   ├── scaffold/
-│   ├── spec-decomposer/
+│   ├── scaffolding/
+│   ├── spec-decomposition/
 │   ├── spec-index/
 │   ├── spec-writing/
 │   ├── testing/

@@ -6,7 +6,7 @@ Creates project structure from templates with variable substitution.
 Called by Claude after user approves project configuration.
 
 Usage:
-    python scaffold.py --config config.json
+    python scaffolding.py --config config.json
 
 Config JSON format:
 {

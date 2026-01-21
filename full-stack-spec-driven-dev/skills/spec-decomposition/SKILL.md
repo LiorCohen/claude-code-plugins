@@ -1,9 +1,9 @@
 ---
-name: spec-decomposer
+name: spec-decomposition
 description: Analyze specifications and decompose into independent changes.
 ---
 
-# Spec Decomposer Skill
+# Spec Decomposition Skill
 
 ## Purpose
 

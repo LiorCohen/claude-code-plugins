@@ -207,9 +207,9 @@ If the user says no, ask what they'd like to change and return to Phase 1.
 
 ### Phase 4: Project Creation (Only After Approval)
 
-Once approved, use the `scaffold` skill to create the project structure.
+Once approved, use the `scaffolding` skill to create the project structure.
 
-**See the `scaffold` skill for detailed instructions.** Pass the following from Phase 1:
+**See the `scaffolding` skill for detailed instructions.** Pass the following from Phase 1:
 - `project_name`, `project_description`, `primary_domain`
 - `target_dir`: Current directory or subdirectory based on Phase 1 directory check
 - `components`: Based on selected project type (Full-Stack, Backend API, Frontend, or Custom)
@@ -227,7 +227,7 @@ If an external spec was provided via `--spec` argument:
 
 #### Step 5.2: Analyze spec for change decomposition
 
-Use the `spec-decomposer` skill to analyze the external spec:
+Use the `spec-decomposition` skill to analyze the external spec:
 
 ```
 Input:
@@ -243,7 +243,7 @@ The skill returns a `DecompositionResult` with:
 - `suggested_order`: recommended implementation sequence
 - `warnings`: any issues detected (circular deps, large changes, etc.)
 
-See `skills/spec-decomposer/SKILL.md` for the full algorithm and data structures.
+See `skills/spec-decomposition/SKILL.md` for the full algorithm and data structures.
 
 **If `is_decomposable` is false:**
 - Display any warnings from the result
@@ -293,7 +293,7 @@ Options:
 3. **Handle user adjustments in a loop:**
 
 - **[A] Accept**: Proceed to Step 5.4 with the accepted changes
-- **[M] Merge**: Use the merge operation from spec-decomposer skill, re-display result
+- **[M] Merge**: Use the merge operation from spec-decomposition skill, re-display result
 - **[S] Split**: Ask for split criteria, use split operation from skill, re-display result
 - **[R] Rename**: Use rename operation from skill, re-display result
 - **[T] Change type**: Update the change type (feature/bugfix/refactor), re-display result
@@ -453,7 +453,7 @@ After ALL steps are done:
 - **External spec support**: When `--spec` is provided, the external spec is:
   - Copied to `specs/external/<original-filename>` for permanent reference
   - Parsed to extract defaults for project setup
-  - **Analyzed for multi-change decomposition** using the `spec-decomposer` skill
+  - **Analyzed for multi-change decomposition** using the `spec-decomposition` skill
   - Decomposed into multiple independent changes (user confirms breakdown)
   - Each change gets its own `specs/changes/YYYY/MM/DD/<change-name>/` directory
   - Changes include SPEC.md and PLAN.md with proper frontmatter
