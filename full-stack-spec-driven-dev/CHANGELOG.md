@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.1.0] - 2026-01-21
+
+### Added
+
+- **Plugin test framework**
+  - `tests/test-helpers.sh`: Core utilities for running Claude and asserting results
+  - `tests/run-all-tests.sh`: Test runner with fast/integration/all modes
+  - `tests/fast/test-sdd-init.sh`: Verifies /sdd-init creates expected project structure
+  - `tests/fast/test-sdd-new-feature.sh`: Verifies correct agents are invoked
+  - `tests/integration/test-full-stack-init.sh`: Full workflow test (init → build → run)
+  - `tests/prompts/`: Test input prompts for automated testing
+  - Based on approach from obra/superpowers repository using `claude -p` with stream-json output
+
 ## [2.0.6] - 2026-01-21
 
 ### Added

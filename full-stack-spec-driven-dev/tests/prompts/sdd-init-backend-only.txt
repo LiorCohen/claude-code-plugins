@@ -1,0 +1,16 @@
+Run /sdd-init to create a new backend-only project with the following configuration:
+
+Project name: test-backend-api
+Project description: A backend API for testing
+Primary domain: Testing
+Project type: Backend API Only (Option B)
+
+When prompted, provide these answers:
+- Project name: test-backend-api
+- Description: A backend API for testing
+- Domain: Testing
+- Components: Backend API Only (Contract, Server, Config, Testing, CI/CD)
+
+Approve the configuration when shown and proceed with creating all files.
+
+IMPORTANT: Do not ask any questions. Use the values provided above and proceed automatically.
