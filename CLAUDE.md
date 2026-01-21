@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Git Rules
+
+- **NEVER push to remote** without explicit user approval (e.g., "push", "push it", "go ahead and push")
+- **NEVER commit** without first updating version and CHANGELOG when modifying plugin files
+- After making changes, STOP and report what was done - wait for user to request commit/push
+
 ## Skills
 
 Use the `commit` skill for ALL commits.
