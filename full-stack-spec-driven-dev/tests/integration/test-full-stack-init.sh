@@ -3,6 +3,7 @@
 # Creates a project with /sdd-init and verifies it builds and runs
 
 set -e
+set -o pipefail  # Ensure pipe returns exit code of failed command, not tee
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../test-helpers.sh"
@@ -24,6 +25,13 @@ echo "Step 1: Running /sdd-init..."
 echo "=========================================="
 OUTPUT=$(run_claude_capture "$PROMPT" 600 "$TEST_PROJECT")
 echo "$OUTPUT" > "$TEST_PROJECT/claude-output.json"
+
+# Check if project was created in a subdirectory
+# The prompt specifies "test-fullstack-project" as the project name
+if [ -d "$TEST_PROJECT/test-fullstack-project" ]; then
+    echo "Project created in subdirectory, updating TEST_PROJECT path..."
+    TEST_PROJECT="$TEST_PROJECT/test-fullstack-project"
+fi
 
 # Verify basic structure
 assert_dir_exists "$TEST_PROJECT" "components/server" "Server component created"
