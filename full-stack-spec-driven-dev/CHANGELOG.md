@@ -1,5 +1,28 @@
 # Changelog
 
+## [3.3.0] - 2026-01-22
+
+### Changed
+
+- **App module refactor**: Consolidated app lifecycle management
+  - Moved `create_database.ts` into `app/` module (database is internal to app)
+  - Renamed `http_server.ts` to `create_http_server.ts` for consistency
+  - Added `state_machine.ts` for generic async state machine implementation
+
+- **State machine with substates**: Improved app lifecycle states
+  - States use colon convention for substates: `STARTING:DATABASE`, `STARTING:HTTP_SERVER`, etc.
+  - Async transitions with `Promise<void>` return type
+  - Auto-transition to first substate when transitioning to parent state
+  - Exhaustive switch handling in `onTransition` callback
+
+- **Dependency injection improvements**:
+  - App receives `logger: pino.Logger` instead of using console
+  - Modules create their own child loggers internally
+  - DAL functions use `.bind(null, deps)` for cleaner partial application
+  - ID generation moved internal to DAL (not a dependency)
+
+- **Module encapsulation**: Only `createApp` exported from app module
+
 ## [3.2.1] - 2026-01-22
 
 ### Changed

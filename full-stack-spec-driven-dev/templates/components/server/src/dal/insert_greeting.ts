@@ -1,12 +1,13 @@
 // DAL: Insert Greeting
 // Mutation function that creates a new greeting in the database
+import { randomUUID } from "node:crypto";
+
 import type { Greeting, CreateGreetingInput } from '../model/definitions';
 
 export type InsertGreetingDeps = {
   readonly db: {
     readonly query: <T>(sql: string, params: unknown[]) => Promise<{ rows: T[] }>;
   };
-  readonly generateId: () => string;
 };
 
 type GreetingRow = {
@@ -20,7 +21,7 @@ export const insertGreeting = async (
   deps: InsertGreetingDeps,
   input: CreateGreetingInput & { readonly message: string }
 ): Promise<Greeting> => {
-  const id = deps.generateId();
+  const id = randomUUID();
   const now = new Date();
 
   const result = await deps.db.query<GreetingRow>(

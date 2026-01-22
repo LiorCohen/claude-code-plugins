@@ -1,8 +1,11 @@
 // Database: Connection factory
 // Replace this implementation with your actual database client (pg, mysql2, etc.)
-import type { Config } from '../config';
+import type pino from "pino";
+
+import type { Config } from "../config";
 
 export type Database = {
+  readonly connect: () => Promise<void>;
   readonly query: <T>(sql: string, params: unknown[]) => Promise<{ rows: T[] }>;
   readonly close: () => Promise<void>;
 };
@@ -19,17 +22,28 @@ const getTable = (name: string): Map<string, StoredRow> => {
   return tables.get(name)!;
 };
 
-export const createDatabase = (_config: Config): Database => {
+type DatabaseDependencies = Readonly<{
+  readonly config: Config;
+  readonly logger: pino.Logger;
+}>;
+
+export const createDatabase = (deps: DatabaseDependencies): Database => {
+  const logger = deps.logger.child({ component: "database" });
   // TODO: Replace with actual database connection
   // Example with pg:
   // import { Pool } from 'pg';
-  // const pool = new Pool({ connectionString: config.databaseUrl });
+  // const pool = new Pool({ connectionString: deps.config.databaseUrl });
   // return {
   //   query: <T>(sql: string, params: unknown[]) => pool.query(sql, params),
   //   close: () => pool.end(),
   // };
 
   return {
+    connect: async () => {
+      // TODO: Replace with actual database connection
+      // Example: await pool.connect();
+      logger.info("Database connected");
+    },
     query: async <T>(sql: string, params: unknown[]): Promise<{ rows: T[] }> => {
       // Simple in-memory implementation for development
       // Supports basic INSERT...RETURNING and SELECT...WHERE id = $1
