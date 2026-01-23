@@ -55,8 +55,14 @@ Once installed, all commands, agents, and skills will be available immediately.
 
 ```
 .
+├── .claude/
+│   └── skills/                    # Marketplace-level skills
+│       ├── commit/                # Commit workflow
+│       └── typescript-standards/  # TypeScript coding standards
 ├── .claude-plugin/
 │   └── marketplace.json           # Marketplace manifest
+├── CHANGELOG.md                   # Marketplace changelog
+├── CONTRIBUTING.md                # Contribution guidelines
 └── full-stack-spec-driven-dev/    # SDD plugin directory
     ├── .claude-plugin/
     │   └── plugin.json            # Plugin manifest
@@ -65,9 +71,10 @@ Once installed, all commands, agents, and skills will be available immediately.
     ├── skills/                    # Reusable patterns
     ├── templates/                 # Project scaffolding
     ├── scripts/                   # Utility scripts
+    ├── tests/                     # Plugin tests
     ├── README.md                  # Plugin documentation
     ├── QUICKSTART.md             # Getting started
-    └── CHANGELOG.md              # Version history
+    └── CHANGELOG.md              # Plugin version history
 ```
 
 ## Contributing

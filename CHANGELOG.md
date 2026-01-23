@@ -31,6 +31,12 @@ Changes to the marketplace infrastructure (not plugin-specific changes).
   - Added marketplace CHANGELOG to repository structure
   - Documented changelog management guidelines
 
+- **Documentation updates**: Fixed inconsistencies across all README and CLAUDE files
+  - Root CLAUDE.md: Fixed skill paths, added missing files to structure diagram
+  - Root README.md: Added `.claude/skills/`, `CHANGELOG.md`, `tests/` to structure
+  - Plugin docs: Updated architecture diagrams to use "App layer" instead of "Server layer"
+  - Added lifecycle probes documentation (port 9090 for Kubernetes health checks)
+
 ## 2026-01-21
 
 ### Added

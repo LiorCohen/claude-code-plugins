@@ -175,15 +175,16 @@ your-project/
 Strict architectural separation enforced by the `backend-dev` agent:
 
 ```
-Server → Controller → Model Use Cases
-   ↓         ↓            ↑
+App → Controller → Model Use Cases
+ ↓         ↓            ↑
 Config → [All layers] → Dependencies (injected)
                            ↓
                          DAL
 ```
 
 **Layer Responsibilities:**
-- **Server layer**: HTTP lifecycle, middleware, routes, graceful shutdown
+- **App layer**: Application lifecycle with state machine, manages HTTP server, database, and lifecycle probes
+  - Lifecycle probes run on separate port (default 9090) for Kubernetes health checks (`/health`, `/readiness`)
 - **Config layer**: Environment parsing, validation, type-safe config objects
 - **Controller layer**: Request/response handling, creates Dependencies for Model
 - **Model layer**: Business logic (definitions + use-cases), never imports from outside

@@ -22,12 +22,17 @@ This is a **Claude Code plugin marketplace** that contains a collection of plugi
 claude-code-plugins/
 ├── .claude/
 │   └── skills/
-│       └── commit.md              # Commit workflow with version/changelog
+│       ├── commit/
+│       │   └── SKILL.md           # Commit workflow with version/changelog
+│       └── typescript-standards/
+│           └── SKILL.md           # TypeScript coding standards
 ├── .claude-plugin/
 │   └── marketplace.json           # Marketplace manifest
 ├── full-stack-spec-driven-dev/    # SDD plugin
 ├── README.md                      # Marketplace overview
-└── CLAUDE.md                      # This file
+├── CLAUDE.md                      # This file
+├── CHANGELOG.md                   # Marketplace changelog (infrastructure)
+└── CONTRIBUTING.md                # Contribution guidelines
 ```
 
 ## What is a Marketplace?
@@ -127,7 +132,7 @@ Each plugin manages its own version independently:
 
 ### Commit (ALWAYS USE)
 
-**CRITICAL:** Before making ANY commit, you MUST follow the `commit` skill located at `.claude/skills/commit.md`.
+**CRITICAL:** Before making ANY commit, you MUST follow the `commit` skill located at `.claude/skills/commit/SKILL.md`.
 
 This skill ensures:
 - Version bumps in both `plugin.json` and `marketplace.json`

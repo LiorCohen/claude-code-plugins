@@ -81,15 +81,18 @@ python scripts/generate-snapshot.py --specs-dir specs/
 The `backend-dev` agent enforces strict architectural separation:
 
 ```
-Server → Controller → Model Use Cases
-   ↓         ↓            ↑
+App → Controller → Model Use Cases
+ ↓         ↓            ↑
 Config → [All layers] → Dependencies (injected)
                            ↓
                          DAL
 ```
 
 **Key principles:**
-- **Server layer**: HTTP lifecycle, middleware, routes, graceful shutdown
+- **App layer**: Application lifecycle with state machine (IDLE → STARTING → RUNNING → STOPPING → STOPPED)
+  - Manages HTTP server, database connections, lifecycle probes
+  - Lifecycle probes run on separate port (default 9090) for Kubernetes health checks
+  - Graceful startup and shutdown with proper sequencing
 - **Config layer**: Environment parsing, validation, type-safe config objects
 - **Controller layer**: Request/response handling, creates Dependencies for Model
 - **Model layer**: Business logic (definitions + use-cases), never imports from outside
