@@ -4,22 +4,11 @@ import { createController } from "../controller";
 import { findGreetingById, insertGreeting } from "../dal";
 import { createDatabase } from "./create_database";
 import { createHttpServer } from "./create_http_server";
+import { createLifecycleProbes } from "./lifecycle_probes";
 import { createStateMachine } from "./state_machine";
 
 import type pino from "pino";
-
 import type { Config } from "../config";
-
-// App lifecycle states (substates use colon convention: "PARENT:SUBSTATE")
-type AppState =
-    | "IDLE"
-    | "STARTING:DATABASE"
-    | "STARTING:HTTP_SERVER"
-    | "RUNNING"
-    | "STOPPING:HTTP_SERVER"
-    | "STOPPING:DATABASE"
-    | "STOPPED"
-    | "FAILED";
 
 type AppDependencies = Readonly<{
     readonly config: Config;
@@ -30,6 +19,19 @@ type App = Readonly<{
     readonly start: () => Promise<void>;
     readonly stop: () => Promise<void>;
 }>;
+
+// App lifecycle states (substates use colon convention: "PARENT:SUBSTATE")
+type AppState =
+    | "IDLE"
+    | "STARTING:PROBES"
+    | "STARTING:DATABASE"
+    | "STARTING:HTTP_SERVER"
+    | "RUNNING"
+    | "STOPPING:HTTP_SERVER"
+    | "STOPPING:DATABASE"
+    | "STOPPING:PROBES"
+    | "STOPPED"
+    | "FAILED";
 
 export const createApp = (deps: AppDependencies): App => {
     const { config, logger } = deps;
@@ -45,22 +47,26 @@ export const createApp = (deps: AppDependencies): App => {
     const stateMachine = createStateMachine<AppState>({
         initial: "IDLE",
         transitions: {
-            IDLE: ["STARTING:DATABASE"],
+            IDLE: ["STARTING:PROBES"],
+            "STARTING:PROBES": ["STARTING:DATABASE", "FAILED"],
             "STARTING:DATABASE": ["STARTING:HTTP_SERVER", "FAILED"],
             "STARTING:HTTP_SERVER": ["RUNNING", "FAILED"],
             RUNNING: ["STOPPING:HTTP_SERVER"],
             "STOPPING:HTTP_SERVER": ["STOPPING:DATABASE", "FAILED"],
-            "STOPPING:DATABASE": ["STOPPED", "FAILED"],
-            STOPPED: ["STARTING:DATABASE"], // Allow restart
-            FAILED: ["STARTING:DATABASE"], // Allow retry
+            "STOPPING:DATABASE": ["STOPPING:PROBES", "FAILED"],
+            "STOPPING:PROBES": ["STOPPED", "FAILED"],
+            STOPPED: ["STARTING:PROBES"], // Allow restart
+            FAILED: ["STARTING:PROBES"], // Allow retry
         },
     });
 
-    // Create HTTP server with controller (needs stateMachine reference)
-    const httpServer = createHttpServer({
-        controller,
+    // Create lifecycle probes server (health/readiness/liveness)
+    const lifecycleProbes = createLifecycleProbes({
         getAppState: stateMachine.getState,
     });
+
+    // Create HTTP server with controller
+    const httpServer = createHttpServer({ controller });
 
     // Handle all state transitions
     stateMachine.onTransition(async (from, to) => {
@@ -68,6 +74,14 @@ export const createApp = (deps: AppDependencies): App => {
         switch (to) {
             case "IDLE":
                 // Initial state, nothing to do
+                break;
+            case "STARTING:PROBES":
+                await lifecycleProbes.start(config.probesPort);
+                logger.info(
+                    { port: config.probesPort },
+                    "Lifecycle probes listening",
+                );
+                await stateMachine.transition("STARTING:DATABASE");
                 break;
             case "STARTING:DATABASE":
                 await db.connect();
@@ -86,6 +100,10 @@ export const createApp = (deps: AppDependencies): App => {
                 break;
             case "STOPPING:DATABASE":
                 await db.close();
+                await stateMachine.transition("STOPPING:PROBES");
+                break;
+            case "STOPPING:PROBES":
+                await lifecycleProbes.stop();
                 await stateMachine.transition("STOPPED");
                 break;
             case "STOPPED":

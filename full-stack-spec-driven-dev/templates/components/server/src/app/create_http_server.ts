@@ -6,7 +6,6 @@ import type { Controller } from '../controller';
 
 export type HttpServerDependencies = Readonly<{
   readonly controller: Controller;
-  readonly getAppState: () => string;
 }>;
 
 export type HttpServer = Readonly<{
@@ -15,38 +14,13 @@ export type HttpServer = Readonly<{
 }>;
 
 export const createHttpServer = (deps: HttpServerDependencies): HttpServer => {
-  const { controller, getAppState } = deps;
+  const { controller } = deps;
 
   let server: Server | null = null;
   const app: Express = express();
 
   // Middleware
   app.use(express.json());
-
-  // Health check endpoints (infrastructure, not in OpenAPI)
-  app.get('/health', (_req: Request, res: Response) => {
-    res.json(controller.handleHealth());
-  });
-
-  app.get('/readiness', (_req: Request, res: Response) => {
-    // Only ready when running
-    const state = getAppState();
-    if (state === 'running') {
-      res.json(controller.handleReadiness());
-    } else {
-      res.status(503).json({ status: 'not_ready', state });
-    }
-  });
-
-  app.get('/liveness', (_req: Request, res: Response) => {
-    // Alive unless failed
-    const state = getAppState();
-    if (state !== 'failed') {
-      res.json(controller.handleLiveness());
-    } else {
-      res.status(503).json({ status: 'unhealthy', state });
-    }
-  });
 
   // Mount API routes
   app.use('/api/v1', controller.router);

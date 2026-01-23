@@ -1,5 +1,31 @@
 # Changelog
 
+## [3.4.0] - 2026-01-23
+
+### Added
+
+- **Lifecycle probes**: Separate HTTP server for Kubernetes health checks
+  - New `lifecycle_probes.ts` module with `/health` and `/readiness` endpoints
+  - Runs on dedicated port (default 9090, env var `PROBES_PORT`)
+  - `/health` - Always returns 200 when process is alive (for startupProbe/livenessProbe)
+  - `/readiness` - Returns 200 only when app state is `RUNNING` (for readinessProbe)
+  - Probes server starts first (before database) and stops last (after database)
+
+### Changed
+
+- **State machine**: Added `STARTING:PROBES` and `STOPPING:PROBES` states
+  - New startup order: PROBES → DATABASE → HTTP_SERVER
+  - New shutdown order: HTTP_SERVER → DATABASE → PROBES
+  - Probes available before app is fully ready (for Kubernetes startup checks)
+
+- **HTTP server**: Removed health endpoints from main API server
+  - Health checks now handled by dedicated lifecycle probes server
+  - Main server focuses solely on API routes
+
+- **Config**: Added `probesPort` configuration
+  - Default: 9090
+  - Environment variable: `PROBES_PORT`
+
 ## [3.3.0] - 2026-01-23
 
 ### Changed

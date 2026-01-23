@@ -14,10 +14,6 @@ export type ControllerDependencies = {
 
 export type Controller = {
   readonly router: Router;
-  // Health checks - infrastructure endpoints, not in OpenAPI contract
-  readonly handleHealth: () => { readonly status: string };
-  readonly handleReadiness: () => { readonly status: string };
-  readonly handleLiveness: () => { readonly status: string };
 };
 
 export const createController = (deps: ControllerDependencies): Controller => {
@@ -34,11 +30,5 @@ export const createController = (deps: ControllerDependencies): Controller => {
   const greetingsRouter = createGreetingsRouter({ modelDeps });
   router.use('/greetings', greetingsRouter);
 
-  return {
-    router,
-    // Health check endpoints - infrastructure only, not in OpenAPI contract
-    handleHealth: () => ({ status: 'ok' }),
-    handleReadiness: () => ({ status: 'ok' }),
-    handleLiveness: () => ({ status: 'ok' }),
-  };
+  return { router };
 };
