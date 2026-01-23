@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.5.1] - 2026-01-23
+
+### Added
+
+- **backend-standards skill**: Extracted CMDO architecture from backend-dev agent into reusable skill
+  - Contains full CMDO layer documentation (Operator, Config, Controller, Model, DAL)
+  - Includes telemetry standards (logging, metrics, spans)
+  - Provides infrastructure vs domain separation guidelines
+
+### Changed
+
+- **backend-dev agent**: Simplified to reference skills instead of duplicating content
+  - Now references `typescript-standards` and `backend-standards` skills
+  - Retains TDD workflow and build order documentation
+  - Reduced from ~400 lines to ~115 lines
+
 ## [3.5.0] - 2026-01-23
 
 ### Changed
