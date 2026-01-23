@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.5.3] - 2026-01-23
+
+### Added
+
+- **frontend-standards skill**: Extracted MVVM architecture from frontend-dev agent into reusable skill
+  - Contains full MVVM layer documentation (Model, ViewModel, View)
+  - Includes TanStack ecosystem standards (Router, Query, Table, Form)
+  - Provides TailwindCSS styling guidelines
+  - Documents state management patterns (Query, Zustand, useState, Router)
+  - Includes file naming conventions and summary checklist
+
+### Changed
+
+- **frontend-dev agent**: Simplified to reference skills instead of duplicating content
+  - Now references `typescript-standards` and `frontend-standards` skills
+  - Retains implementation approach and condensed rules
+  - Reduced from ~507 lines to ~56 lines
+
 ## [3.5.2] - 2026-01-23
 
 ### Added
