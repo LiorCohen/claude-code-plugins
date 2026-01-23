@@ -1,6 +1,6 @@
 #!/bin/bash
 # SDD Plugin Test Runner
-# Runs all tests using pytest
+# Runs all tests using uv and pytest
 
 set -e
 
@@ -47,14 +47,14 @@ echo "SDD Plugin Test Suite"
 echo "=========================================="
 echo ""
 
-# Run pytest
+# Run pytest with uv
 if [[ "$RUN_INTEGRATION" == "true" ]]; then
     echo "Running all tests (including integration)..."
     echo ""
-    python -m pytest -v
+    uv run pytest
 else
     echo "Running fast tests only..."
     echo "(Use --integration or --all to include integration tests)"
     echo ""
-    python -m pytest -v -m "not slow" fast/
+    uv run pytest -m "not slow" fast/
 fi

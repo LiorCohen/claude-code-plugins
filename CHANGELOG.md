@@ -4,6 +4,18 @@ Changes to the marketplace infrastructure (not plugin-specific changes).
 
 ## 2026-01-23
 
+### Changed
+
+- **Test structure**: Moved plugin tests from `full-stack-spec-driven-dev/tests/` to `tests/sdd/`
+  - Tests are now at marketplace level, organized by plugin name
+  - Updated `conftest.py` paths to reflect new structure
+  - Plugin directory no longer contains tests
+  - Future plugins will have tests at `tests/<plugin-name>/`
+  - Replaced `requirements.txt` and `pytest.ini` with `pyproject.toml` (UV)
+  - Updated `run-all-tests.sh` to use `uv run pytest`
+  - Renamed `conftest.py` to `test_helpers.py` (clearer name)
+  - Added minimal `conftest.py` for pytest fixture discovery
+
 ### Added
 
 - **Ignore files**: Added `test-apps/` to `.gitignore` and `.claudeignore`

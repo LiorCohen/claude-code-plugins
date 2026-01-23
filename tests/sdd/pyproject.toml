@@ -1,0 +1,19 @@
+[project]
+name = "sdd-tests"
+version = "0.1.0"
+description = "Tests for the SDD plugin"
+requires-python = ">=3.11"
+dependencies = [
+    "pytest>=7.0.0",
+    "requests>=2.28.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["fast", "integration"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
+addopts = "-v --tb=short"

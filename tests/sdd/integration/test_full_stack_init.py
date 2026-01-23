@@ -9,13 +9,13 @@ import time
 
 import pytest
 
-from conftest import TestProject, http_get, run_claude, run_npm, wait_for_server
+from test_helpers import TestProject, http_get, run_claude, run_npm, wait_for_server
 
 
 @pytest.fixture
 def test_project():
     """Create a test project for integration testing."""
-    from conftest import TEST_OUTPUT_DIR
+    from test_helpers import TEST_OUTPUT_DIR
 
     TEST_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     project_dir = TEST_OUTPUT_DIR / f"integration-fullstack-{int(time.time())}"

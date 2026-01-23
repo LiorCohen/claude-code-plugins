@@ -18,9 +18,9 @@ import pytest
 import requests
 
 # Directories
-TESTS_DIR = Path(__file__).parent
-PLUGIN_DIR = TESTS_DIR.parent
-MARKETPLACE_DIR = PLUGIN_DIR.parent
+TESTS_DIR = Path(__file__).parent  # tests/sdd/
+MARKETPLACE_DIR = TESTS_DIR.parent.parent  # repository root
+PLUGIN_DIR = MARKETPLACE_DIR / "full-stack-spec-driven-dev"
 TEST_OUTPUT_DIR = Path(os.environ.get("TEST_OUTPUT_DIR", "/tmp/sdd-tests"))
 
 

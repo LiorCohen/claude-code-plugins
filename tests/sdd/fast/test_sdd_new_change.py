@@ -5,13 +5,13 @@ Verifies that spec-writer and planner agents are invoked correctly.
 
 import pytest
 
-from conftest import TestProject, run_claude
+from test_helpers import TestProject, run_claude
 
 
 @pytest.fixture
 def test_project():
     """Create a test project with minimal SDD structure for sdd-new-change."""
-    from conftest import TEST_OUTPUT_DIR
+    from test_helpers import TEST_OUTPUT_DIR
     import time
 
     TEST_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
