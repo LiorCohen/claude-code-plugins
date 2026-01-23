@@ -15,7 +15,7 @@ This plugin implements a **specification-driven workflow**:
 3. **Issue tracking required** - Every spec must reference a tracking issue (JIRA, GitHub, etc.)
 4. **Git as state machine** - PR = draft spec, merged to main = active spec
 5. **Contract-first API** - OpenAPI specs generate TypeScript types for both frontend and backend
-6. **5-layer backend architecture** - Strict separation: Server → Controller → Model → Dependencies → DAL
+6. **CMDO backend architecture** - "Commando" (Controller Model DAL Operator) with strict infrastructure/domain separation
 7. **Immutability enforced** - `readonly` everywhere, no mutations, native JavaScript only
 8. **OpenTelemetry by default** - All services emit structured logs, metrics, and traces
 
@@ -31,7 +31,7 @@ This plugin implements a **specification-driven workflow**:
 | `planner` | opus | Break specs into implementation phases |
 | `api-designer` | sonnet | Design OpenAPI contracts |
 | `frontend-dev` | sonnet | React components (MVVM architecture) |
-| `backend-dev` | sonnet | 5-layer Node.js backend |
+| `backend-dev` | sonnet | CMDO architecture Node.js backend |
 | `db-advisor` | opus | Database performance review |
 | `devops` | sonnet | Kubernetes, Helm, Testkube |
 | `ci-dev` | sonnet | CI/CD pipelines |
@@ -76,27 +76,35 @@ python scripts/generate-index.py --specs-dir specs/
 python scripts/generate-snapshot.py --specs-dir specs/
 ```
 
-## Backend Architecture (5 Layers)
+## Backend Architecture: CMDO ("Commando")
 
-The `backend-dev` agent enforces strict architectural separation:
+The `backend-dev` agent enforces strict **C**ontroller **M**odel **D**AL **O**perator architecture:
 
 ```
-App → Controller → Model Use Cases
- ↓         ↓            ↑
-Config → [All layers] → Dependencies (injected)
-                           ↓
-                         DAL
+Operator → Controller → Model Use Cases
+   ↓            ↓              ↑
+Config → [All layers] → Dependencies (injected by Controller)
+                               ↓
+                             DAL
 ```
 
 **Key principles:**
-- **App layer**: Application lifecycle with state machine (IDLE → STARTING → RUNNING → STOPPING → STOPPED)
-  - Manages HTTP server, database connections, lifecycle probes
+- **Operator layer**: Raw I/O capabilities (DB, HTTP clients, cache) - **NO domain knowledge**
+  - Manages lifecycle via state machine (IDLE → STARTING → RUNNING → STOPPING → STOPPED)
   - Lifecycle probes run on separate port (default 9090) for Kubernetes health checks
   - Graceful startup and shutdown with proper sequencing
-- **Config layer**: Environment parsing, validation, type-safe config objects
-- **Controller layer**: Request/response handling, creates Dependencies for Model
+- **Config layer**: Environment parsing, validation, type-safe config objects, URLs and settings
+- **Controller layer**: Combines I/O + config for domain-specific operations, creates Dependencies for Model
 - **Model layer**: Business logic (definitions + use-cases), never imports from outside
 - **DAL layer**: Data access, queries, DB ↔ domain object mapping
+
+**Infrastructure vs Domain separation:**
+| Layer | Knows About | Example |
+|-------|-------------|---------|
+| **Operator** | Infrastructure only | "Here's a DB connection and generic HTTP client" |
+| **Config** | URLs and settings | `paymentGatewayUrl: "https://api.stripe.com"` |
+| **Controller** | Domain concerns | "Use httpClient + paymentGatewayUrl to charge a card" |
+| **Model** | Business logic only | "Calculate total, then call chargePayment()" |
 
 **Immutability rules:**
 - All interfaces use `readonly` properties

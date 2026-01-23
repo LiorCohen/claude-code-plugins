@@ -1,4 +1,5 @@
-// App: Orchestrates application lifecycle and wires dependencies
+// Operator: Provides raw I/O capabilities and orchestrates application lifecycle
+// NO domain knowledge - only infrastructure (DB, HTTP clients, cache, etc.)
 // Telemetry is initialized here as the first thing before other modules
 import { createBaseLogger, createLogger } from "./logger";
 import { createController } from "../controller";
@@ -10,17 +11,17 @@ import { createStateMachine } from "./state_machine";
 
 import type { Config } from "../config";
 
-type AppDependencies = Readonly<{
+type OperatorDependencies = Readonly<{
     readonly config: Config;
 }>;
 
-type App = Readonly<{
+type Operator = Readonly<{
     readonly start: () => Promise<void>;
     readonly stop: () => Promise<void>;
 }>;
 
-// App lifecycle states (substates use colon convention: "PARENT:SUBSTATE")
-type AppState =
+// Operator lifecycle states (substates use colon convention: "PARENT:SUBSTATE")
+type OperatorState =
     | "IDLE"
     | "STARTING:PROBES"
     | "STARTING:DATABASE"
@@ -32,22 +33,27 @@ type AppState =
     | "STOPPED"
     | "FAILED";
 
-export const createApp = (deps: AppDependencies): App => {
+export const createOperator = (deps: OperatorDependencies): Operator => {
     const { config } = deps;
 
     // Initialize telemetry first - logger is created here before any other modules
     const baseLogger = createBaseLogger(config);
-    const logger = createLogger(baseLogger, "app");
+    const logger = createLogger(baseLogger, "operator");
 
+    // Create raw I/O capabilities (no domain knowledge)
     const db = createDatabase({ config, logger });
+
+    // Bind DAL functions with database
     const dal = {
         findGreetingById: findGreetingById.bind(null, { db }),
         insertGreeting: insertGreeting.bind(null, { db }),
     };
+
+    // Create controller, passing raw I/O + DAL + config
     const controller = createController({ dal });
 
-    // State machine for app lifecycle
-    const stateMachine = createStateMachine<AppState>({
+    // State machine for operator lifecycle
+    const stateMachine = createStateMachine<OperatorState>({
         initial: "IDLE",
         transitions: {
             IDLE: ["STARTING:PROBES"],
@@ -63,7 +69,7 @@ export const createApp = (deps: AppDependencies): App => {
         },
     });
 
-    // Create lifecycle probes server (health/readiness/liveness)
+    // Create lifecycle probes server (health/readiness)
     const lifecycleProbes = createLifecycleProbes({
         getAppState: stateMachine.getState,
     });
@@ -95,7 +101,7 @@ export const createApp = (deps: AppDependencies): App => {
                 await stateMachine.transition("RUNNING");
                 break;
             case "RUNNING":
-                logger.info({ port: config.port }, "App listening");
+                logger.info({ port: config.port }, "Operator listening");
                 break;
             case "STOPPING:HTTP_SERVER":
                 await httpServer.stop();
@@ -110,10 +116,10 @@ export const createApp = (deps: AppDependencies): App => {
                 await stateMachine.transition("STOPPED");
                 break;
             case "STOPPED":
-                logger.info("App stopped");
+                logger.info("Operator stopped");
                 break;
             case "FAILED":
-                logger.error("App entered failed state");
+                logger.error("Operator entered failed state");
                 break;
             default: {
                 const exhaustiveCheck: never = to;
@@ -125,14 +131,14 @@ export const createApp = (deps: AppDependencies): App => {
     const start = async (): Promise<void> => {
         const state = stateMachine.getState();
         if (state === "RUNNING") {
-            logger.warn("App already running");
+            logger.warn("Operator already running");
             return;
         }
         if (state !== "IDLE" && state !== "STOPPED" && state !== "FAILED") {
-            throw new Error(`Cannot start app in state: ${state}`);
+            throw new Error(`Cannot start operator in state: ${state}`);
         }
         try {
-            await stateMachine.transition("STARTING" as AppState);
+            await stateMachine.transition("STARTING" as OperatorState);
         } catch (err) {
             await stateMachine.transition("FAILED");
             throw err;
@@ -153,11 +159,11 @@ export const createApp = (deps: AppDependencies): App => {
         }
 
         if (state !== "RUNNING") {
-            throw new Error(`Cannot stop app in state: ${state}`);
+            throw new Error(`Cannot stop operator in state: ${state}`);
         }
 
         try {
-            await stateMachine.transition("STOPPING" as AppState);
+            await stateMachine.transition("STOPPING" as OperatorState);
         } catch (err) {
             await stateMachine.transition("FAILED");
             throw err;

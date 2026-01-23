@@ -172,7 +172,7 @@ The plugin supports three types of changes:
 2. **Issue required** - Every spec references a tracking issue (JIRA, GitHub, etc.)
 3. **Git = state machine** - PR = draft, merged to main = active
 4. **Contract-first** - OpenAPI spec generates types for both frontend and backend
-5. **5-layer backend** - App → Controller → Model → Dependencies → DAL
+5. **CMDO backend** - "Commando" architecture: Operator → Controller → Model → DAL
 6. **Immutable** - `readonly` everywhere, no mutations
 7. **Test in Kubernetes** - Testkube for integration and E2E tests
 

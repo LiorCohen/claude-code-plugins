@@ -1,5 +1,32 @@
 # Changelog
 
+## [3.5.0] - 2026-01-23
+
+### Changed
+
+- **Architecture**: Renamed from "5-layer" to CMDO ("Commando" - Controller Model DAL Operator)
+  - Renamed `src/app/` directory to `src/operator/`
+  - Renamed `create_app.ts` to `create_operator.ts`
+  - Renamed types: `App` → `Operator`, `AppState` → `OperatorState`, `AppDependencies` → `OperatorDependencies`
+  - Updated `src/index.ts` to use `createOperator` instead of `createApp`
+  - Logger component name changed from "app" to "operator"
+
+- **Documentation**: Updated all docs to reflect CMDO architecture
+  - `backend-dev.md`: Complete rewrite with CMDO architecture, infrastructure vs domain distinction
+  - `README.md`: Updated architecture diagrams and layer descriptions
+  - `CLAUDE.md`: Updated backend architecture section
+  - `QUICKSTART.md`: Updated core principles
+
+### Rationale
+
+The CMDO naming provides clearer semantics:
+- **Operator** = provides raw I/O capabilities (DB, HTTP clients, cache) - NO domain knowledge
+- **Config** = provides URLs and settings
+- **Controller** = combines I/O + config for domain-specific operations
+- **Model** = pure business logic with injected Dependencies
+
+This separation clarifies that Operator handles infrastructure while Controller handles domain concerns.
+
 ## [3.4.2] - 2026-01-23
 
 ### Changed

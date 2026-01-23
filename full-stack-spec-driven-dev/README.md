@@ -62,7 +62,7 @@ Agents handle different aspects of the development lifecycle:
 - **planner** (opus) - Break specs into implementation phases
 - **api-designer** (sonnet) - Design OpenAPI contracts
 - **frontend-dev** (sonnet) - React components (MVVM architecture)
-- **backend-dev** (sonnet) - 5-layer Node.js backend
+- **backend-dev** (sonnet) - CMDO architecture Node.js backend
 - **db-advisor** (opus) - Database performance review
 - **devops** (sonnet) - Kubernetes, Helm, Testkube
 - **ci-dev** (sonnet) - CI/CD pipelines
@@ -78,7 +78,7 @@ Project lifecycle automation:
 - `/sdd-generate-snapshot` - Regenerate product snapshot
 
 ### Architectural Patterns
-- **5-Layer Backend Architecture** - Strict separation: Server → Controller → Model → Dependencies → DAL
+- **CMDO Backend Architecture** - "Commando" (Controller Model DAL Operator) with strict infrastructure/domain separation
 - **MVVM Frontend Architecture** - Model-View-ViewModel with TanStack ecosystem
 - **Contract-First API Design** - OpenAPI specs generate TypeScript types for both frontend and backend
 - **Immutability Enforced** - `readonly` everywhere, no mutations, native JavaScript only
@@ -170,25 +170,34 @@ your-project/
 5. **Test in Kubernetes** - Testkube for environment parity (integration/E2E tests run in K8s)
 6. **Observable by default** - OpenTelemetry for all services from day one
 
-## Backend Architecture (5 Layers)
+## Backend Architecture: CMDO ("Commando")
 
-Strict architectural separation enforced by the `backend-dev` agent:
+**C**ontroller **M**odel **D**AL **O**perator - strict separation between infrastructure and domain concerns:
 
 ```
-App → Controller → Model Use Cases
- ↓         ↓            ↑
-Config → [All layers] → Dependencies (injected)
-                           ↓
-                         DAL
+Operator → Controller → Model Use Cases
+   ↓            ↓              ↑
+Config → [All layers] → Dependencies (injected by Controller)
+                               ↓
+                             DAL
 ```
 
 **Layer Responsibilities:**
-- **App layer**: Application lifecycle with state machine, manages HTTP server, database, and lifecycle probes
+- **Operator layer**: Raw I/O capabilities (DB, HTTP clients, cache) - **NO domain knowledge**
+  - Manages lifecycle via state machine (IDLE → STARTING → RUNNING → STOPPING → STOPPED)
   - Lifecycle probes run on separate port (default 9090) for Kubernetes health checks (`/health`, `/readiness`)
-- **Config layer**: Environment parsing, validation, type-safe config objects
-- **Controller layer**: Request/response handling, creates Dependencies for Model
+- **Config layer**: Environment parsing, validation, type-safe config objects, URLs and settings
+- **Controller layer**: Combines I/O + config for domain-specific operations, creates Dependencies for Model
 - **Model layer**: Business logic (definitions + use-cases), never imports from outside
 - **DAL layer**: Data access, queries, DB ↔ domain object mapping
+
+**Key Distinction:**
+| Layer | Knows About | Example |
+|-------|-------------|---------|
+| **Operator** | Infrastructure only | "Here's a DB connection and generic HTTP client" |
+| **Config** | URLs and settings | `paymentGatewayUrl: "https://api.stripe.com"` |
+| **Controller** | Domain concerns | "Use httpClient + paymentGatewayUrl to charge a card" |
+| **Model** | Business logic only | "Calculate total, then call chargePayment()" |
 
 **Immutability Rules:**
 - All interfaces use `readonly` properties

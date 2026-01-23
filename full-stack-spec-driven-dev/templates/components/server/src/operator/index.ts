@@ -1,5 +1,5 @@
-// App index - exports only
-export { createApp } from "./create_app";
+// Operator index - exports only
+export { createOperator } from "./create_operator";
 
 // Telemetry exports for other modules
 export { createBaseLogger, createLogger, withTraceContext } from "./logger";
