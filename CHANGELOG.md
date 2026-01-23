@@ -26,17 +26,15 @@ Changes to the marketplace infrastructure (not plugin-specific changes).
   - Plugin changes update plugin CHANGELOG with version numbers
   - Marketplace changes update root CHANGELOG with date-based entries
   - Added tests directory to files that don't require version bump
-  - Clarified plugin-level documentation files (README, QUICKSTART, CLAUDE.md) don't require version bump
+  - Added plugin documentation files (README, QUICKSTART, CLAUDE.md) to list requiring version bump
 
 - **CONTRIBUTING.md**: Updated to reflect dual changelog structure
   - Added marketplace CHANGELOG to repository structure
   - Documented changelog management guidelines
 
-- **Documentation updates**: Fixed inconsistencies across all README and CLAUDE files
+- **Marketplace documentation**: Fixed inconsistencies in root README and CLAUDE files
   - Root CLAUDE.md: Fixed skill paths, added missing files to structure diagram
   - Root README.md: Added `.claude/skills/`, `CHANGELOG.md`, `tests/` to structure
-  - Plugin docs: Updated architecture diagrams to use "App layer" instead of "Server layer"
-  - Added lifecycle probes documentation (port 9090 for Kubernetes health checks)
 
 ## 2026-01-21
 

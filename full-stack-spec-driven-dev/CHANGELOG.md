@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.4.1] - 2026-01-23
+
+### Fixed
+
+- **Documentation**: Updated architecture diagrams and descriptions
+  - Changed "Server layer" to "App layer" in all documentation (CLAUDE.md, README.md, QUICKSTART.md)
+  - Added lifecycle probes documentation (port 9090 for Kubernetes health checks)
+  - Fixed "5-layer backend" description to show correct flow: App → Controller → Model → Dependencies → DAL
+
 ## [3.4.0] - 2026-01-23
 
 ### Added

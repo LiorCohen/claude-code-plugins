@@ -26,18 +26,20 @@ For each affected plugin, check if version bump is needed:
 
 **Files That REQUIRE Version Bump:**
 
-| Directory | Files |
-|-----------|-------|
+| Directory/File | Description |
+|----------------|-------------|
 | `full-stack-spec-driven-dev/agents/` | All agent `.md` files |
 | `full-stack-spec-driven-dev/commands/` | All command `.md` files |
 | `full-stack-spec-driven-dev/skills/` | All skill `.md` files |
 | `full-stack-spec-driven-dev/templates/` | All template files |
 | `full-stack-spec-driven-dev/scripts/` | All script files |
 | `full-stack-spec-driven-dev/.claude-plugin/` | Plugin manifest |
+| `full-stack-spec-driven-dev/README.md` | Plugin documentation |
+| `full-stack-spec-driven-dev/QUICKSTART.md` | Plugin getting started guide |
+| `full-stack-spec-driven-dev/CLAUDE.md` | Plugin guidance for Claude |
 
-**Files That Do NOT Require Version Bump:**
+**Files That Do NOT Require Version Bump (Marketplace-Level):**
 
-Marketplace-level files:
 - Root `README.md`
 - Root `CLAUDE.md`
 - Root `CONTRIBUTING.md`
@@ -45,12 +47,7 @@ Marketplace-level files:
 - `.claude/skills/` (marketplace-level skills)
 - `.gitignore`
 - `.claudeignore`
-
-Plugin-level non-functional files:
 - `full-stack-spec-driven-dev/tests/` (test files)
-- `full-stack-spec-driven-dev/README.md` (plugin documentation)
-- `full-stack-spec-driven-dev/QUICKSTART.md` (plugin getting started)
-- `full-stack-spec-driven-dev/CLAUDE.md` (plugin guidance)
 
 If version bump is needed, prompt for type:
 - **PATCH** (x.x.Z): Bug fixes, small improvements
