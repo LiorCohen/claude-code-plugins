@@ -1,8 +1,14 @@
 # Changelog
 
-## [3.3.0] - 2026-01-22
+## [3.3.0] - 2026-01-23
 
 ### Changed
+
+- **Test suite**: Rewritten from bash to Python
+  - Added `conftest.py` with test framework (ClaudeResult, TestProject classes)
+  - Converted all test files to pytest format
+  - Added `pytest.ini` and `requirements.txt`
+  - Updated `run-all-tests.sh` to use pytest
 
 - **App module refactor**: Consolidated app lifecycle management
   - Moved `create_database.ts` into `app/` module (database is internal to app)
