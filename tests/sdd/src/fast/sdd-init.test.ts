@@ -62,7 +62,7 @@ describe('sdd-init command', () => {
     expect(projectIsDir(project, 'components', 'config', 'schemas')).toBe(true);
     expect(projectIsDir(project, 'components', 'contract')).toBe(true);
     expect(projectIsDir(project, 'components', 'server')).toBe(true);
-    expect(projectIsDir(project, 'components', 'server', 'src', 'app')).toBe(true);
+    expect(projectIsDir(project, 'components', 'server', 'src', 'operator')).toBe(true);
     expect(projectIsDir(project, 'components', 'webapp')).toBe(true);
 
     // Verify key files exist
@@ -78,7 +78,7 @@ describe('sdd-init command', () => {
 
     // Verify server component
     expect(projectIsFile(project, 'components', 'server', 'package.json')).toBe(true);
-    expect(projectIsFile(project, 'components', 'server', 'src', 'app', 'create_app.ts')).toBe(
+    expect(projectIsFile(project, 'components', 'server', 'src', 'operator', 'create_operator.ts')).toBe(
       true
     );
     expect(projectIsFile(project, 'components', 'server', 'src', 'index.ts')).toBe(true);

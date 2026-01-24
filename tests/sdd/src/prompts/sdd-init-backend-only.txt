@@ -1,16 +1,20 @@
-Run /sdd-init to create a new backend-only project with the following configuration:
+Run /sdd-init to create a new backend-only project.
 
-Project name: test-backend-api
-Project description: A backend API for testing
-Primary domain: Testing
-Project type: Backend API Only (Option B)
-
-When prompted, provide these answers:
+Configuration:
 - Project name: test-backend-api
 - Description: A backend API for testing
 - Domain: Testing
-- Components: Backend API Only (Contract, Server, Config, Testing, CI/CD)
+- Type: Backend API Only (Contract, Server, Config, Testing, CI/CD)
+- Users: API consumers (call endpoints), Admins (manage API)
+- Entities: Resource, Request, Response
+- Workflows: Process requests, Return responses
 
-Approve the configuration when shown and proceed with creating all files.
+THIS IS AN AUTOMATED TEST. You MUST:
+1. Skip ALL discovery questions (Phase 1) and use the values above
+2. Skip Phase 4 approval - consider it PRE-APPROVED
+3. Proceed DIRECTLY to Phase 5 (project creation)
+4. Create the project as a subdirectory: ./test-backend-api/
+5. Execute ALL steps through completion
+6. Do NOT stop for user input at any point
 
-IMPORTANT: Do not ask any questions. Use the values provided above and proceed automatically.
+The user has already approved. Execute the full sdd-init workflow now.

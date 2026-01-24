@@ -1,5 +1,37 @@
 # Changelog
 
+## [4.0.0] - 2026-01-24
+
+### Changed
+
+- **sdd-init command**: Complete redesign of initialization workflow
+  - **Phase 1**: New Product Discovery phase with adaptive questioning
+    - Opens with broad question about what user is building
+    - Adaptively asks follow-ups only for missing information
+    - Extracts users, workflows, entities, scope, and integrations
+    - Never asks more than 4-5 questions total
+    - Respects users who want to skip discovery
+  - **Phase 2**: Recommendation-based component selection
+    - Recommends components based on discovered product needs
+    - Justifies each component with specific product context
+    - Replaces preset options (A/B/C/D/E) with intelligent recommendations
+  - **Phase 3**: Enhanced configuration summary
+    - Shows product context alongside technical configuration
+    - Displays what will be pre-populated (glossary, personas, use-cases)
+  - **Phase 5**: New domain knowledge population step
+    - Pre-populates glossary with discovered entities
+    - Creates entity definition stubs in `specs/domain/definitions/`
+    - Creates use-case stubs in `specs/domain/use-cases/`
+    - Updates SNAPSHOT.md with product overview
+
+### Rationale
+
+The previous workflow jumped from "name + one-liner + domain word" to component selection without understanding what the user was building. The new discovery-first approach:
+- Understands the product before making technical recommendations
+- Pre-populates specs with discovered domain knowledge
+- Creates more relevant, context-aware project scaffolds
+- Reduces manual work filling in boilerplate domain documentation
+
 ## [3.10.0] - 2026-01-24
 
 ### Changed

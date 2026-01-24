@@ -297,8 +297,10 @@ describe('TestDocumentationConsistency', () => {
     const commandMd = path.join(PLUGIN_DIR, 'commands', 'sdd-init.md');
     const content = fs.readFileSync(commandMd, 'utf-8');
 
+    // Verify database is mentioned as a component option
     expect(content).toContain('Database');
-    expect(content).toContain('Backend with Database');
+    // Verify database is in the component dependencies table
+    expect(content).toContain('Database | Server');
   });
 
   it('planner agent should know about database', () => {
