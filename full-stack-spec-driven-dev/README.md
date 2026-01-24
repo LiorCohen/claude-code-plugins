@@ -57,25 +57,29 @@ Specs → Plans → Implementation → Tests → Validation
 ## Key Features
 
 ### 10 Specialized Agents
-Agents handle different aspects of the development lifecycle:
-- **spec-writer** (opus) - Create/maintain specifications
-- **planner** (opus) - Break specs into implementation phases
-- **api-designer** (sonnet) - Design OpenAPI contracts
-- **frontend-dev** (sonnet) - React components (MVVM architecture)
-- **backend-dev** (sonnet) - CMDO architecture Node.js backend
-- **db-advisor** (opus) - Database performance review
-- **devops** (sonnet) - Kubernetes, Helm, Testkube
-- **ci-dev** (sonnet) - CI/CD pipelines
-- **tester** (sonnet) - Test automation via Testkube
-- **reviewer** (opus) - Code review and spec compliance
+
+| Agent | Model | Purpose | Invocation |
+|-------|-------|---------|------------|
+| spec-writer | opus | Create/maintain specifications | `/agent spec-writer` |
+| planner | opus | Break specs into implementation phases | `/agent planner` |
+| api-designer | sonnet | Design OpenAPI contracts | `/agent api-designer` |
+| frontend-dev | sonnet | React components (MVVM architecture) | `/agent frontend-dev` |
+| backend-dev | sonnet | CMDO architecture Node.js backend | `/agent backend-dev` |
+| db-advisor | opus | Database performance review | `/agent db-advisor` |
+| devops | sonnet | Kubernetes, Helm, Testkube | `/agent devops` |
+| ci-dev | sonnet | CI/CD pipelines | `/agent ci-dev` |
+| tester | sonnet | Test automation via Testkube | `/agent tester` |
+| reviewer | opus | Code review and spec compliance | `/agent reviewer` |
 
 ### 5 Slash Commands
-Project lifecycle automation:
-- `/sdd-init` - Initialize new project from template
-- `/sdd-new-change` - Create change spec and plan (feature, bugfix, or refactor)
-- `/sdd-implement-change` - Execute implementation plan
-- `/sdd-verify-spec` - Verify implementation matches spec
-- `/sdd-generate-snapshot` - Regenerate product snapshot
+
+| Command | Purpose |
+|---------|---------|
+| `/sdd-init --name [name]` | Initialize new project from template |
+| `/sdd-new-change --type [type] --name [name]` | Create change spec and plan (feature, bugfix, or refactor) |
+| `/sdd-implement-change [path]` | Execute implementation plan |
+| `/sdd-verify-spec [path]` | Verify implementation matches spec |
+| `/sdd-generate-snapshot` | Regenerate product snapshot |
 
 ### Architectural Patterns
 - **CMDO Backend Architecture** - "Commando" (Controller Model DAL Operator) with strict infrastructure/domain separation
@@ -112,30 +116,46 @@ Once installed, all commands, agents, and skills will be available immediately.
 
 ### Usage
 
-1. **Initialize a new project**:
-   ```
-   /sdd-init --name my-app
-   ```
+```
+┌─────────────────┐
+│ 1. Write Spec   │  /sdd-new-change --type feature --name user-auth
+└────────┬────────┘
+         ↓
+┌─────────────────┐
+│ 2. Create Plan  │  (automatically generated with spec)
+└────────┬────────┘
+         ↓
+┌─────────────────┐
+│ 3. Implement    │  /sdd-implement-change specs/changes/.../PLAN.md
+└────────┬────────┘
+         ↓
+┌─────────────────┐
+│ 4. Verify       │  /sdd-verify-spec specs/changes/.../SPEC.md
+└─────────────────┘
+```
 
-2. **Create your first feature**:
-   ```
-   /sdd-new-change --type feature --name user-authentication
-   ```
+**Initialize a new project:**
+```bash
+/sdd-init --name my-app
+```
 
-3. **Or create a bugfix**:
-   ```
-   /sdd-new-change --type bugfix --name fix-session-timeout
-   ```
+You can also create multiple backend or frontend instances:
+```bash
+/sdd-init --name my-app --components "server:api,server:worker,webapp:admin,webapp:public"
+```
 
-4. **Review the generated spec and plan**, then implement:
-   ```
-   /sdd-implement-change specs/changes/2026/01/21/user-authentication/PLAN.md
-   ```
+**Create a change** (feature, bugfix, or refactor):
+```bash
+/sdd-new-change --type feature --name user-authentication
+/sdd-new-change --type bugfix --name fix-session-timeout
+/sdd-new-change --type refactor --name extract-validation-layer
+```
 
-5. **Verify implementation matches spec**:
-   ```
-   /sdd-verify-spec specs/changes/2026/01/21/user-authentication/SPEC.md
-   ```
+**Implement and verify:**
+```bash
+/sdd-implement-change specs/changes/2026/01/21/user-authentication/PLAN.md
+/sdd-verify-spec specs/changes/2026/01/21/user-authentication/SPEC.md
+```
 
 ## Project Structure
 
@@ -315,10 +335,52 @@ updated: YYYY-MM-DD
 - [ ] **AC1:** Given [precondition], when [action], then [result]
 ```
 
-## Documentation
+## Plugin Structure
 
-- [Quick Start Guide](./QUICKSTART.md) - Getting started tutorial
-- [Changelog](./CHANGELOG.md) - Version history and updates
+```
+full-stack-spec-driven-dev/
+├── agents/                     # 10 specialized agents
+│   ├── spec-writer.md
+│   ├── planner.md
+│   ├── api-designer.md
+│   ├── frontend-dev.md
+│   ├── backend-dev.md
+│   ├── db-advisor.md
+│   ├── devops.md
+│   ├── ci-dev.md
+│   ├── tester.md
+│   └── reviewer.md
+├── commands/                   # 5 slash commands
+│   ├── sdd-init.md
+│   ├── sdd-new-change.md
+│   ├── sdd-implement-change.md
+│   ├── sdd-verify-spec.md
+│   └── sdd-generate-snapshot.md
+├── skills/                     # Reusable skills with colocated templates
+│   ├── backend-scaffolding/
+│   ├── backend-standards/
+│   ├── change-creation/
+│   ├── contract-scaffolding/
+│   ├── database-scaffolding/
+│   ├── e2e-testing/
+│   ├── epic-planning/
+│   ├── frontend-scaffolding/
+│   ├── frontend-standards/
+│   ├── integration-testing/
+│   ├── planning/
+│   ├── postgresql/
+│   ├── project-scaffolding/
+│   ├── project-settings/
+│   ├── scaffolding/
+│   ├── spec-decomposition/
+│   ├── spec-index/
+│   ├── spec-writing/
+│   └── unit-testing/
+└── scripts/                    # Utility scripts
+    ├── validate-spec.py
+    ├── generate-index.py
+    └── generate-snapshot.py
+```
 
 ## Support
 

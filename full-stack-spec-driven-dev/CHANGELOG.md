@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.1.1] - 2026-01-24
+
+### Removed
+
+- **QUICKSTART.md**: Merged into README.md to consolidate documentation
+  - Added agent invocation syntax table
+  - Added workflow diagram
+  - Added multiple components example
+  - Added plugin structure section
+  - Removed redundant content
+
 ## [4.1.0] - 2026-01-24
 
 ### Changed
