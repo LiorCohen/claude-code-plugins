@@ -4,6 +4,26 @@ Changes to the marketplace infrastructure (not plugin-specific changes).
 
 ## 2026-01-24
 
+### Added
+
+- **Plugin testing standards skill**: New marketplace skill at `.claude/skills/plugin-testing-standards/`
+  - Documents testing methodology for Claude Code plugins
+  - Defines test tiers: unit, workflow, integration
+  - Establishes deterministic LLM testing patterns
+  - Includes WHY comment requirements and file size guidelines
+
+### Refactored
+
+- **Test infrastructure**: Reorganized `tests/sdd/src/` with lib/tests separation
+  - `src/lib/` - All helper modules (paths, fs, process, project, claude, http)
+  - `src/tests/unit/` - Unit tests (no LLM required)
+  - `src/tests/workflows/` - Workflow tests (LLM with deterministic verification)
+  - `src/tests/integration/` - Integration tests (functional verification)
+  - Tests no longer import `node:*` directly, use lib helpers instead
+  - Split large test files into directories (database-component, postgresql)
+  - Added WHY comments to all test blocks
+  - Updated tsconfig to use Bundler module resolution (no file extensions needed)
+
 ### Changed
 
 - **Test prompts**: Embedded prompts as constants in test files

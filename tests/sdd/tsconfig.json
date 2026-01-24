@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "lib": ["ES2022"],
     "strict": true,
     "noImplicitAny": true,
@@ -18,8 +18,5 @@
     "outDir": "./dist",
     "rootDir": "./"
   },
-  "include": ["src/**/*.ts", "vitest.config.ts"],
-  "ts-node": {
-    "esm": true
-  }
+  "include": ["src/**/*.ts", "vitest.config.ts"]
 }

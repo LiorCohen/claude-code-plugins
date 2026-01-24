@@ -1,10 +1,11 @@
 /**
- * Test: /sdd-new-change command
- * Verifies that spec-writer and planner agents are invoked correctly.
+ * Workflow Test: /sdd-new-change command
+ *
+ * WHY: Verifies that sdd-new-change correctly invokes the spec-writer and
+ * planner agents in the right order. This ensures the SDD workflow produces
+ * valid specifications and implementation plans.
  */
 
-import * as fsp from 'node:fs/promises';
-import * as path from 'node:path';
 import { describe, expect, it, beforeAll } from 'vitest';
 import {
   createTestProject,
@@ -12,8 +13,13 @@ import {
   agentWasUsed,
   agentOrder,
   projectFindDir,
+  writeFileAsync,
+  mkdir,
+  joinPath,
+  statAsync,
+  readFileAsync,
   type TestProject,
-} from '../test-helpers.js';
+} from '../../lib';
 
 const NEW_CHANGE_PROMPT = `Run /sdd-new-change --type feature --name user-auth to create a new change specification.
 
@@ -42,6 +48,11 @@ IMPORTANT:
 - Create ALL files in the CURRENT WORKING DIRECTORY (.) - do NOT use absolute paths or navigate elsewhere.
 - The specs/ directory already exists in the current directory.`;
 
+/**
+ * WHY: sdd-new-change is the primary workflow for creating new feature specs.
+ * If agents aren't invoked correctly, specifications will be malformed or
+ * missing critical information.
+ */
 describe('sdd-new-change command', () => {
   let testProject: TestProject;
 
@@ -49,13 +60,13 @@ describe('sdd-new-change command', () => {
     testProject = await createTestProject('sdd-new-change');
 
     // Create minimal project structure that /sdd-new-change expects
-    await fsp.mkdir(path.join(testProject.path, 'specs', 'changes'), { recursive: true });
-    await fsp.mkdir(path.join(testProject.path, 'specs', 'domain'), { recursive: true });
-    await fsp.mkdir(path.join(testProject.path, 'components', 'contract'), { recursive: true });
+    await mkdir(joinPath(testProject.path, 'specs', 'changes'));
+    await mkdir(joinPath(testProject.path, 'specs', 'domain'));
+    await mkdir(joinPath(testProject.path, 'components', 'contract'));
 
     // Create minimal glossary
-    await fsp.writeFile(
-      path.join(testProject.path, 'specs', 'domain', 'glossary.md'),
+    await writeFileAsync(
+      joinPath(testProject.path, 'specs', 'domain', 'glossary.md'),
       `# Glossary
 
 ## Domains
@@ -70,8 +81,8 @@ The primary business domain.
     );
 
     // Create minimal INDEX.md
-    await fsp.writeFile(
-      path.join(testProject.path, 'specs', 'INDEX.md'),
+    await writeFileAsync(
+      joinPath(testProject.path, 'specs', 'INDEX.md'),
       `# Specifications Index
 
 ## Active Changes
@@ -81,7 +92,12 @@ The primary business domain.
     );
   });
 
-  it('invokes spec-writer and planner agents', async () => {
+  /**
+   * WHY: The spec-writer and planner agents must be invoked in the correct
+   * order (spec-writer first, then planner). Spec-writer creates the SPEC.md
+   * which planner needs to create the PLAN.md. Wrong order = broken workflow.
+   */
+  it('invokes spec-writer and planner agents in correct order', async () => {
     console.log(`\nTest project directory: ${testProject.path}\n`);
     console.log('Created minimal project structure\n');
     console.log('Running /sdd-new-change...');
@@ -89,7 +105,7 @@ The primary business domain.
     const result = await runClaude(NEW_CHANGE_PROMPT, testProject.path, 300);
 
     // Save output for debugging
-    await fsp.writeFile(path.join(testProject.path, 'claude-output.json'), result.output);
+    await writeFileAsync(joinPath(testProject.path, 'claude-output.json'), result.output);
 
     console.log('\nVerifying agent invocations...\n');
 
@@ -109,27 +125,21 @@ The primary business domain.
     console.log(`Found spec directory: ${specDir}`);
 
     // Verify SPEC.md exists and has correct content
-    const specFile = path.join(specDir!, 'SPEC.md');
-    const specExists = await fsp
-      .stat(specFile)
-      .then((s) => s.isFile())
-      .catch(() => false);
-    expect(specExists).toBe(true);
+    const specFile = joinPath(specDir!, 'SPEC.md');
+    const specStat = await statAsync(specFile);
+    expect(specStat?.isFile()).toBe(true);
 
-    const specContent = await fsp.readFile(specFile, 'utf-8');
+    const specContent = await readFileAsync(specFile);
     expect(specContent).toContain('sdd_version:');
     expect(specContent).toContain('issue:');
     expect(specContent).toContain('type:');
 
     // Verify PLAN.md exists and has correct content
-    const planFile = path.join(specDir!, 'PLAN.md');
-    const planExists = await fsp
-      .stat(planFile)
-      .then((s) => s.isFile())
-      .catch(() => false);
-    expect(planExists).toBe(true);
+    const planFile = joinPath(specDir!, 'PLAN.md');
+    const planStat = await statAsync(planFile);
+    expect(planStat?.isFile()).toBe(true);
 
-    const planContent = await fsp.readFile(planFile, 'utf-8');
+    const planContent = await readFileAsync(planFile);
     expect(planContent).toContain('sdd_version:');
 
     console.log('\nAll assertions passed!');

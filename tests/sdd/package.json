@@ -4,7 +4,11 @@
   "type": "module",
   "scripts": {
     "test": "vitest run",
-    "test:fast": "vitest run fast/",
+    "test:unit": "vitest run src/tests/unit/",
+    "test:workflows": "vitest run src/tests/workflows/",
+    "test:integration": "vitest run src/tests/integration/",
+    "test:ci": "vitest run src/tests/unit/",
+    "test:all": "vitest run",
     "test:watch": "vitest"
   },
   "devDependencies": {

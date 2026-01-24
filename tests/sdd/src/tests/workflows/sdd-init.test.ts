@@ -1,10 +1,11 @@
 /**
- * Test: /sdd-init command
- * Verifies that sdd-init creates the expected project structure.
+ * Workflow Test: /sdd-init command
+ *
+ * WHY: Verifies that sdd-init creates the expected project structure.
+ * This is a workflow test that runs Claude with a predefined prompt
+ * and validates the generated output deterministically.
  */
 
-import * as fsp from 'node:fs/promises';
-import * as path from 'node:path';
 import { describe, expect, it, beforeAll } from 'vitest';
 import {
   createTestProject,
@@ -12,8 +13,11 @@ import {
   projectIsDir,
   projectIsFile,
   projectFileContains,
+  writeFileAsync,
+  joinPath,
+  statAsync,
   type TestProject,
-} from '../test-helpers.js';
+} from '../../lib';
 
 const FULLSTACK_PROMPT = `Run /sdd-init to create a new Full-Stack project.
 
@@ -37,6 +41,10 @@ THIS IS AN AUTOMATED TEST. You MUST:
 
 The user has already approved. Execute the full sdd-init workflow now.`;
 
+/**
+ * WHY: sdd-init is the primary entry point for new projects. If it doesn't
+ * create the correct structure, all subsequent development is broken.
+ */
 describe('sdd-init command', () => {
   let testProject: TestProject;
 
@@ -44,6 +52,11 @@ describe('sdd-init command', () => {
     testProject = await createTestProject('sdd-init-fullstack');
   });
 
+  /**
+   * WHY: This test validates that sdd-init creates a complete, functional
+   * project structure. Missing directories or files would break the SDD
+   * workflow for users attempting to start new projects.
+   */
   it('creates fullstack project structure', async () => {
     console.log(`\nTest directory: ${testProject.path}\n`);
     console.log('Running /sdd-init...');
@@ -51,23 +64,19 @@ describe('sdd-init command', () => {
     const result = await runClaude(FULLSTACK_PROMPT, testProject.path, 300);
 
     // Save output for debugging
-    await fsp.writeFile(path.join(testProject.path, 'claude-output.json'), result.output);
+    await writeFileAsync(joinPath(testProject.path, 'claude-output.json'), result.output);
 
     console.log('\nVerifying project structure...\n');
 
     // sdd-init creates a subdirectory with the project name
-    const projectSubdir = path.join(testProject.path, 'test-fullstack-project');
+    const projectSubdir = joinPath(testProject.path, 'test-fullstack-project');
     let project: TestProject;
 
-    try {
-      const stat = await fsp.stat(projectSubdir);
-      if (stat.isDirectory()) {
-        console.log(`Project created in subdirectory: ${projectSubdir}`);
-        project = { path: projectSubdir, name: 'test-fullstack-project' };
-      } else {
-        project = testProject;
-      }
-    } catch {
+    const stat = await statAsync(projectSubdir);
+    if (stat?.isDirectory()) {
+      console.log(`Project created in subdirectory: ${projectSubdir}`);
+      project = { path: projectSubdir, name: 'test-fullstack-project' };
+    } else {
       console.log(`Using test directory directly: ${testProject.path}`);
       project = testProject;
     }
@@ -97,9 +106,9 @@ describe('sdd-init command', () => {
 
     // Verify server component
     expect(projectIsFile(project, 'components', 'server', 'package.json')).toBe(true);
-    expect(projectIsFile(project, 'components', 'server', 'src', 'operator', 'create_operator.ts')).toBe(
-      true
-    );
+    expect(
+      projectIsFile(project, 'components', 'server', 'src', 'operator', 'create_operator.ts')
+    ).toBe(true);
     expect(projectIsFile(project, 'components', 'server', 'src', 'index.ts')).toBe(true);
 
     // Verify webapp component
