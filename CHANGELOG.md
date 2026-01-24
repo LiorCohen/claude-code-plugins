@@ -6,6 +6,10 @@ Changes to the marketplace infrastructure (not plugin-specific changes).
 
 ### Changed
 
+- **Root README**: Simplified to remove redundancy with plugin README
+  - Removed duplicate features, commands, and structure sections
+  - Now links to plugin README for full documentation
+
 - **Directory structure**: Moved plugin from `full-stack-spec-driven-dev/` to `plugins/sdd/`
   - Establishes cleaner multi-plugin marketplace structure
   - Updated all path references in marketplace files, commit skill, and test infrastructure
