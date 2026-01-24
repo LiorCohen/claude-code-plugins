@@ -1,5 +1,35 @@
 # Changelog
 
+## [3.10.0] - 2026-01-24
+
+### Changed
+
+- **Scripts**: Migrated all Python scripts to TypeScript
+  - `validate-spec.ts`, `generate-index.ts`, `generate-snapshot.ts`
+  - Consolidated duplicated `parse_frontmatter()` into `scripts/lib/frontmatter.ts`
+  - Added `scripts/lib/spec-utils.ts` for shared utilities
+  - Scripts run via `npx ts-node --esm` (no build step required)
+
+- **Scaffolding skill**: Migrated `scaffolding.py` to `scaffolding.ts`
+  - Same functionality, TypeScript implementation
+  - Updated SKILL.md with TypeScript invocation examples
+
+### Added
+
+- **TypeScript configuration**: Plugin-level TypeScript support
+  - `package.json` with npm scripts for all utilities
+  - `tsconfig.json` with strict settings, ESM modules
+
+### Removed
+
+- **Python scripts**: Deleted all Python files from plugin
+  - `validate-spec.py`, `generate-index.py`, `generate-snapshot.py`
+  - `scaffolding.py`
+
+### Rationale
+
+Reduces environment dependencies - developers already have Node.js and TypeScript installed. No Python required to use the plugin.
+
 ## [3.9.0] - 2026-01-24
 
 ### Added

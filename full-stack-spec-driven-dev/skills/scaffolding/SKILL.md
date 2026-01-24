@@ -41,7 +41,7 @@ cat > /tmp/sdd-scaffold-config.json << 'EOF'
 EOF
 
 # 2. Run the scaffold script
-python3 <path-to-plugin>/skills/scaffolding/scaffolding.py --config /tmp/sdd-scaffold-config.json
+npx ts-node --esm <path-to-plugin>/skills/scaffolding/scaffolding.ts --config /tmp/sdd-scaffold-config.json
 
 # 3. Clean up config file
 rm /tmp/sdd-scaffold-config.json
@@ -169,7 +169,7 @@ skills/
 │   └── templates/            # migrations/, seeds/, scripts/
 └── scaffolding/
     ├── SKILL.md              # This file (orchestrator)
-    └── scaffolding.py        # Python script
+    └── scaffolding.ts        # TypeScript script
 ```
 
 ## After Scaffolding

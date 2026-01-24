@@ -2,6 +2,29 @@
 
 Changes to the marketplace infrastructure (not plugin-specific changes).
 
+## 2026-01-24
+
+### Changed
+
+- **Test infrastructure**: Migrated from Python/pytest to TypeScript/Vitest
+  - `test-helpers.ts` replaces `test_helpers.py`
+  - All test files migrated to TypeScript (`.test.ts`)
+  - Tests now in `tests/sdd/src/` directory structure
+  - Using Vitest for test framework (ESM-first, native TypeScript)
+
+- **Dependencies**: Added ts-node to root package.json
+  - `ts-node`, `@types/node` for TypeScript execution
+  - Test directory has own `package.json` with Vitest
+
+- **Git ignore**: Added `**/node_modules/` pattern for all directories
+
+### Removed
+
+- **Python test infrastructure**: Deleted all Python test files
+  - `conftest.py`, `test_helpers.py`, `pyproject.toml`, `uv.lock`
+  - `run-all-tests.sh` (was pytest-based)
+  - All `__pycache__/` and `.pytest_cache/` directories
+
 ## 2026-01-23
 
 ### Changed
