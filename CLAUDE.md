@@ -1,22 +1,22 @@
 # CLAUDE.md
 
-Guidance for Claude Code when working with this repository.
-
 ## Git Rules
 
 - **NEVER push to remote** without explicit user approval
-- **NEVER commit** without first updating version and CHANGELOG when modifying plugin files
-- After making changes, STOP and report what was done - wait for user to request commit/push
+- **ALWAYS use the `commit` skill** for commits
 
-## Skills
+## Tools
 
-Use the `commit` skill for ALL commits.
+- **TypeScript LSP** - Configured in `.claude/cclsp.json`
+- **Context7** - Enabled for up-to-date library documentation
 
 ## Repository Structure
 
 ```
 claude-code-plugins/
 ├── .claude/
+│   ├── cclsp.json                    # TypeScript LSP config
+│   ├── settings.json                 # Context7 enabled
 │   └── skills/
 │       ├── commit/                   # Commit workflow with version/changelog
 │       └── typescript-standards/     # TypeScript coding standards
@@ -25,32 +25,8 @@ claude-code-plugins/
 ├── plugins/
 │   └── sdd/                          # SDD plugin (see plugins/sdd/README.md)
 ├── tests/sdd/                        # Plugin tests
-├── README.md                         # Overview
-├── CLAUDE.md                         # This file
-├── CHANGELOG.md                      # Marketplace changelog
-└── CONTRIBUTING.md                   # Contribution guidelines
+├── README.md
+├── CLAUDE.md
+├── CHANGELOG.md
+└── CONTRIBUTING.md
 ```
-
-## Plugin Documentation
-
-For SDD plugin details, see:
-- [Plugin README](./plugins/sdd/README.md) - Complete documentation
-- [Plugin CLAUDE.md](./plugins/sdd/CLAUDE.md) - Plugin-specific guidance
-- [Plugin CHANGELOG](./plugins/sdd/CHANGELOG.md) - Version history
-
-## Commit Workflow
-
-**CRITICAL:** Before making ANY commit, follow the `commit` skill at `.claude/skills/commit/SKILL.md`.
-
-Quick reference:
-```
-Plugin file changed? → Bump version → Update CHANGELOG → Stage all → Commit
-```
-
-Version must be updated in BOTH:
-- `plugins/sdd/.claude-plugin/plugin.json`
-- `.claude-plugin/marketplace.json`
-
-## Resources
-
-- [Claude Code Documentation](https://docs.anthropic.com/claude/docs/claude-code)
