@@ -60,18 +60,20 @@ Specs → Plans → Implementation → Tests → Validation
 
 ### 10 Specialized Agents
 
-| Agent | Model | Purpose | Invocation |
-|-------|-------|---------|------------|
-| spec-writer | opus | Create/maintain specifications | `/agent spec-writer` |
-| planner | opus | Break specs into implementation phases | `/agent planner` |
-| api-designer | sonnet | Design OpenAPI contracts | `/agent api-designer` |
-| frontend-dev | sonnet | React components (MVVM architecture) | `/agent frontend-dev` |
-| backend-dev | sonnet | CMDO architecture Node.js backend | `/agent backend-dev` |
-| db-advisor | opus | Database performance review | `/agent db-advisor` |
-| devops | sonnet | Kubernetes, Helm, Testkube | `/agent devops` |
-| ci-dev | sonnet | CI/CD pipelines | `/agent ci-dev` |
-| tester | sonnet | Test automation via Testkube | `/agent tester` |
-| reviewer | opus | Code review and spec compliance | `/agent reviewer` |
+Agents are invoked by asking Claude to use them (e.g., "Use the planner agent to create an implementation plan").
+
+| Agent | Model | Purpose |
+|-------|-------|---------|
+| spec-writer | opus | Create/maintain specifications |
+| planner | opus | Break specs into implementation phases |
+| api-designer | sonnet | Design OpenAPI contracts |
+| frontend-dev | sonnet | React components (MVVM architecture) |
+| backend-dev | sonnet | CMDO architecture Node.js backend |
+| db-advisor | opus | Database performance review |
+| devops | sonnet | Kubernetes, Helm, Testkube |
+| ci-dev | sonnet | CI/CD pipelines |
+| tester | sonnet | Test automation via Testkube |
+| reviewer | opus | Code review and spec compliance |
 
 ### 5 Slash Commands
 

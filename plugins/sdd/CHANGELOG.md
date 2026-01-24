@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.2.2] - 2026-01-24
+
+### Fixed
+
+- **README.md**: Corrected agent invocation documentation
+  - Removed incorrect `/agent` command syntax (not a valid Claude Code command)
+  - Agents are invoked via natural language requests to Claude
+
 ## [4.2.1] - 2026-01-24
 
 ### Added
