@@ -58,34 +58,55 @@ rm /tmp/sdd-scaffold-config.json
 | `components` | Yes | List of components to create (see below for formats) |
 | `skills_dir` | Yes | Path to the skills directory (templates are colocated) |
 
-## Component Naming
+## Component Format
 
-Components can be specified in two formats:
+Components are specified as a list of objects with `type` and `name` (both required):
 
-### Simple Format (Single Instance)
-
-```json
-["contract", "server", "webapp", "config", "testing", "cicd"]
+```yaml
+components:
+  - type: contract
+    name: contract                  # -> components/contract/
+  - type: server
+    name: server                    # -> components/server/
+  - type: webapp
+    name: webapp                    # -> components/webapp/
+  - type: database
+    name: database                  # -> components/database/
+  - type: config
+    name: config                    # -> config/
+  - type: testing
+    name: testing                   # -> testing config
+  - type: cicd
+    name: cicd                      # -> CI/CD workflows
 ```
 
-Creates: `components/contract/`, `components/server/`, `components/webapp/`
-
-### Named Format (Multiple Instances)
-
-```json
-["contract", "server:api", "server:worker", "webapp:admin", "webapp:public", "config", "testing", "cicd"]
+**Multiple instances of the same type:**
+```yaml
+components:
+  - type: server
+    name: api                       # -> components/server-api/
+  - type: server
+    name: worker                    # -> components/server-worker/
+  - type: webapp
+    name: admin                     # -> components/webapp-admin/
+  - type: webapp
+    name: public                    # -> components/webapp-public/
 ```
 
-Creates: `components/server-api/`, `components/server-worker/`, `components/webapp-admin/`, `components/webapp-public/`
+### Directory Naming
 
-### Naming Rules
+| Component | Directory Created |
+|-----------|-------------------|
+| `{type: server, name: server}` | `components/server/` |
+| `{type: server, name: api}` | `components/server-api/` |
+| `{type: webapp, name: admin}` | `components/webapp-admin/` |
 
-| Rule | Example | Notes |
-|------|---------|-------|
-| Lowercase | `webapp:admin` ✓ | All names must be lowercase |
-| Hyphens allowed | `server:background-worker` ✓ | Use hyphens, not underscores |
-| No spaces | `server:my server` ✗ | Spaces not allowed |
-| Type prefix auto-added | `server:api` → `server-api/` | Directory gets type prefix |
+### Rules
+
+- Both `type` and `name` are ALWAYS required
+- Names must be lowercase, hyphens allowed, no spaces
+- When `name` matches `type`, directory is `components/{type}/`
+- When `name` differs from `type`, directory is `components/{type}-{name}/`
 
 ## Available Components
 
@@ -103,33 +124,62 @@ Creates: `components/server-api/`, `components/server-worker/`, `components/weba
 ## Component Presets
 
 **Full-Stack Application (default):**
-```json
-["contract", "server", "webapp", "config", "testing", "cicd"]
+```yaml
+- {type: contract, name: contract}
+- {type: server, name: server}
+- {type: webapp, name: webapp}
+- {type: database, name: database}
+- {type: config, name: config}
+- {type: testing, name: testing}
+- {type: cicd, name: cicd}
 ```
 
 **Backend API Only:**
-```json
-["contract", "server", "config", "testing", "cicd"]
+```yaml
+- {type: contract, name: contract}
+- {type: server, name: server}
+- {type: config, name: config}
+- {type: testing, name: testing}
+- {type: cicd, name: cicd}
 ```
 
 **Frontend Only:**
-```json
-["webapp", "config", "testing", "cicd"]
+```yaml
+- {type: webapp, name: webapp}
+- {type: config, name: config}
+- {type: testing, name: testing}
+- {type: cicd, name: cicd}
 ```
 
 **Multi-Backend:**
-```json
-["contract", "server:api", "server:worker", "config", "testing", "cicd"]
+```yaml
+- {type: contract, name: contract}
+- {type: server, name: api}
+- {type: server, name: worker}
+- {type: config, name: config}
+- {type: testing, name: testing}
+- {type: cicd, name: cicd}
 ```
 
 **Multi-Frontend:**
-```json
-["contract", "server", "webapp:admin", "webapp:public", "config", "testing", "cicd"]
+```yaml
+- {type: contract, name: contract}
+- {type: server, name: server}
+- {type: webapp, name: admin}
+- {type: webapp, name: public}
+- {type: config, name: config}
+- {type: testing, name: testing}
+- {type: cicd, name: cicd}
 ```
 
 **Backend with Database:**
-```json
-["contract", "server", "database", "config", "testing", "cicd"]
+```yaml
+- {type: contract, name: contract}
+- {type: server, name: server}
+- {type: database, name: database}
+- {type: config, name: config}
+- {type: testing, name: testing}
+- {type: cicd, name: cicd}
 ```
 
 ## Scaffolding Order

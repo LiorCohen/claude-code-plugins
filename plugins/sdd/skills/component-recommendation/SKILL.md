@@ -48,15 +48,39 @@ discovery_results:
 ```yaml
 project_type: "fullstack"  # fullstack | backend | frontend | custom
 components:
-  contract: true
-  server: true        # or ["api", "worker"] for multiple instances
-  webapp: true        # or ["admin", "public"] for multiple instances
-  database: true
-  config: true        # Always true
-  helm: false
-  testing: true
-  cicd: true
+  - type: contract
+    name: contract
+  - type: server
+    name: server
+  - type: webapp
+    name: webapp
+  - type: database
+    name: database
+  - type: config
+    name: config
+  - type: testing
+    name: testing
+  - type: cicd
+    name: cicd
 ```
+
+**For multiple instances of the same type:**
+
+```yaml
+components:
+  - type: server
+    name: api                 # -> components/server-api/
+  - type: server
+    name: worker              # -> components/server-worker/
+  - type: webapp
+    name: admin               # -> components/webapp-admin/
+  - type: webapp
+    name: public              # -> components/webapp-public/
+```
+
+- Both `type` and `name` are ALWAYS required
+- When `name` matches `type`, directory is `components/{type}/`
+- When `name` differs from `type`, directory is `components/{type}-{name}/`
 
 ## Available Components
 
@@ -200,14 +224,20 @@ Recommendation:
 Output:
   project_type: "fullstack"
   components:
-    contract: true
-    server: true
-    webapp: true
-    database: true
-    config: true
-    helm: false
-    testing: true
-    cicd: true
+    - type: contract
+      name: contract
+    - type: server
+      name: server
+    - type: webapp
+      name: webapp
+    - type: database
+      name: database
+    - type: config
+      name: config
+    - type: testing
+      name: testing
+    - type: cicd
+      name: cicd
 ```
 
 ### Example 2: Multi-Frontend Architecture
@@ -231,14 +261,22 @@ User: "storefront" and "merchant"
 Output:
   project_type: "fullstack"
   components:
-    contract: true
-    server: true
-    webapp: ["storefront", "merchant"]
-    database: true
-    config: true
-    helm: false
-    testing: true
-    cicd: true
+    - type: contract
+      name: contract
+    - type: server
+      name: server
+    - type: webapp
+      name: storefront
+    - type: webapp
+      name: merchant
+    - type: database
+      name: database
+    - type: config
+      name: config
+    - type: testing
+      name: testing
+    - type: cicd
+      name: cicd
 ```
 
 ### Example 3: Backend Only
@@ -260,14 +298,18 @@ User: Yes, but add database too
 Output:
   project_type: "backend"
   components:
-    contract: true
-    server: true
-    webapp: false
-    database: true
-    config: true
-    helm: false
-    testing: true
-    cicd: true
+    - type: contract
+      name: contract
+    - type: server
+      name: server
+    - type: database
+      name: database
+    - type: config
+      name: config
+    - type: testing
+      name: testing
+    - type: cicd
+      name: cicd
 ```
 
 ### Example 4: Microservices Architecture
@@ -286,14 +328,26 @@ User: Multiple - api for requests, worker for background jobs, scheduler for rep
 Output:
   project_type: "custom"
   components:
-    contract: true
-    server: ["api", "worker", "scheduler"]
-    webapp: true
-    database: true
-    config: true
-    helm: true
-    testing: true
-    cicd: true
+    - type: contract
+      name: contract
+    - type: server
+      name: api
+    - type: server
+      name: worker
+    - type: server
+      name: scheduler
+    - type: webapp
+      name: webapp
+    - type: database
+      name: database
+    - type: config
+      name: config
+    - type: helm
+      name: helm
+    - type: testing
+      name: testing
+    - type: cicd
+      name: cicd
 ```
 
 ## Notes

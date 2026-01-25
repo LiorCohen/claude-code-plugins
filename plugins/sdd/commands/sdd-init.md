@@ -132,14 +132,20 @@ The skill recommends components and returns:
 ```yaml
 project_type: "fullstack"
 components:
-  contract: true
-  server: true        # or ["api", "worker"]
-  webapp: true        # or ["admin", "public"]
-  database: true
-  config: true
-  helm: false
-  testing: true
-  cicd: true
+  - type: contract
+    name: contract
+  - type: server
+    name: server
+  - type: webapp
+    name: webapp
+  - type: database
+    name: database
+  - type: config
+    name: config
+  - type: testing
+    name: testing
+  - type: cicd
+    name: cicd
 ```
 
 Store configuration for subsequent phases.
@@ -235,7 +241,7 @@ project_name: <from Phase 0>
 project_description: <from Phase 1>
 primary_domain: <from Phase 1>
 target_dir: <absolute path to target>
-components: <from Phase 2, as list e.g. ["contract", "server", "webapp"]>
+components: <from Phase 2>
 ```
 
 #### Step 5.3: Populate Domain Knowledge

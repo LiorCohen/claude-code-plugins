@@ -1,5 +1,15 @@
 # Changelog
 
+## [4.2.13] - 2026-01-25
+
+### Changed
+
+- **Component format**: Require `name` ALWAYS for all components
+  - Both `type` and `name` are now required fields
+  - When `name` matches `type`, directory is `components/{type}/`
+  - When `name` differs from `type`, directory is `components/{type}-{name}/`
+  - Updated: sdd-init, component-recommendation, scaffolding
+
 ## [4.2.12] - 2026-01-25
 
 ### Added
