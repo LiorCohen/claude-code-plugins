@@ -209,6 +209,28 @@ Infrastructure file changed? → Add Infrastructure entry to CHANGELOG.md → St
 6. **Staging incomplete** - Must include all version files in same commit
 7. **Wrong date in CHANGELOG** - Use today's date
 8. **Amending pushed commits** - NEVER amend commits that have been pushed to remote
+9. **Multiple changelog entries per commit** - Each commit = one changelog entry. Split if needed
+
+## One Commit = One Changelog Entry
+
+**CRITICAL:** If your changes would result in multiple changelog entries, split them into separate commits.
+
+**Example - Wrong:**
+```
+git add file1.md file2.md file3.md
+git commit -m "Add feature A, fix bug B, refactor C"
+# Results in 3 changelog entries in one commit - BAD
+```
+
+**Example - Correct:**
+```
+git add file1.md && git commit -m "Add feature A"
+git add file2.md && git commit -m "Fix bug B"
+git add file3.md && git commit -m "Refactor C"
+# Each commit has one changelog entry - GOOD
+```
+
+**Why:** Clean git history, easier rollbacks, clearer blame, simpler code review.
 
 ## Amending vs New Commit
 
