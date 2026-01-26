@@ -2,6 +2,19 @@
 
 Changes to the marketplace infrastructure (not plugin-specific changes).
 
+## 2026-01-26
+
+### Added
+
+- **docs-writer agent**: New marketplace-level agent at `.claude/agents/docs-writer.md`
+  - Writes and maintains user-facing documentation for the SDD plugin
+  - Three modes: Audit (detect sync issues), Update (targeted fixes), Rewrite (full refresh)
+  - Proactively detects when docs are out of sync with plugin source
+  - Includes style guide for pain/outcome messaging and tutorial structure
+  - Uses Opus model for quality prose and user empathy
+
+---
+
 ## 2026-01-24
 
 ### Changed
