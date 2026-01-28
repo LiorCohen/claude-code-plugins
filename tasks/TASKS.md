@@ -234,6 +234,28 @@ Move the `sdd-settings.yaml` configuration file into the `.sdd/` directory:
 - Update all references to `sdd-settings.yaml` path
 - Ensure backwards compatibility or migration path for existing projects
 
+### 54. Missing postgresql-standards skill
+Add a `postgresql-standards` skill that provides guidance and standards for PostgreSQL database design and usage:
+- Schema design and naming conventions
+- Index strategies and query optimization
+- Migration best practices
+- Connection pooling and resource management
+- Security (roles, permissions, row-level security)
+- Data types and constraints
+- Transaction handling
+- Backup and recovery considerations
+
+### 53. Missing helm-standards skill
+Add a `helm-standards` skill that provides guidance and standards for writing Helm charts:
+- Chart structure and naming conventions
+- Values file organization
+- Template best practices
+- Security considerations (RBAC, securityContext, etc.)
+- Resource management (limits, requests)
+- Health checks and probes
+- ConfigMap and Secret handling
+- **Readability first:** Prioritize simple, readable templates over clever solutions. Minimize use of special functions and Go template wizardry. Charts should be easy to understand at a glance.
+
 ### 52. Clean up .gitkeep and placeholder content during implementation
 When changes are implemented and actual content is added to directories, ensure that:
 - `.gitkeep` files are removed once the directory has real content
