@@ -2,6 +2,8 @@
 
 **Task:** TASKS.md #2 - Add npm run scripts for component lifecycle management
 
+**Status:** ✅ COMPLETED (v4.8.0 - 2026-01-28)
+
 ## Overview
 
 Add root-level npm scripts that allow running/building/testing individual components. Currently the root `package.json` has generic `--workspaces --if-present` commands that aren't useful:
