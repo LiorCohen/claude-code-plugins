@@ -8,6 +8,17 @@ All notable changes to the SDD plugin and marketplace infrastructure.
 
 ---
 
+## Infrastructure - 2026-01-28
+
+### Changed
+
+- **Repo structure**: Flatten single-plugin layout
+  - `plugins/sdd/` → `plugin/`
+  - `tests/sdd/` → `tests/`
+  - Updated all path references in configs, tests, docs, and skills
+
+---
+
 ## Infrastructure - 2026-01-27
 
 ### Fixed

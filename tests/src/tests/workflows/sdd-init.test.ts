@@ -5,7 +5,7 @@
  * This is a workflow test that runs Claude with a predefined prompt
  * and validates the generated output deterministically.
  *
- * Token usage is recorded to tests/sdd/data/sdd-init.yaml for benchmarking.
+ * Token usage is recorded to tests/data/sdd-init.yaml for benchmarking.
  */
 
 import { describe, expect, it, beforeAll } from 'vitest';

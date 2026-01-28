@@ -160,17 +160,17 @@ describe('getTestFilePath', () => {
   /**
    * WHY: Paths should be stored relative for portability.
    */
-  it('extracts relative path from tests/sdd/', () => {
-    const absolutePath = '/some/path/to/tests/sdd/src/tests/workflows/sdd-init.test.ts';
+  it('extracts relative path from tests/', () => {
+    const absolutePath = '/some/path/to/tests/src/tests/workflows/sdd-init.test.ts';
     const result = getTestFilePath(absolutePath);
 
-    expect(result).toBe('tests/sdd/src/tests/workflows/sdd-init.test.ts');
+    expect(result).toBe('tests/src/tests/workflows/sdd-init.test.ts');
   });
 
   /**
-   * WHY: Paths not containing tests/sdd/ should be returned as-is.
+   * WHY: Paths not containing tests/ should be returned as-is.
    */
-  it('returns original path if tests/sdd/ not found', () => {
+  it('returns original path if tests/ not found', () => {
     const absolutePath = '/some/other/path/test.ts';
     const result = getTestFilePath(absolutePath);
 
@@ -231,7 +231,7 @@ describe('benchmark data serialization', () => {
         {
           timestamp: '2026-01-24T12:00:00.000Z',
           plugin_version: '4.0.0',
-          test_file: 'tests/sdd/src/tests/workflows/sdd-init.test.ts',
+          test_file: 'tests/src/tests/workflows/sdd-init.test.ts',
           test_name: 'init-minimal',
           turn_count: 5,
           usage: {

@@ -15,18 +15,17 @@ claude-code-plugins/
 │       ├── commit/               # Commit workflow
 │       ├── plugin-testing-standards/ # Plugin testing methodology
 │       └── typescript-standards/ # TypeScript coding standards
-├── plugins/
-│   └── sdd/                      # SDD plugin
-│       ├── .claude-plugin/
-│       │   └── plugin.json       # Plugin manifest
-│       ├── agents/               # Specialized agents
-│       ├── commands/             # Slash commands
-│       ├── skills/               # Reusable patterns
-│       ├── scripts/              # Utility scripts
-│       ├── CHANGELOG.md          # Version history
-│       └── CLAUDE.md             # Plugin guidance
+├── plugin/                          # SDD plugin
+│   ├── .claude-plugin/
+│   │   └── plugin.json           # Plugin manifest
+│   ├── agents/                   # Specialized agents
+│   ├── commands/                 # Slash commands
+│   ├── skills/                   # Reusable patterns
+│   ├── scripts/                  # Utility scripts
+│   ├── CHANGELOG.md              # Version history
+│   └── CLAUDE.md                 # Plugin guidance
 ├── docs/                         # User-facing documentation
-├── tests/sdd/                    # Plugin tests
+├── tests/                        # Plugin tests
 ├── README.md                     # Marketplace overview
 ├── CLAUDE.md                     # Development guidance
 └── CHANGELOG.md                  # Marketplace changelog
@@ -37,11 +36,11 @@ claude-code-plugins/
 1. **Make your changes** to plugin files (agents, commands, skills, etc.)
 
 2. **Bump the version** in both locations:
-   - `plugins/sdd/.claude-plugin/plugin.json`
+   - `plugin/.claude-plugin/plugin.json`
    - `.claude-plugin/marketplace.json`
 
 3. **Update CHANGELOG.md**:
-   - Add a new version entry in `plugins/sdd/CHANGELOG.md`
+   - Add a new version entry in `plugin/CHANGELOG.md`
    - Include version number, date, and clear description of changes
    - Categorize changes (Added, Enhanced, Fixed, Removed, etc.)
 
@@ -64,7 +63,7 @@ We follow [Semantic Versioning](https://semver.org/):
 
 **Two separate changelogs:**
 
-1. **Plugin CHANGELOG** (`plugins/sdd/CHANGELOG.md`):
+1. **Plugin CHANGELOG** (`plugin/CHANGELOG.md`):
    - Updated when plugin functionality changes
    - Tied to semantic version numbers
    - Covers: agents, commands, skills, templates, scripts

@@ -5,7 +5,7 @@
  * with proper structure and content. This ensures the SDD workflow produces
  * valid specifications and implementation plans.
  *
- * Token usage is recorded to tests/sdd/data/sdd-new-change.yaml for benchmarking.
+ * Token usage is recorded to tests/data/sdd-new-change.yaml for benchmarking.
  */
 
 import { describe, expect, it, beforeAll } from 'vitest';

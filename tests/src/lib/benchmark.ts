@@ -407,7 +407,7 @@ export const recordBenchmark = async (
  * Get the relative test file path for benchmark recording.
  */
 export const getTestFilePath = (absolutePath: string): string => {
-  const testsIndex = absolutePath.indexOf('tests/sdd/');
+  const testsIndex = absolutePath.indexOf('tests/');
   if (testsIndex === -1) return absolutePath;
   return absolutePath.slice(testsIndex);
 };

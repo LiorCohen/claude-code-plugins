@@ -28,15 +28,15 @@ For each affected plugin, check if version bump is needed:
 
 | Directory/File | Description |
 |----------------|-------------|
-| `plugins/sdd/agents/` | All agent `.md` files |
-| `plugins/sdd/commands/` | All command `.md` files |
-| `plugins/sdd/skills/` | All skill `.md` files |
-| `plugins/sdd/templates/` | All template files |
-| `plugins/sdd/scripts/` | All script files |
-| `plugins/sdd/.claude-plugin/` | Plugin manifest |
-| `plugins/sdd/README.md` | Plugin documentation |
-| `plugins/sdd/QUICKSTART.md` | Plugin getting started guide |
-| `plugins/sdd/CLAUDE.md` | Plugin guidance for Claude |
+| `plugin/agents/` | All agent `.md` files |
+| `plugin/commands/` | All command `.md` files |
+| `plugin/skills/` | All skill `.md` files |
+| `plugin/templates/` | All template files |
+| `plugin/scripts/` | All script files |
+| `plugin/.claude-plugin/` | Plugin manifest |
+| `plugin/README.md` | Plugin documentation |
+| `plugin/QUICKSTART.md` | Plugin getting started guide |
+| `plugin/CLAUDE.md` | Plugin guidance for Claude |
 
 **Files That Do NOT Require Version Bump (Marketplace-Level):**
 
@@ -47,7 +47,7 @@ For each affected plugin, check if version bump is needed:
 - `.claude/skills/` (marketplace-level skills)
 - `.gitignore`
 - `.claudeignore`
-- `plugins/sdd/tests/` (test files)
+- `plugin/tests/` (test files)
 
 If version bump is needed, prompt for type:
 - **PATCH** (x.x.Z): Bug fixes, small improvements
@@ -55,7 +55,7 @@ If version bump is needed, prompt for type:
 - **MAJOR** (X.0.0): Breaking changes
 
 Update BOTH files:
-- `plugins/sdd/.claude-plugin/plugin.json`
+- `plugin/.claude-plugin/plugin.json`
 - `.claude-plugin/marketplace.json`
 
 ### Step 3: Changelog Check
@@ -134,12 +134,12 @@ User: /commit
 Agent: Analyzing changes...
 
 Found changes in:
-- plugins/sdd/agents/backend-dev.md
+- plugin/agents/backend-dev.md
 
-Detected plugin: plugins/sdd (current version: 1.10.19)
+Detected plugin: plugin (current version: 1.10.19)
 
 Version files need updating:
-- plugins/sdd/.claude-plugin/plugin.json
+- plugin/.claude-plugin/plugin.json
 - .claude-plugin/marketplace.json
 
 What type of version bump?
@@ -178,8 +178,8 @@ Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 ---
 
 Files to commit:
-- plugins/sdd/agents/backend-dev.md
-- plugins/sdd/.claude-plugin/plugin.json
+- plugin/agents/backend-dev.md
+- plugin/.claude-plugin/plugin.json
 - CHANGELOG.md
 - .claude-plugin/marketplace.json
 
@@ -255,7 +255,7 @@ Run these before committing:
 ```bash
 # Check versions match
 echo "Plugin version:"
-cat plugins/sdd/.claude-plugin/plugin.json | grep version
+cat plugin/.claude-plugin/plugin.json | grep version
 
 echo "Marketplace version:"
 cat .claude-plugin/marketplace.json | grep version

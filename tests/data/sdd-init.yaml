@@ -13,7 +13,7 @@
 runs:
   - timestamp: "2026-01-24T15:23:43.222Z"
     plugin_version: "4.0.0"
-    test_file: "tests/sdd/src/tests/workflows/sdd-init.test.ts"
+    test_file: "tests/src/tests/workflows/sdd-init.test.ts"
     test_name: "init-fullstack"
     turn_count: 64
     usage:
@@ -27,7 +27,7 @@ runs:
       total_tokens: 718
   - timestamp: "2026-01-24T15:30:47.503Z"
     plugin_version: "4.0.0"
-    test_file: "tests/sdd/src/tests/workflows/sdd-init.test.ts"
+    test_file: "tests/src/tests/workflows/sdd-init.test.ts"
     test_name: "init-fullstack"
     turn_count: 68
     usage:
@@ -41,7 +41,7 @@ runs:
       total_tokens: 1087
   - timestamp: "2026-01-24T19:41:09.154Z"
     plugin_version: "4.0.0"
-    test_file: "tests/sdd/src/tests/workflows/sdd-init.test.ts"
+    test_file: "tests/src/tests/workflows/sdd-init.test.ts"
     test_name: "init-fullstack"
     turn_count: 46
     usage:
@@ -55,7 +55,7 @@ runs:
       total_tokens: 1201
   - timestamp: "2026-01-24T19:46:52.946Z"
     plugin_version: "4.0.0"
-    test_file: "tests/sdd/src/tests/workflows/sdd-init.test.ts"
+    test_file: "tests/src/tests/workflows/sdd-init.test.ts"
     test_name: "init-fullstack"
     turn_count: 37
     usage:
@@ -69,7 +69,7 @@ runs:
       total_tokens: 805
   - timestamp: "2026-01-24T19:51:58.225Z"
     plugin_version: "4.0.0"
-    test_file: "tests/sdd/src/tests/workflows/sdd-init.test.ts"
+    test_file: "tests/src/tests/workflows/sdd-init.test.ts"
     test_name: "init-fullstack"
     turn_count: 51
     usage:

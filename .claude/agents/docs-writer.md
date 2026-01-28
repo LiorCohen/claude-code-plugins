@@ -17,9 +17,9 @@ You write and maintain high-quality, engaging documentation for the SDD plugin. 
 - `docs/` - In-depth tutorials and reference
 
 ### You Do NOT Own
-- Agent prompt files (`plugins/sdd/agents/`) - Internal implementation
-- Skill files (`plugins/sdd/skills/`) - Internal implementation
-- Command files (`plugins/sdd/commands/`) - Internal implementation
+- Agent prompt files (`plugin/agents/`) - Internal implementation
+- Skill files (`plugin/skills/`) - Internal implementation
+- Command files (`plugin/commands/`) - Internal implementation
 - `CHANGELOG.md` - Owned by commit workflow
 - `CONTRIBUTING.md` - Contribution guidelines
 - Code comments or inline documentation
@@ -87,9 +87,9 @@ docs/
 When invoked without a specific task, or when asked to "check" or "audit" docs:
 
 1. **Read plugin source of truth:**
-   - `plugins/sdd/.claude-plugin/plugin.json` - Current version
-   - `plugins/sdd/agents/*.md` - All agents (frontmatter only)
-   - `plugins/sdd/commands/*.md` - All commands (frontmatter only)
+   - `plugin/.claude-plugin/plugin.json` - Current version
+   - `plugin/agents/*.md` - All agents (frontmatter only)
+   - `plugin/commands/*.md` - All commands (frontmatter only)
 
 2. **Read current documentation:**
    - `README.md`
@@ -131,8 +131,8 @@ Run this checklist when auditing:
 
 ```
 [ ] plugin.json version matches README version references
-[ ] All agents in plugins/sdd/agents/ are listed in docs/agents.md
-[ ] All commands in plugins/sdd/commands/ are documented in docs/commands.md
+[ ] All agents in plugin/agents/ are listed in docs/agents.md
+[ ] All commands in plugin/commands/ are documented in docs/commands.md
 [ ] Command arguments in docs match actual command files
 [ ] Agent tools/models in docs match actual agent files
 [ ] Quick start examples actually work with current commands
@@ -144,20 +144,20 @@ Run this checklist when auditing:
 When you need to understand what to document:
 
 ### For Commands
-Read frontmatter and first section of each `plugins/sdd/commands/*.md`:
+Read frontmatter and first section of each `plugin/commands/*.md`:
 - `name` - Command name with arguments
 - `description` - One-line purpose
 - Arguments and their types
 
 ### For Agents
-Read frontmatter of each `plugins/sdd/agents/*.md`:
+Read frontmatter of each `plugin/agents/*.md`:
 - `name` - Agent identifier
 - `description` - What it does
 - `model` - sonnet or opus
 - `tools` - What capabilities it has
 
 ### For Version
-Read `plugins/sdd/.claude-plugin/plugin.json`:
+Read `plugin/.claude-plugin/plugin.json`:
 - `version` - Current plugin version
 
 ## Rules

@@ -13,7 +13,7 @@
 runs:
   - timestamp: "2026-01-24T19:32:55.069Z"
     plugin_version: "4.0.0"
-    test_file: "tests/sdd/src/tests/workflows/sdd-new-change.test.ts"
+    test_file: "tests/src/tests/workflows/sdd-new-change.test.ts"
     test_name: "new-change-feature"
     turn_count: 28
     usage:
@@ -27,7 +27,7 @@ runs:
       total_tokens: 967
   - timestamp: "2026-01-24T19:39:24.805Z"
     plugin_version: "4.0.0"
-    test_file: "tests/sdd/src/tests/workflows/sdd-new-change.test.ts"
+    test_file: "tests/src/tests/workflows/sdd-new-change.test.ts"
     test_name: "new-change-feature"
     turn_count: 29
     usage:
@@ -41,7 +41,7 @@ runs:
       total_tokens: 713
   - timestamp: "2026-01-24T19:46:03.592Z"
     plugin_version: "4.0.0"
-    test_file: "tests/sdd/src/tests/workflows/sdd-new-change.test.ts"
+    test_file: "tests/src/tests/workflows/sdd-new-change.test.ts"
     test_name: "new-change-feature"
     turn_count: 27
     usage:
@@ -55,7 +55,7 @@ runs:
       total_tokens: 4328
   - timestamp: "2026-01-24T19:50:31.187Z"
     plugin_version: "4.0.0"
-    test_file: "tests/sdd/src/tests/workflows/sdd-new-change.test.ts"
+    test_file: "tests/src/tests/workflows/sdd-new-change.test.ts"
     test_name: "new-change-feature"
     turn_count: 27
     usage:

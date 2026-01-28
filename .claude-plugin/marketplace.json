@@ -6,7 +6,7 @@
     "plugins": [
         {
             "name": "sdd",
-            "source": "./plugins/sdd",
+            "source": "./plugin",
             "description": "Spec-driven development methodology for full-stack teams",
             "version": "4.5.0"
         }

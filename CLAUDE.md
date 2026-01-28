@@ -29,9 +29,8 @@ claude-code-plugins/
 │       └── typescript-standards/     # TypeScript coding standards
 ├── .claude-plugin/
 │   └── marketplace.json              # Marketplace manifest
-├── plugins/
-│   └── sdd/                          # SDD plugin (see plugins/sdd/README.md)
-├── tests/sdd/                        # Plugin tests
+├── plugin/                              # SDD plugin (see plugin/README.md)
+├── tests/                               # Plugin tests
 ├── README.md
 ├── CLAUDE.md
 ├── CHANGELOG.md
