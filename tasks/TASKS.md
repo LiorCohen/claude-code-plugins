@@ -241,6 +241,13 @@ Move the `sdd-settings.yaml` configuration file into the `.sdd/` directory:
 - Update all references to `sdd-settings.yaml` path
 - Ensure backwards compatibility or migration path for existing projects
 
+### 52. Clean up .gitkeep and placeholder content during implementation
+When changes are implemented and actual content is added to directories, ensure that:
+- `.gitkeep` files are removed once the directory has real content
+- Placeholder content (example files, TODO comments, stub implementations) is replaced or removed
+- The implementation phase should detect and clean up scaffolding artifacts
+- Prevents stale placeholders from accumulating in the codebase
+
 ---
 
 ## Low Priority
