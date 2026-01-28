@@ -380,7 +380,7 @@ Location: <absolute-path-to-target-dir>
 Description: <project-description>
 Primary Domain: <primary-domain>
 
-External spec archived: specs/external/<filename>
+External spec archived: specs/external/<filename> (audit only)
 Changes created: N
 
 ┌─────────────────────────────────────────────────────────────┐
@@ -392,6 +392,9 @@ Changes created: N
 │ 2. change-2 (feature): Brief description                    │
 │    → specs/changes/YYYY/MM/DD/change-2/SPEC.md              │
 └─────────────────────────────────────────────────────────────┘
+
+⚠️  IMPORTANT: Implementation must use the generated SPEC.md files only.
+    Do NOT reference specs/external/ - it exists for audit purposes only.
 
 NEXT: Review the first change specification
 

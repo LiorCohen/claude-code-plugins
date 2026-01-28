@@ -26,7 +26,8 @@ Create a complete change specification package consisting of:
 | `user_stories` | No | List of user stories (feature type only) |
 | `acceptance_criteria` | No | List of acceptance criteria |
 | `api_endpoints` | No | List of API endpoints affected |
-| `external_source` | No | Path to external spec (for traceability) |
+| `external_source` | No | Path to archived external spec (audit trail only) |
+| `source_content` | No | Full markdown content from external spec section to embed in generated spec |
 | `decomposition_id` | No | UUID linking related changes |
 | `prerequisites` | No | List of prerequisite changes (for dependencies) |
 | `affected_files` | No | List of files affected (bugfix/refactor types) |
@@ -103,11 +104,15 @@ decomposition_id: <uuid>  # Only if provided
 
 <description>
 
-## External Source
+## Original Requirements
 
-> Only include if `external_source` is provided
+> Only include if `source_content` is provided. This section embeds the full content from the external spec, making this spec self-sufficient.
 
-This specification was imported from an external document: `<external_source>`
+<source_content>
+
+<!-- Audit reference: <external_source> - DO NOT READ, use content above -->
+
+---
 
 ## User Stories
 

@@ -8,6 +8,30 @@ All notable changes to the SDD plugin and marketplace infrastructure.
 
 ---
 
+## [4.9.0] - 2026-01-28
+
+### Fixed
+
+- **External spec handling (Task 7)**: Complete overhaul of how external specs are processed during `sdd-init`
+  - External specs are now consumed ONCE during import, then NEVER read again
+  - Archived to `specs/external/` for audit purposes only
+  - Generated SPEC.md files are completely self-sufficient with embedded `source_content`
+  - PLAN.md files are now always created alongside each SPEC.md
+  - Epic structure created when 3+ changes are decomposed (with order-preserving prefixes: 01-, 02-, 03-)
+  - Added `recommend_epic` flag to spec-decomposition skill
+  - Added `source_content` parameter to change-creation skill
+  - Added explicit warnings about external spec isolation in sdd-init and sdd-implement-change
+
+### Added
+
+- **External spec workflow test**: New test `sdd-init-external-spec.test.ts` validates:
+  - External spec archiving
+  - SPEC.md and PLAN.md creation
+  - Content embedding
+  - External spec isolation
+
+---
+
 ## [4.8.0] - 2026-01-28
 
 ### Added

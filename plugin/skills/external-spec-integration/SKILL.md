@@ -10,11 +10,15 @@ Processes external specification files into the SDD change structure, with optio
 ## Purpose
 
 When a user provides an external specification via `--spec`:
-- Copy the external spec to the archive (`specs/external/`)
+- Copy the external spec to the archive (`specs/external/`) for audit trail only
 - Analyze the spec for potential decomposition into multiple changes
 - Present decomposition options to user for adjustment
-- Create change specifications using the `change-creation` skill
+- Create **self-sufficient** change specifications that embed all relevant content
 - Update shared files (INDEX.md, glossary)
+
+**CRITICAL: External specs are consumed ONCE during import, then NEVER read again.**
+
+Generated SPEC.md files must be completely self-sufficient. Implementation agents, planning skills, and any downstream processes must NEVER read from `specs/external/`. The archived external spec exists solely for audit/compliance purposes - it is not part of the working specification.
 
 ## When to Use
 
@@ -35,12 +39,17 @@ When a user provides an external specification via `--spec`:
 ```yaml
 success: true
 external_spec_archived: "specs/external/original-spec.md"
+is_epic: false  # true if created as epic structure
 changes_created:
   - name: "user-authentication"
     path: "specs/changes/2026/01/25/user-authentication/"
+    spec_path: "specs/changes/2026/01/25/user-authentication/SPEC.md"
+    plan_path: "specs/changes/2026/01/25/user-authentication/PLAN.md"
     type: "feature"
   - name: "password-reset"
     path: "specs/changes/2026/01/25/password-reset/"
+    spec_path: "specs/changes/2026/01/25/password-reset/SPEC.md"
+    plan_path: "specs/changes/2026/01/25/password-reset/PLAN.md"
     type: "feature"
 suggested_order: ["user-authentication", "password-reset"]
 shared_concepts_added: ["User", "Session", "Token"]
@@ -50,19 +59,24 @@ shared_concepts_added: ["User", "Session", "Token"]
 
 ### Step 1: Copy External Spec to Archive
 
+**Purpose:** Archive the original external specification for audit trail and traceability ONLY. This archived copy is for compliance/reference - implementers must use the generated SPEC.md files, not the external source.
+
 **If spec is a single file:**
 1. Determine the original filename from the spec path
 2. Copy to: `specs/external/<original-filename>`
 3. Store: `archived_spec_path = {target_dir}/specs/external/<filename>`
-4. Display: "Copied external spec to: specs/external/<filename>"
+4. Display: "Archived external spec to: specs/external/<filename> (audit only - will not be read after import)"
 
 **If spec is a directory:**
 1. Determine the directory name from the spec path
 2. Copy entire directory to: `specs/external/<directory-name>/`
 3. Store: `archived_spec_dir = {target_dir}/specs/external/<directory-name>/`
-4. Display: "Copied external spec directory to: specs/external/<directory-name>/ ({N} files)"
+4. Display: "Archived external spec directory to: specs/external/<directory-name>/ ({N} files) (audit only - will not be read after import)"
 
-**Important:** All subsequent section reads use the archived path, not the original `spec_path`.
+**Important:**
+- All section reads during THIS import use the archived path, not the original `spec_path`
+- After import completes, the archived spec is NEVER read again
+- Generated SPEC.md files will embed the relevant content, making them self-sufficient
 
 ### Step 2: Present Outline to User
 
@@ -156,7 +170,14 @@ For each section at the chosen boundary level:
 1. **Read section content** from the archived location:
    - **Single file:** Read from `archived_spec_path` using `start_line` to `end_line`
    - **Directory:** Read from `archived_spec_dir/<section.source_file>` using `start_line` to `end_line`
-2. **Analyze the section:**
+
+2. **Store the full section content:**
+   ```yaml
+   section_content: <complete markdown content of this section>
+   ```
+   This content will be embedded in the generated spec to make it self-sufficient.
+
+3. **Analyze the section:**
    ```
    INVOKE spec-decomposition skill with:
      mode: "section"
@@ -164,8 +185,16 @@ For each section at the chosen boundary level:
      section_header: <e.g., "## User Authentication">
      default_domain: <primary_domain>
    ```
-3. **Collect** the `DecomposedChange` result
-4. **Display progress:** "Analyzing: User Authentication (1/2)..."
+
+4. **Attach content to DecomposedChange:**
+   Each `DecomposedChange` should include:
+   ```yaml
+   source_content: <full markdown content from the section>
+   ```
+
+5. **Collect** the `DecomposedChange` result with attached content
+
+6. **Display progress:** "Analyzing: User Authentication (1/2)..."
 
 ### Step 5: Present Combined Decomposition
 
@@ -200,13 +229,57 @@ Options:
   [C] Cancel
 ```
 
+### Step 5.5: Check for Epic Threshold
+
+After user accepts the decomposition (before creating changes), check if an epic structure is needed:
+
+**If total accepted changes >= 3:**
+
+1. **Display epic recommendation:**
+   ```
+   ═══════════════════════════════════════════════════════════════
+   📦 EPIC STRUCTURE RECOMMENDED
+   ═══════════════════════════════════════════════════════════════
+
+   You have N changes identified. For 3+ changes, SDD recommends
+   organizing them as an Epic for better tracking and organization.
+
+   Epic structure:
+     specs/changes/YYYY/MM/DD/<epic-name>/
+     ├── SPEC.md          (epic overview)
+     ├── PLAN.md          (change ordering)
+     └── changes/
+         ├── 01-<change-1>/
+         ├── 02-<change-2>/
+         └── 03-<change-3>/
+
+   Options:
+     [E] Create as Epic (recommended)
+     [I] Keep as individual changes
+     [C] Cancel
+   ```
+
+2. **If user chooses [E]:**
+   - Set `create_as_epic: true`
+   - Generate epic name from domain or first change (e.g., `<domain>-implementation`)
+   - Assign order-preserving prefixes to child changes: `01-`, `02-`, `03-`, etc.
+   - Order reflects the dependency graph (topological sort from suggested_order)
+   - Proceed to Step 7 with epic structure
+
+3. **If user chooses [I]:**
+   - Proceed with individual changes as before
+   - Add note in summary: "Note: Large change set (N changes) created as individual changes"
+
+**If total accepted changes < 3:**
+- Skip this step, proceed directly to Step 6 and then Step 7
+
 ### Step 6: Handle User Adjustments
 
 Process user adjustments in a loop:
 
 | Option | Action |
 |--------|--------|
-| **[A] Accept** | Proceed to Step 7 with accepted changes |
+| **[A] Accept** | Check epic threshold (Step 5.5), then proceed to Step 7 |
 | **[M] Merge** | Combine selected changes, re-display |
 | **[R] Rename** | Update change name, re-display |
 | **[T] Change type** | Update change type (feature/bugfix/refactor), re-display |
@@ -216,6 +289,42 @@ Process user adjustments in a loop:
 Continue until user accepts or cancels.
 
 ### Step 7: Create Change Specifications
+
+**If `create_as_epic` is true (3+ changes):**
+
+1. Create the epic first:
+   ```
+   INVOKE change-creation skill with:
+     name: <epic-name>
+     type: epic
+     title: <Epic Title>
+     description: <combined description>
+     domain: <primary_domain>
+     issue: TBD
+     child_changes: [01-change-1, 02-change-2, ...]
+     acceptance_criteria: <combined ACs from all changes>
+   ```
+
+2. For each child change (with order-preserving prefix):
+   ```
+   INVOKE change-creation skill with:
+     name: <NN-change-name>  # e.g., 01-user-authentication
+     type: feature
+     title: <Change Title>
+     description: <extracted description>
+     domain: <primary_domain or detected>
+     issue: TBD
+     user_stories: <extracted user stories>
+     acceptance_criteria: <extracted ACs>
+     api_endpoints: <extracted endpoints>
+     source_content: <full section content from Step 4>
+     external_source: ../../../external/<filename>  # Audit reference only
+     decomposition_id: <uuid>
+     prerequisites: <prerequisite change names>
+     parent_epic: ../SPEC.md
+   ```
+
+**If `create_as_epic` is false (individual changes):**
 
 For each accepted change, invoke the `change-creation` skill:
 
@@ -230,10 +339,19 @@ INVOKE change-creation skill with:
   user_stories: <extracted user stories>
   acceptance_criteria: <extracted ACs>
   api_endpoints: <extracted endpoints>
-  external_source: ../../external/<filename>
+  source_content: <full section content from Step 4>
+  external_source: ../../external/<filename>  # Audit reference only
   decomposition_id: <uuid> (if multi-change)
   prerequisites: <prerequisite change names> (if dependencies)
 ```
+
+**Verification (all cases):**
+
+After each `change-creation` invocation, verify both files were created:
+- [ ] SPEC.md exists at the returned `spec_path`
+- [ ] PLAN.md exists at the returned `plan_path`
+
+If either file is missing, report error and halt.
 
 ### Step 8: Update Shared Files
 
@@ -255,15 +373,57 @@ Add extracted shared concepts from decomposition to `specs/domain/glossary.md`.
 
 Display completion summary:
 
+**For epic structure:**
 ```
-External spec processed successfully!
+═══════════════════════════════════════════════════════════════
+✅ EXTERNAL SPEC PROCESSED SUCCESSFULLY
+═══════════════════════════════════════════════════════════════
 
-External spec copied to: specs/external/<filename>
+Archived to: specs/external/<filename> (audit only - will not be read after import)
+
+Created Epic: specs/changes/YYYY/MM/DD/<epic-name>/
+├── SPEC.md
+├── PLAN.md
+└── changes/
+    ├── 01-<change-1>/
+    │   ├── SPEC.md
+    │   └── PLAN.md
+    ├── 02-<change-2>/
+    │   ├── SPEC.md
+    │   └── PLAN.md
+    └── 03-<change-3>/
+        ├── SPEC.md
+        └── PLAN.md
+
+Implementation order: 01-change-1 → 02-change-2 → 03-change-3
+
+⚠️  IMPORTANT: Implementation must use the generated SPEC.md files only.
+    Do NOT reference specs/external/ - it exists for audit purposes only.
+
+Next step: Start with the first child change:
+  /sdd-implement-change specs/changes/YYYY/MM/DD/<epic-name>/changes/01-<change-1>
+```
+
+**For individual changes:**
+```
+═══════════════════════════════════════════════════════════════
+✅ EXTERNAL SPEC PROCESSED SUCCESSFULLY
+═══════════════════════════════════════════════════════════════
+
+Archived to: specs/external/<filename> (audit only - will not be read after import)
+
 Created N change specifications:
-  - specs/changes/YYYY/MM/DD/change-1/ (feature)
-  - specs/changes/YYYY/MM/DD/change-2/ (feature)
+  specs/changes/YYYY/MM/DD/change-1/
+  ├── SPEC.md
+  └── PLAN.md
+  specs/changes/YYYY/MM/DD/change-2/
+  ├── SPEC.md
+  └── PLAN.md
 
-Suggested implementation order: change-1 → change-2 → ...
+Implementation order: change-1 → change-2 → ...
+
+⚠️  IMPORTANT: Implementation must use the generated SPEC.md files only.
+    Do NOT reference specs/external/ - it exists for audit purposes only.
 
 Next step: Start with the first change:
   /sdd-implement-change specs/changes/YYYY/MM/DD/change-1
@@ -380,6 +540,11 @@ This skill orchestrates:
 ## Notes
 
 - This skill is conversational and handles user interaction
-- Always preserves the original external spec in `specs/external/`
+- Archives the original external spec in `specs/external/` for audit/compliance only
+- **CRITICAL:** External specs are consumed ONCE during import, then NEVER read again
+- Generated SPEC.md files embed all relevant content and are completely self-sufficient
+- Implementation agents must NEVER read from `specs/external/`
 - Decomposition is optional - user can always keep as single spec
 - Dependencies between changes are tracked and affect suggested order
+- When 3+ changes are identified, epic structure is recommended for better organization
+- Epic child changes use order-preserving prefixes (01-, 02-, etc.) to maintain implementation sequence

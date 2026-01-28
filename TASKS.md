@@ -2,13 +2,6 @@
 
 ## High Priority
 
-### 7. External spec handling is broken [CRITICAL]
-Multiple issues with how external specs are processed:
-- Specs generated from `sdd-init` with an external spec don't include plans
-- Large external specs should produce epics, not individual changes (8+ changes = epic)
-- Generated specs are weak and implementation keeps relying on the external spec
-- External specs should be for archive/reference only - Claude should create self-sufficient specs that don't require referring back to the external spec
-
 ### 9. sdd-init should produce ready-to-work components [CRITICAL]
 After running `sdd-init`, all components should be in a ready-to-work state without additional setup or configuration needed. The initial template generated for new components is currently sparse and doesn't include enough content/guidance for the different component types.
 
@@ -191,6 +184,41 @@ The `tests/src/tests/workflows/sdd-new-change.test.ts` test is failing because t
 - Need to either update the test expectations or fix the spec generation to use frontmatter
 - Related to spec format consistency across the plugin
 
+### 41. sdd-new-change should handle external specs
+`sdd-new-change` currently doesn't support external specs the way `sdd-init` does. Need to:
+- Accept an external spec as input for creating a new change
+- Apply the same external spec handling rules (archive/reference only, create self-sufficient specs)
+- Consistent behavior between `sdd-init` and `sdd-new-change` for external spec workflows
+
+### 42. Restructure specs directory - separate static specs from changes
+Current `specs/` directory mixes static specs with changes. Need to restructure:
+- `specs/` should only contain static files (domain, architecture, etc.)
+- Move `specs/changes/` out to a separate location (e.g., `changes/` at root)
+- Move external specs to a new `archive/` directory
+- Add `archive/` to `.claudeignore` so Claude doesn't read them during implementation
+- Cleaner separation of concerns
+
+### 43. CI/CD components and .github folder integration
+Need to figure out how to handle separate CI/CD components and how they integrate with the root `.github/` folder:
+- How do CI/CD component types work with monorepo structure?
+- Should workflows be defined per-component or centralized?
+- How to handle component-specific vs shared workflows
+- Relationship between component specs and actual `.github/workflows/` files
+
+### 44. Add Victoria Logs and Metrics to Helm chart
+Add observability stack to the generated Helm chart:
+- Victoria Logs for log aggregation
+- Victoria Metrics for metrics collection
+- Integrate with existing k8s infrastructure templates
+
+### 45. TypeScript standards: ban mutable array/object operations
+Add to typescript-standards skill a ban against mutable state operations:
+- No `.push()` on arrays
+- No `obj['foo'] = bar` dynamic property assignment
+- No `.pop()`, `.shift()`, `.unshift()`, `.splice()`
+- Prefer immutable patterns: spread operator, `.concat()`, `.filter()`, `.map()`
+- Enforce functional/immutable approach to data manipulation
+
 ---
 
 ## Low Priority
@@ -228,6 +256,19 @@ Investigate if there's a way to show a welcome prompt/message after plugin insta
 ---
 
 ## Completed
+
+### 7. External spec handling is broken ✓
+**Completed: 2026-01-28**
+
+Fixed all issues with external spec processing:
+- Specs generated from `sdd-init` with external spec now include both SPEC.md and PLAN.md
+- External specs with 3+ changes produce epic structures with order-preserving prefixes (01-, 02-, 03-)
+- Generated specs embed full `source_content` making them completely self-sufficient
+- External specs are consumed ONCE during import, then NEVER read again (archived to `specs/external/` for audit only)
+
+**Core principle:** External specs are consumed once during import, then never referenced again. Generated SPEC.md files are completely self-sufficient.
+
+**Plan:** [plans/PLAN-task-7-external-spec-handling.md](plans/PLAN-task-7-external-spec-handling.md)
 
 ### 2. Add npm run scripts for component lifecycle management ✓
 **Completed: 2026-01-28 (v4.8.0)**

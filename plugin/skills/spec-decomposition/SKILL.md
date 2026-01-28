@@ -306,7 +306,11 @@ shared_concepts: list      # concepts used by multiple changes
 suggested_order: list      # change ids in implementation order
 warnings: list             # any issues detected
 is_decomposable: boolean   # false if spec is too small/simple
+recommend_epic: boolean    # true if changes.length >= 3 (signals epic structure recommended)
 ```
+
+**Epic Recommendation:**
+When `recommend_epic` is true (3+ changes identified), the calling skill should consider wrapping the changes in an epic structure. This provides better organization for larger decompositions.
 
 ## Special Cases
 

@@ -183,6 +183,7 @@ Before declaring implementation complete, you MUST:
 - **Verification required**: Explicitly confirm each documentation area (glossary, definitions, architecture) is updated or doesn't need updates
 - **Traceability**: Domain documentation serves as the bridge between specs and implementation
 - **Single source of truth**: Ensures domain knowledge is centralized and accessible to all team members
+- **NEVER read specs/external/**: The `specs/external/` directory contains archived external specs for audit purposes only. Implementation must use only the generated SPEC.md files in the change directory. External specs are consumed once during import and never referenced again.
 
 ## Example
 
