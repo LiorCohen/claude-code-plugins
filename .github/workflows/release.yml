@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Need previous commit to compare versions
+
+      - name: Get current version
+        id: current
+        run: |
+          VERSION=$(jq -r '.plugins[0].version' .claude-plugin/marketplace.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get previous version
+        id: previous
+        run: |
+          git show HEAD~1:.claude-plugin/marketplace.json > /tmp/prev-manifest.json 2>/dev/null || echo '{"plugins":[{"version":"0.0.0"}]}' > /tmp/prev-manifest.json
+          VERSION=$(jq -r '.plugins[0].version' /tmp/prev-manifest.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if version changed
+        id: check
+        run: |
+          if [ "${{ steps.current.outputs.version }}" != "${{ steps.previous.outputs.version }}" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Extract changelog for version
+        if: steps.check.outputs.changed == 'true'
+        id: changelog
+        run: |
+          VERSION="${{ steps.current.outputs.version }}"
+          # Extract changelog section for this version (from ## [x.y.z] to next ## [ or ## Infrastructure)
+          CHANGELOG=$(awk -v ver="$VERSION" '
+            BEGIN { found=0; output="" }
+            /^## \[/ {
+              if (found) exit
+              if ($0 ~ "\\[" ver "\\]") { found=1; next }
+            }
+            /^## Infrastructure/ { if (found) exit }
+            found { output = output $0 "\n" }
+            END { print output }
+          ' CHANGELOG.md)
+          {
+            echo "body<<EOF"
+            echo "$CHANGELOG"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ steps.current.outputs.version }}" \
+            --title "SDD Plugin v${{ steps.current.outputs.version }}" \
+            --notes "${{ steps.changelog.outputs.body }}"

@@ -6,16 +6,6 @@
 
 ## Planned
 
-### 51. Add GitHub Actions workflow for automated releases
-Add marketplace-level GitHub Actions that create a release in the repo (LiorCohen/claude-code-plugins) for every plugin change that requires a version change:
-- Trigger on push to main branch
-- Detect if plugin version changed (compare current vs previous commit)
-- Extract changelog entry for the new version from CHANGELOG.md
-- Create GitHub release with version tag and changelog as release notes
-- Only create release when version actually changes (not for infrastructure-only commits)
-
-**Plan:** [plans/planned/PLAN-task-51-github-actions-releases.md](plans/planned/PLAN-task-51-github-actions-releases.md)
-
 ---
 
 ## Pending
@@ -308,6 +298,19 @@ Investigate if there's a way to show a welcome prompt/message after plugin insta
 ---
 
 ## Completed
+
+### 51. Add GitHub Actions workflow for automated releases ✓
+**Completed: 2026-01-29**
+
+Added GitHub Actions workflow at `.github/workflows/release.yml` that automatically creates GitHub releases when plugin versions change:
+- Triggers on push to main branch
+- Compares current vs previous commit's version in `.claude-plugin/marketplace.json`
+- Extracts changelog entry for the specific version from CHANGELOG.md using awk
+- Creates GitHub release with `v{version}` tag and changelog as release notes
+- Uses GitHub CLI (`gh release create`) - no third-party actions
+- No release created for infrastructure-only commits (no version change)
+
+**Plan:** [plans/complete/PLAN-task-51-github-actions-releases.md](plans/complete/PLAN-task-51-github-actions-releases.md)
 
 ### 45. TypeScript standards: ban mutable array/object operations ✓
 **Completed: 2026-01-28**

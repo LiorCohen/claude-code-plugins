@@ -30,6 +30,19 @@ All notable changes to the SDD plugin and marketplace infrastructure.
 
 ---
 
+## Infrastructure - 2026-01-29
+
+### Added
+
+- **GitHub Actions release workflow (Task 51)**: Automated releases on plugin version changes
+  - Workflow at `.github/workflows/release.yml`
+  - Triggers on push to main, compares version in `.claude-plugin/marketplace.json`
+  - Extracts changelog entry for the version using awk
+  - Creates GitHub release with `v{version}` tag via `gh release create`
+  - No third-party actions - uses only `actions/checkout@v4` and GitHub CLI
+
+---
+
 ## [5.0.0] - 2026-01-28
 
 ### Changed

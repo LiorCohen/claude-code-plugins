@@ -1,6 +1,6 @@
 # Plan: Add GitHub Actions Workflow for Automated Releases (Task 51)
 
-## Status: PLANNED
+## Status: COMPLETE
 
 ---
 
@@ -88,13 +88,12 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.check.outputs.changed == 'true'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.current.outputs.version }}
-          name: SDD Plugin v${{ steps.current.outputs.version }}
-          body: ${{ steps.changelog.outputs.body }}
-          draft: false
-          prerelease: false
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ steps.current.outputs.version }}" \
+            --title "SDD Plugin v${{ steps.current.outputs.version }}" \
+            --notes "${{ steps.changelog.outputs.body }}"
 ```
 
 ### Key Design Decisions
@@ -107,7 +106,7 @@ jobs:
    - Plugin releases: `## [x.y.z] - YYYY-MM-DD`
    - Infrastructure changes: `## Infrastructure - YYYY-MM-DD` (not versioned, no release created)
 
-4. **Release action:** Uses `softprops/action-gh-release@v2` - a well-maintained, popular action for creating GitHub releases.
+4. **Release creation:** Uses GitHub CLI (`gh release create`) which is pre-installed on GitHub-hosted runners. No third-party actions required.
 
 5. **Permissions:** Uses `contents: write` for creating releases and tags.
 
