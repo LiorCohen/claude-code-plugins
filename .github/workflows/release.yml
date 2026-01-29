@@ -33,9 +33,13 @@ jobs:
       - name: Check if version changed
         id: check
         run: |
+          echo "Current version: ${{ steps.current.outputs.version }}"
+          echo "Previous version: ${{ steps.previous.outputs.version }}"
           if [ "${{ steps.current.outputs.version }}" != "${{ steps.previous.outputs.version }}" ]; then
+            echo "Version changed - will create release"
             echo "changed=true" >> $GITHUB_OUTPUT
           else
+            echo "Version unchanged - skipping release"
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
@@ -47,21 +51,25 @@ jobs:
           # Extract major version (e.g., 5.1.0 -> 5)
           MAJOR=$(echo "$VERSION" | cut -d. -f1)
           CHANGELOG_FILE="changelog/v${MAJOR}.md"
-          # Extract changelog section for this version (from ## [x.y.z] to next ## [ or ## Infrastructure)
+
+          # Extract changelog section for this version
+          # Start after "## [VERSION]" line, stop at next "## " or "---"
           CHANGELOG=$(awk -v ver="$VERSION" '
-            BEGIN { found=0; output="" }
+            BEGIN { found=0 }
             /^## \[/ {
               if (found) exit
-              if ($0 ~ "\\[" ver "\\]") { found=1; next }
+              if (index($0, "[" ver "]") > 0) { found=1; next }
             }
             /^## Infrastructure/ { if (found) exit }
-            found { output = output $0 "\n" }
-            END { print output }
+            /^---$/ { if (found) exit }
+            found { print }
           ' "$CHANGELOG_FILE")
+
+          # Write to output using heredoc
           {
-            echo "body<<EOF"
+            echo "body<<CHANGELOG_EOF"
             echo "$CHANGELOG"
-            echo "EOF"
+            echo "CHANGELOG_EOF"
           } >> $GITHUB_OUTPUT
 
       - name: Create release archive
@@ -83,6 +91,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="${{ steps.current.outputs.version }}"
+
+          # Check if release already exists
+          if gh release view "v${VERSION}" > /dev/null 2>&1; then
+            echo "Release v${VERSION} already exists - skipping"
+            exit 0
+          fi
+
+          echo "Creating release v${VERSION}..."
           gh release create "v${VERSION}" \
             --title "SDD Plugin v${VERSION}" \
             --notes "${{ steps.changelog.outputs.body }}" \
