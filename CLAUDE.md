@@ -20,7 +20,7 @@
 ## Repository Structure
 
 ```
-claude-code-plugins/
+sdd/
 ├── .claude/
 │   ├── cclsp.json                    # TypeScript LSP config
 │   ├── settings.json                 # Context7 enabled

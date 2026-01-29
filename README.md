@@ -9,7 +9,7 @@ SDD brings structure to AI-assisted development. Every change starts with a spec
 ## Installation
 
 ```bash
-claude plugin marketplace add https://github.com/LiorCohen/claude-code-plugins
+claude plugin marketplace add https://github.com/LiorCohen/sdd
 claude plugin install sdd
 ```
 

@@ -5,7 +5,7 @@ Guidelines for contributing to the Spec-Driven Development plugin.
 ## Repository Structure
 
 ```
-claude-code-plugins/
+sdd/
 ├── .claude-plugin/
 │   └── marketplace.json          # Marketplace manifest
 ├── .claude/
