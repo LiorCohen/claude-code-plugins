@@ -45,9 +45,9 @@ components/
 │       │   └── load_config.ts      # Imports type from @config/types
 │       └── index.ts
 │
-├── webapp-task-dashboard/
+├── frontend-task-dashboard/
 │   └── src/
-│       └── config.ts               # Imports type from @config/types
+│       └── config.ts               # Build-time config (see Frontend Config below)
 │
 └── contract-task-api/
     └── ...
@@ -106,6 +106,43 @@ database-taskdb: {}
 helm-task-service: {}
 ```
 
+### Frontend Config (Build-Time)
+
+Frontend components (webapps) **cannot** use `SDD_CONFIG_PATH` at runtime because browsers don't have filesystem access. Frontend config is handled differently:
+
+1. **Build-time injection** - Config values are injected during build via Vite's `import.meta.env`
+2. **Type sharing only** - Frontend imports types from `@project/config/types` for type safety
+3. **Config generation** - `/sdd-config generate --env local --component frontend-task-dashboard` outputs values that are then set as build env vars
+
+**Frontend config flow:**
+```bash
+# Generate frontend config as JSON
+sdd-system config generate --env local --component frontend-task-dashboard --format json > .env.local.json
+
+# Build script reads .env.local.json and sets VITE_* env vars
+# Or: manually set VITE_API_URL, VITE_FEATURE_FLAGS, etc.
+```
+
+**Note:** Frontend config is simpler than backend - typically just API URLs and feature flags. Sensitive config never goes to frontend.
+
+## Design Principles
+
+### Environment Agnosticism
+
+**Components are environment-agnostic.** Server, frontend, database, contract components never know which environment they're running in. They receive config values and use them.
+
+**Only two places know about environments:**
+1. `components/config/` - has `envs/local/`, `envs/production/`, etc.
+2. `components/helm-*/` - has `values-local.yaml`, `values-production.yaml`, etc.
+
+**A server component:**
+- ✅ Reads `config.port` and listens on it
+- ✅ Reads `config.database.host` and connects to it
+- ❌ Never checks "am I in production?"
+- ❌ Never has `if (env === 'local')` logic
+
+This separation means components are testable, portable, and predictable.
+
 ## Design Decisions
 
 | Decision | Choice |
@@ -116,8 +153,97 @@ helm-task-service: {}
 | Schema authority | Config component defines all config schemas centrally |
 | Components without config | Unlikely; most will have a section |
 | Type definitions | Centralized in `components/config/types/`, imported by components |
-| Environment variable | Single env var `SDD_CONFIG_PATH` (no APP_ENV/NODE_ENV) |
+| Environment variable | Single env var `SDD_CONFIG_PATH` for servers (see NODE_ENV note below) |
 | sdd-system role | CLI tool only (generate, validate, diff) - NOT a library |
+| Merge algorithm | **Deep merge** - nested objects merged recursively, arrays replaced (not concatenated) |
+| Component extraction | Outputs section contents only (no wrapper key) - see below |
+| Scaffolding order | Config component scaffolded **first**, before other components |
+
+### Merge Algorithm Details
+
+When merging `envs/default/` → `envs/{env}/`:
+
+- **Objects**: Recursively merged (both levels' keys preserved)
+- **Arrays**: Replaced entirely (env array replaces default array)
+- **Primitives**: Env value replaces default value
+- **Null values**: Explicitly setting `null` removes the key
+
+Example:
+```yaml
+# envs/default/config.yaml
+server-task-service:
+  port: 3000
+  database:
+    host: db.internal
+    pool: 10
+
+# envs/local/config.yaml
+server-task-service:
+  database:
+    host: localhost
+
+# Result (merged):
+server-task-service:
+  port: 3000        # Preserved from default
+  database:
+    host: localhost # Overridden by local
+    pool: 10        # Preserved from default
+```
+
+### Component Extraction Output
+
+When using `--component`, the output contains **only the section contents** (no wrapper key):
+
+```bash
+sdd-system config generate --env local --component server-task-service
+```
+
+Output:
+```yaml
+port: 3000
+database:
+  host: localhost
+  pool: 10
+```
+
+This allows `load_config.ts` to parse the file directly as `ServerConfig` without unwrapping.
+
+### NODE_ENV Handling
+
+**NODE_ENV is an infrastructure exception**, not application config. It exists because third-party libraries (Express, etc.) check it for performance optimizations.
+
+**Key principle:** Application code NEVER reads NODE_ENV. It's injected by infrastructure for library behavior only.
+
+- **Local development**: Not set. Libraries default to development behavior - fine.
+- **K8s deployment**: Set via Helm values:
+
+```yaml
+# helm-{name}/values.yaml (default)
+nodeEnv: development
+
+# helm-{name}/values-production.yaml
+nodeEnv: production
+```
+
+```yaml
+# helm-{name}/templates/deployment.yaml
+env:
+  - name: NODE_ENV
+    value: {{ .Values.nodeEnv }}
+  - name: SDD_CONFIG_PATH
+    value: /app/config/config.yaml
+```
+
+**What NODE_ENV controls (library behavior, NOT app logic):**
+- Express view caching
+- Express error verbosity
+- Some npm packages' internal optimizations
+
+**What NODE_ENV does NOT control (use config YAML instead):**
+- Logging level → `config.logging.level`
+- Feature flags → `config.features.*`
+- API endpoints → `config.api.baseUrl`
+- Any application behavior
 
 ## Files to Create/Modify
 
@@ -144,6 +270,18 @@ helm-task-service: {}
 | `plugin/system/src/commands/config/validate.ts` | Validate config against schemas |
 | `plugin/system/src/commands/config/diff.ts` | Show differences between environments |
 
+### New Files (Helm Skills)
+
+| File | Purpose |
+|------|---------|
+| `plugin/skills/helm-standards/SKILL.md` | Standards for Helm charts |
+| `plugin/skills/helm-scaffolding/SKILL.md` | Helm scaffolding skill |
+| `plugin/skills/helm-scaffolding/templates/Chart.yaml` | Chart template |
+| `plugin/skills/helm-scaffolding/templates/values.yaml` | Default values template |
+| `plugin/skills/helm-scaffolding/templates/templates/deployment.yaml` | Deployment template |
+| `plugin/skills/helm-scaffolding/templates/templates/service.yaml` | Service template |
+| `plugin/skills/helm-scaffolding/templates/templates/configmap.yaml` | ConfigMap template |
+
 ### New Files (Config Command & Skill)
 
 | File | Purpose |
@@ -161,24 +299,23 @@ helm-task-service: {}
 
 | File | Purpose |
 |------|---------|
-| `tests/unit/commands/config/generate.test.ts` | Config merge logic tests |
-| `tests/unit/commands/config/validate.test.ts` | Schema validation tests |
-| `tests/unit/commands/config/diff.test.ts` | Diff output tests |
-| `tests/integration/config-scaffolding.test.ts` | Config component scaffolding tests |
-| `tests/integration/backend-config.test.ts` | Backend config loading tests |
-| `tests/integration/project-init-config.test.ts` | Project init with config tests |
-| `tests/snapshots/config-templates.test.ts` | Template snapshot tests |
-| `tests/snapshots/generated-config.test.ts` | Generated config snapshot tests |
-| `tests/fixtures/config/` | Test fixtures directory |
+| `tests/src/tests/unit/commands/config/generate.test.ts` | Config merge logic tests |
+| `tests/src/tests/unit/commands/config/validate.test.ts` | Schema validation tests |
+| `tests/src/tests/unit/commands/config/diff.test.ts` | Diff output tests |
+| `tests/src/tests/integration/config-scaffolding.test.ts` | Config component scaffolding tests |
+| `tests/src/tests/integration/backend-config.test.ts` | Backend config loading tests |
+| `tests/src/tests/workflows/sdd-init-config.test.ts` | Project init with config tests |
+| `tests/src/fixtures/config/` | Test fixtures directory |
 
 ### Modifications
 
 | File | Changes |
 |------|---------|
-| `plugin/skills/project-scaffolding/` | Remove `config/` from root, add `components/config/` |
+| `plugin/skills/project-scaffolding/` | Remove `config/` from root template |
 | `plugin/skills/project-scaffolding/templates/config/` | **DELETE** - moved to config-scaffolding |
+| `plugin/skills/scaffolding/SKILL.md` | Add config-scaffolding to orchestration (call first) |
 | `plugin/skills/backend-scaffolding/` | Remove dotenv, use config from `SDD_CONFIG_PATH` |
-| `plugin/skills/project-settings/SKILL.md` | Add `config` as valid type (singleton, mandatory) |
+| `plugin/skills/project-settings/SKILL.md` | Add `config` as valid type (singleton, mandatory); remove "config is not a component" note |
 | `plugin/commands/sdd-init.md` | Include config component in sdd-settings.yaml |
 | `docs/getting-started.md` | Add config section, update structure diagram |
 | `docs/components.md` | Add config component type documentation |
@@ -288,17 +425,31 @@ global: {}  # Reserved for future cross-cutting concerns
 **1.7 templates/types/index.ts**
 ```typescript
 // Re-export all config types for easy importing
-// Users add exports as they create component-specific types
-export type { ServerConfig } from './server';
+// Add exports as you create component-specific types
+
+// Base config type - all components can use this
+export type BaseConfig = Readonly<Record<string, unknown>>;
+
+// Component-specific types (uncomment/add as needed)
+// export type { ServerConfig } from './server';
+// export type { FrontendConfig } from './frontend';
 ```
 
-**1.8 templates/types/server.ts**
+**1.8 templates/types/server.ts** (created only when server component exists)
 ```typescript
-// Minimal starting point - users extend as needed
-export type ServerConfig = Readonly<Record<string, unknown>>;
+// Server config type - extend as needed
+export type ServerConfig = Readonly<{
+  port?: number;
+  host?: string;
+  database?: {
+    host?: string;
+    port?: number;
+    pool?: number;
+  };
+}>;
 ```
 
-**Note:** Types start as `Record<string, unknown>`. Users define specific properties as their config evolves. Components import types via workspace package `@{{PROJECT_NAME}}/config/types`.
+**Note:** Types start minimal. The `index.ts` exports `BaseConfig` unconditionally; component-specific types are added as components are scaffolded. Components import types via workspace package `@{{PROJECT_NAME}}/config/types`.
 
 ---
 
@@ -436,36 +587,209 @@ Update scaffolding templates to:
 
 ---
 
-### Phase 4: Helm Integration
+### Phase 4: Helm Standards Skill
 
-**4.1 Helm templates use config sections**
+Create `plugin/skills/helm-standards/SKILL.md` - minimal standards for Helm charts.
 
-The helm-scaffolding skill creates templates that:
-- Mount config as a ConfigMap
-- Set `SDD_CONFIG_PATH` env var pointing to the mounted file
+```markdown
+# Helm Standards Skill
+
+Standards for Helm charts in SDD projects.
+
+## Values File Conventions
+
+| File | Purpose |
+|------|---------|
+| `values.yaml` | Default values (development-safe) |
+| `values-{env}.yaml` | Environment overrides (local, staging, production) |
+
+## Required Values
 
 ```yaml
-# helm-{name}/templates/deployment.yaml (scaffolded)
-spec:
-  containers:
-    - name: {{ .Release.Name }}
-      env:
-        - name: SDD_CONFIG_PATH
-          value: /app/config/config.yaml
-      volumeMounts:
-        - name: config
-          mountPath: /app/config
-          readOnly: true
-  volumes:
-    - name: config
-      configMap:
-        name: {{ .Release.Name }}-config
+# Every Helm chart must define:
+nodeEnv: development          # Infrastructure: NODE_ENV for libraries
+config: {}                    # Application config (from config component)
 ```
 
-**4.2 ConfigMap template**
+## Environment Variables
+
+| Var | Source | Purpose |
+|-----|--------|---------|
+| `NODE_ENV` | `.Values.nodeEnv` | Library behavior (Express caching, etc.) |
+| `SDD_CONFIG_PATH` | Static `/app/config/config.yaml` | Path to mounted config |
+
+## Config Injection Pattern
+
+Config is mounted via ConfigMap:
 
 ```yaml
-# helm-{name}/templates/configmap.yaml (scaffolded)
+# templates/configmap.yaml
+data:
+  config.yaml: |
+    {{- toYaml .Values.config | nindent 4 }}
+```
+
+```yaml
+# templates/deployment.yaml
+volumeMounts:
+  - name: config
+    mountPath: /app/config
+    readOnly: true
+volumes:
+  - name: config
+    configMap:
+      name: {{ .Release.Name }}-config
+```
+
+## Secret References
+
+Config contains secret **names**, not values:
+
+```yaml
+config:
+  database:
+    passwordSecret: "my-db-credentials"  # K8s Secret name
+```
+
+Deployment maps to actual secret:
+
+```yaml
+env:
+  - name: DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: {{ .Values.config.database.passwordSecret }}
+        key: password
+```
+```
+
+---
+
+### Phase 5: Helm Scaffolding Skill
+
+Create `plugin/skills/helm-scaffolding/SKILL.md` and minimal templates.
+
+**5.1 SKILL.md**
+
+```markdown
+# Helm Scaffolding Skill
+
+Scaffold Helm chart structure for SDD components.
+
+## Output Structure
+
+```
+components/helm-{name}/
+├── Chart.yaml
+├── values.yaml              # Defaults (nodeEnv: development)
+├── values-local.yaml        # Local overrides (if needed)
+└── templates/
+    ├── deployment.yaml
+    ├── service.yaml
+    └── configmap.yaml
+```
+
+## Template Variables
+
+| Variable | Description |
+|----------|-------------|
+| `{{CHART_NAME}}` | Helm chart name |
+| `{{CHART_DESCRIPTION}}` | Chart description |
+| `{{APP_VERSION}}` | Application version |
+```
+
+**5.2 templates/Chart.yaml**
+
+```yaml
+apiVersion: v2
+name: {{CHART_NAME}}
+description: {{CHART_DESCRIPTION}}
+type: application
+version: 0.1.0
+appVersion: "{{APP_VERSION}}"
+```
+
+**5.3 templates/values.yaml**
+
+```yaml
+# Default values - safe for development
+nodeEnv: development
+
+# Replica count
+replicaCount: 1
+
+# Container image
+image:
+  repository: {{CHART_NAME}}
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 3000
+
+# Application config (populated at deploy time)
+config: {}
+```
+
+**5.4 templates/templates/deployment.yaml**
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            - name: NODE_ENV
+              value: {{ .Values.nodeEnv }}
+            - name: SDD_CONFIG_PATH
+              value: /app/config/config.yaml
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}-config
+```
+
+**5.5 templates/templates/service.yaml**
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+  selector:
+    app: {{ .Release.Name }}
+```
+
+**5.6 templates/templates/configmap.yaml**
+
+```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -475,11 +799,34 @@ data:
     {{- toYaml .Values.config | nindent 4 }}
 ```
 
-**Note:** How users populate `.Values.config` at deploy time is outside plugin scope. Users can use `--set-file`, values files, or CI/CD tooling.
+---
+
+### Phase 6: Helm Integration
+
+Wire up helm-scaffolding with config system.
+
+**6.1 Update scaffolding skill**
+
+Add helm-scaffolding to the orchestration in `plugin/skills/scaffolding/SKILL.md`.
+
+**6.2 Deployment workflow**
+
+```bash
+# Generate config for production
+sdd-system config generate --env production --component server-task-service \
+  --output helm-values-config.yaml
+
+# Deploy with config
+helm install my-release ./components/helm-task-service \
+  -f values-production.yaml \
+  --set-file config=helm-values-config.yaml
+```
+
+**Note:** How users populate `.Values.config` at deploy time is flexible - `--set-file`, values files, or CI/CD tooling.
 
 ---
 
-### Phase 5: Config Command & Standards Skill
+### Phase 7: Config Command & Standards Skill
 
 **5.1 /sdd-config command**
 
@@ -589,20 +936,26 @@ sdd-system config diff local production
 1. **Phase 1**: Config component scaffolds correctly with all templates
 2. **Phase 2**: Backend component builds without dotenv, uses config via workspace import
 3. **Phase 3**: `sdd-init` creates config component with sections for declared components
-4. **Phase 4**: Helm templates mount config via ConfigMap and set `SDD_CONFIG_PATH`
-5. **Phase 5**: `/sdd-config` command works, `sdd-system config` subcommands function
-6. **Phase 6**: Documentation complete, developer workflow is clear and actionable
-7. **Phase 7**: All tests pass, no regressions in existing functionality
+4. **Phase 4**: Helm standards skill created with conventions documented
+5. **Phase 5**: Helm scaffolding skill creates valid chart structure
+6. **Phase 6**: Helm chart integrates with config system (ConfigMap, env vars)
+7. **Phase 7**: `/sdd-config` command works, `sdd-system config` subcommands function
+8. **Phase 8**: Documentation complete, developer workflow is clear and actionable
+9. **Phase 9**: All tests pass, no regressions in existing functionality
 
 ## Environment Variables
 
-**Single allowed env var:**
+**Config env var:**
 
 | Var | Purpose | Required |
 |-----|---------|----------|
-| `SDD_CONFIG_PATH` | Absolute path to config file | Yes |
+| `SDD_CONFIG_PATH` | Absolute path to config file | Yes (servers) |
 
-**No other env vars.** All configuration comes from the file at `SDD_CONFIG_PATH`.
+**All application configuration** comes from the file at `SDD_CONFIG_PATH`.
+
+**Infrastructure env vars** (not config, set in deployment):
+- `NODE_ENV=production` - Set statically in Helm deployment template for performance
+- These are not part of config YAML - they're deployment infrastructure
 
 ### Local Development
 
@@ -657,7 +1010,7 @@ Actual secrets managed via `external-secrets` operator (syncs from Vault/AWS Sec
 
 ---
 
-## Phase 6: Documentation
+## Phase 8: Documentation
 
 ### 6.1 Developer Workflow Guide
 
@@ -703,15 +1056,15 @@ Add `/sdd-config` to `docs/commands.md`:
 
 ---
 
-## Phase 7: Testing
+## Phase 9: Testing
 
 ### 7.1 Unit Tests (sdd-system)
 
 | Test File | Purpose |
 |-----------|---------|
-| `tests/unit/commands/config/generate.test.ts` | Config merge logic |
-| `tests/unit/commands/config/validate.test.ts` | Schema validation |
-| `tests/unit/commands/config/diff.test.ts` | Diff output |
+| `tests/src/tests/unit/commands/config/generate.test.ts` | Config merge logic |
+| `tests/src/tests/unit/commands/config/validate.test.ts` | Schema validation |
+| `tests/src/tests/unit/commands/config/diff.test.ts` | Diff output |
 
 **Test cases for generate:**
 - Merges default → env correctly
@@ -736,9 +1089,9 @@ Add `/sdd-config` to `docs/commands.md`:
 
 | Test File | Purpose |
 |-----------|---------|
-| `tests/integration/config-scaffolding.test.ts` | Config component scaffolds correctly |
-| `tests/integration/backend-config.test.ts` | Backend loads config from YAML |
-| `tests/integration/project-init-config.test.ts` | sdd-init includes config component |
+| `tests/src/tests/integration/config-scaffolding.test.ts` | Config component scaffolds correctly |
+| `tests/src/tests/integration/backend-config.test.ts` | Backend loads config from YAML |
+| `tests/src/tests/workflows/sdd-init-config.test.ts` | sdd-init includes config component |
 
 **Test cases for scaffolding:**
 - Creates all expected files (`package.json`, `tsconfig.json`, etc.)
@@ -762,8 +1115,8 @@ Add `/sdd-config` to `docs/commands.md`:
 
 | Test File | Purpose |
 |-----------|---------|
-| `tests/snapshots/config-templates.test.ts` | Template file contents |
-| `tests/snapshots/generated-config.test.ts` | Generated config output |
+| `tests/src/tests/unit/config/templates.test.ts` | Template file contents (snapshots) |
+| `tests/src/tests/unit/config/generate.test.ts` | Generated config output (snapshots) |
 
 **Snapshot what:**
 - All scaffolding template files
@@ -786,10 +1139,10 @@ Add `/sdd-config` to `docs/commands.md`:
 
 ### 7.5 Test Fixtures
 
-Create fixtures in `tests/fixtures/config/`:
+Create fixtures in `tests/src/fixtures/config/`:
 
 ```
-tests/fixtures/config/
+tests/src/fixtures/config/
 ├── valid-project/
 │   └── components/
 │       └── config/
@@ -815,4 +1168,11 @@ tests/fixtures/config/
 
 ## Dependencies
 
-None - this task can proceed independently.
+None - this task is self-contained.
+
+## Follow-Up Tasks
+
+After this plan is complete, create tasks to improve:
+- `helm-scaffolding` - Add more template patterns (ingress, HPA, etc.)
+- `helm-standards` - Add advanced patterns (blue-green, canary, etc.)
+- `config-scaffolding` - Schema-to-type generation tooling
