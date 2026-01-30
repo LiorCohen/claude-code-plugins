@@ -24,6 +24,24 @@ Agents are severely outdated and lacking depth. Need comprehensive review:
 
 ## Planned
 
+### 62. CRITICAL: Consolidate all plugin TypeScript into unified CLI system
+**Priority: CRITICAL - Major Refactor**
+
+Create a new `plugin/system/` directory containing a unified TypeScript CLI tool that consolidates all scripting functionality:
+- Single entry point CLI tool for all plugin operations
+- Consolidates functionality currently scattered across skills, agents, commands, hooks
+- Unified tsconfig, build process, and dependency management
+- Subcommands for different operations (e.g., `sdd-system scaffold`, `sdd-system validate`, etc.)
+- Replace shell scripts with TypeScript equivalents where possible
+- Consistent error handling, logging, and output formatting
+- Type-safe interfaces between components
+- Single source of truth for shared utilities and helpers
+- Makes the plugin more maintainable, testable, and extensible
+
+**Supersedes:** #58 (shell→TS), #61 (consolidate TS files)
+
+**Plan:** [plans/pending/PLAN-task-62-unified-cli-system.md](plans/pending/PLAN-task-62-unified-cli-system.md)
+
 ---
 
 ## Pending
