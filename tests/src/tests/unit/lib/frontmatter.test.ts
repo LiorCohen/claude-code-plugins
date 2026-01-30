@@ -9,8 +9,8 @@
 import { describe, expect, it } from 'vitest';
 import { PLUGIN_DIR, joinPath, readFile } from '../../../lib';
 
-// Import the actual functions from the plugin's scripts/lib
-const FRONTMATTER_PATH = joinPath(PLUGIN_DIR, 'scripts', 'lib', 'frontmatter.ts');
+// Import the actual functions from the plugin's system/src/lib
+const FRONTMATTER_PATH = joinPath(PLUGIN_DIR, 'system', 'src', 'lib', 'frontmatter.ts');
 
 // Since we can't directly import TypeScript from another project,
 // we'll test by evaluating the functions' logic patterns.
@@ -328,7 +328,7 @@ Different content.`;
  * WHY: Verify the actual source file exists and has expected structure.
  */
 describe('frontmatter.ts source file', () => {
-  it('exists in plugin scripts/lib', () => {
+  it('exists in plugin system/src/lib', () => {
     const content = readFile(FRONTMATTER_PATH);
     expect(content).toBeDefined();
     expect(content.length).toBeGreaterThan(0);

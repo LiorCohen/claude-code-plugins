@@ -21,7 +21,7 @@ import {
   runScaffolding,
 } from '../../../lib';
 
-const SCAFFOLDING_SCRIPT = joinPath(SKILLS_DIR, 'scaffolding', 'scaffolding.ts');
+const SCAFFOLDING_SCRIPT = joinPath(PLUGIN_DIR, 'system', 'src', 'commands', 'scaffolding', 'project.ts');
 
 /**
  * WHY: The scaffolding script is the actual implementation that generates
@@ -34,7 +34,7 @@ describe('Scaffolding Script Database Support', () => {
    * type. Without these references, 'database' won't be recognized as
    * a valid component during project generation.
    */
-  it('scaffolding.ts references database component', () => {
+  it('project.ts references database component', () => {
     const content = readFile(SCAFFOLDING_SCRIPT);
 
     expect(content).toContain('database');
@@ -44,16 +44,15 @@ describe('Scaffolding Script Database Support', () => {
   /**
    * WHY: The scaffolding script must create the expected directory structure.
    * Without these paths, the generated database component won't have
-   * migrations, seeds, or scripts directories.
+   * migrations and seeds directories.
    */
-  it('scaffolding.ts creates database directories', () => {
+  it('project.ts creates database directories', () => {
     const content = readFile(SCAFFOLDING_SCRIPT);
 
     // Database directories are now dynamically generated from component name
     expect(content).toContain('databaseComponents');
     expect(content).toContain('migrations');
     expect(content).toContain('seeds');
-    expect(content).toContain('scripts');
   });
 });
 
@@ -107,10 +106,7 @@ describe('Scaffolding Integration', () => {
     expect(fileExists(joinPath(dbDir, 'README.md'))).toBe(true);
     expect(isDirectory(joinPath(dbDir, 'migrations'))).toBe(true);
     expect(isDirectory(joinPath(dbDir, 'seeds'))).toBe(true);
-    expect(isDirectory(joinPath(dbDir, 'scripts'))).toBe(true);
-    expect(fileExists(joinPath(dbDir, 'scripts', 'migrate.sh'))).toBe(true);
-    expect(fileExists(joinPath(dbDir, 'scripts', 'seed.sh'))).toBe(true);
-    expect(fileExists(joinPath(dbDir, 'scripts', 'reset.sh'))).toBe(true);
+    // Note: scripts/ directory no longer created - commands use sdd-system CLI
   });
 
   /**

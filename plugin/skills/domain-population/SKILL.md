@@ -41,8 +41,8 @@ cat > /tmp/sdd-domain-config.json << 'EOF'
 }
 EOF
 
-# 2. Run the domain population script
-npx ts-node --esm <path-to-plugin>/skills/domain-population/domain-population.ts --config /tmp/sdd-domain-config.json
+# 2. Run the domain population command
+node --enable-source-maps <path-to-plugin>/system/dist/cli.js scaffolding domain --config /tmp/sdd-domain-config.json
 
 # 3. Clean up config file
 rm /tmp/sdd-domain-config.json

@@ -8,21 +8,21 @@
 import { describe, expect, it } from 'vitest';
 import { PLUGIN_DIR, joinPath, readFile } from '../../../lib';
 
-const GENERATE_SNAPSHOT_PATH = joinPath(PLUGIN_DIR, 'scripts', 'generate-snapshot.ts');
+const GENERATE_SNAPSHOT_PATH = joinPath(PLUGIN_DIR, 'system', 'src', 'commands', 'spec', 'generate-snapshot.ts');
 
 /**
  * WHY: Verify the script exists and has expected structure.
  */
 describe('generate-snapshot.ts source file', () => {
-  it('exists in plugin scripts directory', () => {
+  it('exists in plugin system/src/commands/spec', () => {
     const content = readFile(GENERATE_SNAPSHOT_PATH);
     expect(content).toBeDefined();
     expect(content.length).toBeGreaterThan(0);
   });
 
-  it('defines ActiveSpec interface', () => {
+  it('imports ActiveSpec type from types module', () => {
     const content = readFile(GENERATE_SNAPSHOT_PATH);
-    expect(content).toContain('interface ActiveSpec');
+    expect(content).toContain("import type { ActiveSpec } from '../../types/spec.js'");
   });
 
   it('defines generateSnapshot function', () => {
@@ -32,7 +32,7 @@ describe('generate-snapshot.ts source file', () => {
 
   it('filters by active status', () => {
     const content = readFile(GENERATE_SNAPSHOT_PATH);
-    expect(content).toContain("status'] === 'active'");
+    expect(content).toContain("['status'] === 'active'");
   });
 
   it('extracts overview from specs', () => {

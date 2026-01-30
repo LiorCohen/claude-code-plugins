@@ -147,56 +147,34 @@ describe('Database Seeds Templates', () => {
 });
 
 /**
- * WHY: Shell scripts provide the actual implementation of npm run commands.
- * They handle database connections and execute SQL files.
+ * WHY: Database operations are now handled by the sdd-system CLI.
+ * The package.json scripts call CLI commands instead of shell scripts.
+ * This provides type-safe, testable implementations.
  */
-describe('Database Scripts Templates', () => {
+describe('Database CLI Integration', () => {
   /**
-   * WHY: Each npm script (migrate, seed, reset) needs a corresponding
-   * shell script. Missing scripts break the npm run commands.
+   * WHY: package.json scripts should use sdd-system CLI commands
+   * instead of local shell scripts for better maintainability.
    */
-  it('scripts directory exists with all management scripts', () => {
-    const scriptsDir = joinPath(DATABASE_TEMPLATES_DIR, 'scripts');
-    expect(fileExists(scriptsDir)).toBe(true);
-    expect(isDirectory(scriptsDir)).toBe(true);
+  it('package.json uses sdd-system CLI commands', () => {
+    const packageJson = joinPath(DATABASE_TEMPLATES_DIR, 'package.json');
+    const content = readFile(packageJson);
 
-    expect(fileExists(joinPath(scriptsDir, 'migrate.sh'))).toBe(true);
-    expect(fileExists(joinPath(scriptsDir, 'seed.sh'))).toBe(true);
-    expect(fileExists(joinPath(scriptsDir, 'reset.sh'))).toBe(true);
+    expect(content).toContain('sdd-system database setup');
+    expect(content).toContain('sdd-system database migrate');
+    expect(content).toContain('sdd-system database seed');
+    expect(content).toContain('sdd-system database reset');
+    expect(content).toContain('sdd-system database teardown');
   });
 
   /**
-   * WHY: Proper shebang (#!/bin/bash) ensures scripts run in bash.
-   * set -e makes scripts fail on first error, preventing silent failures.
+   * WHY: The CLI commands should use {{COMPONENT_NAME}} variable
+   * so each database component can be managed independently.
    */
-  it('migrate.sh has proper shebang and set -e', () => {
-    const migrateScript = joinPath(DATABASE_TEMPLATES_DIR, 'scripts', 'migrate.sh');
-    const content = readFile(migrateScript);
+  it('package.json uses {{COMPONENT_NAME}} variable for CLI commands', () => {
+    const packageJson = joinPath(DATABASE_TEMPLATES_DIR, 'package.json');
+    const content = readFile(packageJson);
 
-    expect(content.startsWith('#!/bin/bash')).toBe(true);
-    expect(content).toContain('set -e');
-  });
-
-  /**
-   * WHY: Same requirements as migrate.sh - proper execution environment
-   * and fail-fast behavior for reliable operations.
-   */
-  it('seed.sh has proper shebang and set -e', () => {
-    const seedScript = joinPath(DATABASE_TEMPLATES_DIR, 'scripts', 'seed.sh');
-    const content = readFile(seedScript);
-
-    expect(content.startsWith('#!/bin/bash')).toBe(true);
-    expect(content).toContain('set -e');
-  });
-
-  /**
-   * WHY: reset.sh is destructive - it drops and recreates the database.
-   * A safety prompt prevents accidental data loss in production.
-   */
-  it('reset.sh has a safety confirmation prompt', () => {
-    const resetScript = joinPath(DATABASE_TEMPLATES_DIR, 'scripts', 'reset.sh');
-    const content = readFile(resetScript);
-
-    expect(content.includes('WARNING') || content.includes('Are you sure')).toBe(true);
+    expect(content).toContain('{{COMPONENT_NAME}}');
   });
 });

@@ -8,7 +8,7 @@
 import { describe, expect, it } from 'vitest';
 import { PLUGIN_DIR, joinPath, readFile } from '../../../lib';
 
-const VALIDATE_SPEC_PATH = joinPath(PLUGIN_DIR, 'scripts', 'validate-spec.ts');
+const VALIDATE_SPEC_PATH = joinPath(PLUGIN_DIR, 'system', 'src', 'commands', 'spec', 'validate.ts');
 
 // Required fields as defined in the script
 const REQUIRED_FIELDS = ['title', 'status', 'domain', 'issue', 'created', 'updated'];
@@ -19,7 +19,7 @@ const PLACEHOLDER_ISSUES = ['PROJ-XXX', '[PROJ-XXX]', 'TODO', '', '{{ISSUE}}'];
  * WHY: Verify the script exists and has expected structure.
  */
 describe('validate-spec.ts source file', () => {
-  it('exists in plugin scripts directory', () => {
+  it('exists in plugin system/src/commands/spec', () => {
     const content = readFile(VALIDATE_SPEC_PATH);
     expect(content).toBeDefined();
     expect(content.length).toBeGreaterThan(0);

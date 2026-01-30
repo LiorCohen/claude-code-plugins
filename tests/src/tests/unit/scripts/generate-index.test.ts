@@ -8,21 +8,21 @@
 import { describe, expect, it } from 'vitest';
 import { PLUGIN_DIR, joinPath, readFile } from '../../../lib';
 
-const GENERATE_INDEX_PATH = joinPath(PLUGIN_DIR, 'scripts', 'generate-index.ts');
+const GENERATE_INDEX_PATH = joinPath(PLUGIN_DIR, 'system', 'src', 'commands', 'spec', 'generate-index.ts');
 
 /**
  * WHY: Verify the script exists and has expected structure.
  */
 describe('generate-index.ts source file', () => {
-  it('exists in plugin scripts directory', () => {
+  it('exists in plugin system/src/commands/spec', () => {
     const content = readFile(GENERATE_INDEX_PATH);
     expect(content).toBeDefined();
     expect(content.length).toBeGreaterThan(0);
   });
 
-  it('defines SpecEntry interface', () => {
+  it('imports SpecEntry type from types module', () => {
     const content = readFile(GENERATE_INDEX_PATH);
-    expect(content).toContain('interface SpecEntry');
+    expect(content).toContain("import type { SpecEntry } from '../../types/spec.js'");
   });
 
   it('defines generateIndex function', () => {

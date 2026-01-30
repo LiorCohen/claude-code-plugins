@@ -1,4 +1,10 @@
 {
+  "private": true,
+  "workspaces": ["plugin/system", "tests"],
+  "scripts": {
+    "build:plugin": "npm run build -w plugin/system",
+    "typecheck:plugin": "npm run typecheck -w plugin/system"
+  },
   "devDependencies": {
     "@types/node": "^22.0.0",
     "ts-node": "^10.9.2",

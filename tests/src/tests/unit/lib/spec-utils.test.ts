@@ -17,7 +17,7 @@ import {
   mkdtemp,
 } from '../../../lib';
 
-const SPEC_UTILS_PATH = joinPath(PLUGIN_DIR, 'scripts', 'lib', 'spec-utils.ts');
+const SPEC_UTILS_PATH = joinPath(PLUGIN_DIR, 'system', 'src', 'lib', 'spec-utils.ts');
 
 /**
  * WHY: isExcludedFile determines which files are skipped during spec processing.
@@ -305,7 +305,7 @@ describe('directoryExists', () => {
  * WHY: Verify the actual source file exists and has expected structure.
  */
 describe('spec-utils.ts source file', () => {
-  it('exists in plugin scripts/lib', () => {
+  it('exists in plugin system/src/lib', () => {
     const content = readFile(SPEC_UTILS_PATH);
     expect(content).toBeDefined();
     expect(content.length).toBeGreaterThan(0);

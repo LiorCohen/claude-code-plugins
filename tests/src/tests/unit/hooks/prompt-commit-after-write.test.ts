@@ -10,15 +10,16 @@
 import { describe, expect, it } from 'vitest';
 import { runCommand, PLUGIN_DIR, joinPath } from '../../../lib';
 
-const HOOK_PATH = joinPath(PLUGIN_DIR, 'hooks', 'prompt-commit-after-write.sh');
+const HOOK_PATH = joinPath(PLUGIN_DIR, 'hooks', 'hook-runner.sh');
 
 /**
  * Helper to run the hook with given input JSON.
  */
 const runHook = async (input: object) => {
-  return runCommand('bash', [HOOK_PATH], {
+  return runCommand('bash', [HOOK_PATH, 'prompt-commit'], {
     input: JSON.stringify(input),
     timeout: 5000,
+    env: { ...process.env, CLAUDE_PLUGIN_ROOT: PLUGIN_DIR },
   });
 };
 

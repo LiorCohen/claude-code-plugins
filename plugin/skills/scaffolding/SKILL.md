@@ -46,8 +46,8 @@ cat > /tmp/sdd-scaffold-config.json << 'EOF'
 }
 EOF
 
-# 2. Run the scaffold script
-npx ts-node --esm <path-to-plugin>/skills/scaffolding/scaffolding.ts --config /tmp/sdd-scaffold-config.json
+# 2. Run the scaffold command
+node --enable-source-maps <path-to-plugin>/system/dist/cli.js scaffolding project --config /tmp/sdd-scaffold-config.json
 
 # 3. Clean up config file
 rm /tmp/sdd-scaffold-config.json
@@ -215,10 +215,9 @@ skills/
 │   └── templates/            # openapi.yaml, package.json
 ├── database-scaffolding/
 │   ├── SKILL.md
-│   └── templates/            # migrations/, seeds/, scripts/
+│   └── templates/            # migrations/, seeds/
 └── scaffolding/
-    ├── SKILL.md              # This file (orchestrator)
-    └── scaffolding.ts        # TypeScript script
+    └── SKILL.md              # This file (orchestrator)
 ```
 
 ## After Scaffolding

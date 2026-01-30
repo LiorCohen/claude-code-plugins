@@ -17,11 +17,11 @@ The directory path depends on the component name as defined in `sdd-settings.yam
 
 ```
 components/contract[-<name>]/
-├── package.json          # Build scripts for type generation
+├── package.json          # Build scripts (call sdd-system CLI)
 ├── openapi.yaml          # OpenAPI 3.0 specification
 ├── .gitignore            # Ignores generated/ directory
 └── generated/            # Generated types (git-ignored)
-    └── types.ts          # Generated after npm run generate:types
+    └── api-types.ts      # Generated after npm run generate:types
 ```
 
 ## OpenAPI Template
@@ -41,9 +41,17 @@ The contract component generates TypeScript types from the OpenAPI spec:
 ```bash
 cd components/contract  # path depends on component name
 npm run generate:types
+npm run validate        # Validate OpenAPI spec with Spectral
 ```
 
-This creates `generated/types.ts` inside the contract component. The contract is published as a workspace package — server and webapp components consume types by declaring a workspace dependency and importing:
+Or use the CLI directly:
+
+```bash
+sdd-system contract generate-types <component-name>
+sdd-system contract validate <component-name>
+```
+
+This creates `generated/api-types.ts` inside the contract component. The contract is published as a workspace package — server and webapp components consume types by declaring a workspace dependency and importing:
 
 ```typescript
 import type { components } from '@project-name/contract';
@@ -60,17 +68,7 @@ type Greeting = components['schemas']['Greeting'];
 
 ## Usage
 
-Called programmatically by the scaffolding script:
-
-```python
-from contract_scaffolding import scaffold_contract
-
-scaffold_contract(
-    target_dir="/path/to/project",
-    project_name="my-app",
-    project_description="My application API",
-)
-```
+Called programmatically by the scaffolding system during project creation via `sdd-system scaffolding project`.
 
 ## Templates Location
 

@@ -24,23 +24,7 @@ Agents are severely outdated and lacking depth. Need comprehensive review:
 
 ## Planned
 
-### 62. CRITICAL: Consolidate all plugin TypeScript into unified CLI system
-**Priority: CRITICAL - Major Refactor**
-
-Create a new `plugin/system/` directory containing a unified TypeScript CLI tool that consolidates all scripting functionality:
-- Single entry point CLI tool for all plugin operations
-- Consolidates functionality currently scattered across skills, agents, commands, hooks
-- Unified tsconfig, build process, and dependency management
-- Subcommands for different operations (e.g., `sdd-system scaffold`, `sdd-system validate`, etc.)
-- Replace shell scripts with TypeScript equivalents where possible
-- Consistent error handling, logging, and output formatting
-- Type-safe interfaces between components
-- Single source of truth for shared utilities and helpers
-- Makes the plugin more maintainable, testable, and extensible
-
-**Supersedes:** #58 (shell→TS), #61 (consolidate TS files)
-
-**Plan:** [plans/pending/PLAN-task-62-unified-cli-system.md](plans/pending/PLAN-task-62-unified-cli-system.md)
+(No planned tasks - use `/tasks add` or `/tasks plan` to add items)
 
 ---
 
@@ -284,21 +268,6 @@ Add a command to view and manage SDD settings:
 - Show available configuration options with descriptions
 - Validate settings on save
 
-### 61. Consolidate plugin TypeScript files into single directory
-Consider consolidating all plugin-level TypeScript files into a single directory to simplify the structure:
-- Audit current TS file locations across the plugin
-- Evaluate benefits: simpler imports, unified tsconfig, easier navigation
-- Determine target structure (e.g., `plugin/src/` with subdirectories)
-- Plan migration path to avoid breaking changes
-- Update any build/tooling configurations accordingly
-
-### 58. Replace shell scripts with TypeScript
-Replace all shell scripts (`.sh` files) with TypeScript equivalents where possible:
-- Audit all shell scripts in the plugin (hooks, templates, utilities)
-- Convert to TypeScript using appropriate libraries (e.g., execa, fs-extra)
-- Benefits: type safety, better error handling, cross-platform compatibility
-- Keep shell scripts only where truly necessary (e.g., hook entry points that must be shell)
-- Ensure all existing functionality is preserved
 
 ### 52. Clean up .gitkeep and placeholder content during implementation
 When changes are implemented and actual content is added to directories, ensure that:
@@ -337,6 +306,9 @@ Investigate if there's a way to show a welcome prompt/message after plugin insta
 
 ## Merged
 
+### 61. Consolidate plugin TypeScript files → merged into #62
+### 58. Replace shell scripts with TypeScript → merged into #62
+
 ### 8. Multiple changes should be grouped as epics → merged into #6
 
 ### 28. Schema validation skill for marketplace → merged into #27
@@ -360,6 +332,39 @@ Investigate if there's a way to show a welcome prompt/message after plugin insta
 ---
 
 ## Completed
+
+### 62. Consolidate all plugin TypeScript into unified CLI system ✓
+**Completed: 2026-01-30**
+
+Created a new `plugin/system/` directory containing a unified TypeScript CLI tool that consolidates all plugin scripting functionality:
+- Single entry point CLI (`sdd-system`) with namespaced commands
+- **Namespaces:** scaffolding, spec, version, hook, database, contract
+- Migrated all TypeScript scripts from `plugin/scripts/` to unified location
+- Converted shell hook scripts to TypeScript (single `hook-runner.sh` wrapper remains)
+- Unified build process with npm workspaces
+- Type-safe command handlers with consistent error handling
+- JSON output mode for all commands
+- Source maps for debugging
+
+**Files Created:**
+- `plugin/system/` - New CLI package (~30 files)
+- `plugin/hooks/hook-runner.sh` - Thin shell wrapper for hooks
+- `plugin/commands/sdd-run.md` - Unified `/sdd-run` command
+- `plugin/system/src/lib/schema-validator.ts` - JSON Schema validation utility
+- JSON Schema definitions in all 6 command namespace index files
+
+**Files Deleted:**
+- `plugin/scripts/` directory (5 files)
+- `plugin/skills/scaffolding/scaffolding.ts`
+- `plugin/skills/domain-population/domain-population.ts`
+- `plugin/hooks/validate-sdd-writes.sh`
+- `plugin/hooks/prompt-commit-after-write.sh`
+- `plugin/package.json`
+- `plugin/tsconfig.json`
+
+**Supersedes:** #58 (shell→TS), #61 (consolidate TS files)
+
+**Plan:** [plans/completed/PLAN-task-62-unified-cli-system.md](plans/completed/PLAN-task-62-unified-cli-system.md)
 
 ### 49. Auto-commit to prevent data loss ✓
 **Completed: 2026-01-29**

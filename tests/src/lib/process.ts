@@ -4,7 +4,7 @@
  */
 
 import { spawn, type ChildProcess } from 'node:child_process';
-import { SKILLS_DIR } from './paths';
+import { PLUGIN_DIR } from './paths';
 
 export interface RunResult {
   readonly exitCode: number;
@@ -16,6 +16,7 @@ export interface RunOptions {
   readonly cwd?: string;
   readonly timeout?: number;
   readonly input?: string;
+  readonly env?: Readonly<Record<string, string | undefined>>;
 }
 
 /**
@@ -47,6 +48,7 @@ export const runCommand = async (
     const proc = spawn(cmd, [...args], {
       cwd: options.cwd,
       stdio: ['pipe', 'pipe', 'pipe'],
+      env: options.env ? { ...process.env, ...options.env } : process.env,
     });
 
     const stdoutCollector = createChunkCollector();
@@ -81,11 +83,11 @@ export const runCommand = async (
 };
 
 /**
- * Run the scaffolding script with ts-node.
+ * Run the scaffolding command via the sdd-system CLI.
  */
 export const runScaffolding = async (configPath: string, cwd: string): Promise<RunResult> => {
-  const scaffoldingScript = `${SKILLS_DIR}/scaffolding/scaffolding.ts`;
-  return runCommand('npx', ['ts-node', '--esm', scaffoldingScript, '--config', configPath], {
+  const cliPath = `${PLUGIN_DIR}/system/dist/cli.js`;
+  return runCommand('node', ['--enable-source-maps', cliPath, 'scaffolding', 'project', '--config', configPath], {
     cwd,
     timeout: 60000,
   });

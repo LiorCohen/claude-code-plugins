@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/validate-sdd-writes.sh"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/hook-runner.sh validate-write"
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/prompt-commit-after-write.sh"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/hook-runner.sh prompt-commit"
           }
         ]
       }

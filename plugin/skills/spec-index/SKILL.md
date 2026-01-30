@@ -6,34 +6,36 @@ description: Manage spec registry and generate snapshots.
 
 # Spec Index Skill
 
-## Scripts
+## Commands
 
-### generate-index.py
+The spec commands are available via the sdd-system CLI:
+
+### Generate Index
 
 Generates `specs/INDEX.md` from all spec files.
 
 ```bash
-python scripts/generate-index.py --specs-dir specs/
+sdd-system spec index --specs-dir specs/
 ```
 
-### generate-snapshot.py
+### Generate Snapshot
 
 Generates `specs/SNAPSHOT.md` compiling all active specs.
 
 ```bash
-python scripts/generate-snapshot.py --specs-dir specs/
+sdd-system spec snapshot --specs-dir specs/
 ```
 
-### validate-spec.py
+### Validate Spec
 
 Validates spec frontmatter and format.
 
 ```bash
 # Validate single spec
-python scripts/validate-spec.py changes/2026/01/21/my-change/SPEC.md
+sdd-system spec validate changes/2026/01/21/my-change/SPEC.md
 
 # Validate all specs
-python scripts/validate-spec.py --all --specs-dir specs/
+sdd-system spec validate --all --specs-dir specs/
 ```
 
 ---
@@ -103,13 +105,13 @@ This document represents the current active state of the product by compiling al
 ### After Creating a Spec
 
 1. Merge spec to main
-2. Run `generate-index.py` to update INDEX.md
-3. Run `generate-snapshot.py` to update SNAPSHOT.md
+2. Run `sdd-system spec index` to update INDEX.md
+3. Run `sdd-system spec snapshot` to update SNAPSHOT.md
 4. Commit the updated index and snapshot
 
 ### Before Release
 
-1. Run `validate-spec.py --all` to ensure all specs are valid
+1. Run `sdd-system spec validate --all` to ensure all specs are valid
 2. Review SNAPSHOT.md for completeness
 3. Verify all active specs have corresponding implementations
 
@@ -138,10 +140,10 @@ jobs:
           python-version: '3.11'
 
       - name: Validate all specs
-        run: python scripts/validate-spec.py --all --specs-dir specs/
+        run: npx sdd-system spec validate --all --specs-dir specs/
 
       - name: Check index is up-to-date
         run: |
-          python scripts/generate-index.py --specs-dir specs/
+          npx sdd-system spec index --specs-dir specs/
           git diff --exit-code specs/INDEX.md
 ```

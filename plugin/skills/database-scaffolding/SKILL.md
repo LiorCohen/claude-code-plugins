@@ -13,16 +13,12 @@ The directory path depends on the component name as defined in `sdd-settings.yam
 
 ```
 components/database[-<name>]/
-├── package.json              # npm scripts for database operations
+├── package.json              # npm scripts (call sdd-system CLI)
 ├── README.md                 # Component documentation
 ├── migrations/
 │   └── 001_initial_schema.sql
-├── seeds/
-│   └── 001_seed_data.sql
-└── scripts/
-    ├── migrate.sh            # Run all migrations
-    ├── seed.sh               # Run all seed files
-    └── reset.sh              # Drop, recreate, migrate, seed
+└── seeds/
+    └── 001_seed_data.sql
 ```
 
 ## Template Variables
@@ -41,18 +37,31 @@ Use when your project needs:
 
 ## Usage
 
-After scaffolding, the database component provides:
+After scaffolding, the database component provides npm scripts that call the sdd-system CLI:
 
 ```bash
 # From components/database/ (path depends on component name)
-npm run migrate   # Run all migrations in order
-npm run seed      # Run all seed files in order
-npm run reset     # Full reset: drop, create, migrate, seed
+npm run setup        # Deploy PostgreSQL to k8s
+npm run teardown     # Remove PostgreSQL from k8s
+npm run migrate      # Run all migrations in order
+npm run seed         # Run all seed files in order
+npm run reset        # Full reset: teardown + setup + migrate + seed
+npm run port-forward # Port forward to local
+npm run psql         # Open psql shell
+```
+
+Or use the CLI directly:
+
+```bash
+sdd-system database setup <component-name>
+sdd-system database migrate <component-name>
+sdd-system database seed <component-name>
+sdd-system database reset <component-name>
 ```
 
 ## Prerequisites
 
-The scripts require:
+The CLI commands require:
 - PostgreSQL 14+ (client tools: `psql`, `createdb`, `dropdb`)
 - Environment variables set:
   - `PGHOST` - Database host

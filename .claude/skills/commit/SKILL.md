@@ -32,9 +32,8 @@ For each affected plugin, check if version bump is needed:
 | `plugin/commands/` | All command `.md` files |
 | `plugin/skills/` | All skill `.md` files |
 | `plugin/templates/` | All template files |
-| `plugin/scripts/` | All script files |
+| `plugin/system/` | CLI system source files |
 | `plugin/.claude-plugin/` | Plugin manifest |
-| `plugin/QUICKSTART.md` | Plugin getting started guide |
 | `plugin/CLAUDE.md` | Plugin guidance for Claude |
 
 **Files That Do NOT Require Version Bump (Marketplace-Level):**
