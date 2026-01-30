@@ -13,7 +13,7 @@
 ## Skills
 
 - **commit** - Use for all commits (handles version bump + changelog)
-- **tasks** - Manage tasks and plans using `tasks/` directory
+- **tasks** - Manage tasks and plans using `.tasks/` directory
 - **plugin-testing-standards** - Follow when writing or modifying tests
 - **typescript-standards** - Follow when writing TypeScript code
 
@@ -31,8 +31,9 @@ sdd/
 │       └── typescript-standards/     # TypeScript coding standards
 ├── .claude-plugin/
 │   └── marketplace.json              # Marketplace manifest
-├── tasks/                               # Task data (TASKS.md + plans/)
-│   ├── TASKS.md                         # Backlog with all tasks
+├── .tasks/                              # Task data
+│   ├── INDEX.md                         # Task index (links to issues/)
+│   ├── issues/                          # Individual task files by status
 │   └── plans/                           # Implementation plans
 ├── plugin/                              # SDD plugin
 ├── tests/                               # Plugin tests

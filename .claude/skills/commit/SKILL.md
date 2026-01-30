@@ -113,7 +113,7 @@ Why this change was made (for significant changes).
 **Skip conditions:**
 - Changes only affect test files
 - Changes only affect marketplace-level skills (`.claude/skills/`)
-- Changes only affect task management (`tasks/`)
+- Changes only affect task management (`.tasks/`)
 - Trivial changes (typos, formatting)
 
 ### Step 5: Tasks & Plans Check
@@ -123,14 +123,14 @@ Why this change was made (for significant changes).
 **Check for task-related work:**
 
 1. **Is this commit completing a task?**
-   - Search `tasks/TASKS.md` for related task numbers
+   - Search `.tasks/INDEX.md` for related task numbers
    - If completing a task, ensure it will be moved to `## Completed` with:
      - Completion date (`**Completed: YYYY-MM-DD**`)
      - Summary of what was accomplished
      - Link to plan if one exists (`**Plan:** [plans/PLAN-task-N-slug.md](...)`)
 
 2. **Does a plan exist for this work?**
-   - Check `tasks/plans/` directory for related `PLAN-task-N-*.md` files
+   - Check `.tasks/plans/` directory for related `PLAN-task-N-*.md` files
    - If a plan exists and work is complete, update plan status to `## Status: COMPLETED ✓`
    - If a plan exists and work is partial, leave status as `IN PROGRESS`
 
@@ -141,9 +141,9 @@ Why this change was made (for significant changes).
 **Verification checklist:**
 
 ```
-□ If completing a task → tasks/TASKS.md updated (moved to Completed, date added)
+□ If completing a task → .tasks/INDEX.md updated (moved to Completed, date added)
 □ If plan exists → Plan status updated (COMPLETED or still IN PROGRESS)
-□ If follow-up needed → New task added to tasks/TASKS.md
+□ If follow-up needed → New task added to .tasks/INDEX.md
 □ If work not tracked → Consider adding a task for traceability
 ```
 
@@ -153,7 +153,7 @@ Why this change was made (for significant changes).
 
 **If tasks/plans need updating:**
 - Update them BEFORE proceeding to commit
-- Include `tasks/TASKS.md` and/or `tasks/plans/*.md` in the staged files
+- Include `.tasks/INDEX.md` and/or `.tasks/plans/*.md` in the staged files
 
 ### Step 6: Generate Commit Message
 
@@ -173,7 +173,7 @@ Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 - **Remove**: Deletion
 - **Refactor**: Code restructuring without behavior change
 - **Docs**: Documentation only
-- **Tasks**: Task management changes (adding, completing, updating tasks in `tasks/`)
+- **Tasks**: Task management changes (adding, completing, updating tasks in `.tasks/`)
 
 ### Step 7: Review and Confirm
 
@@ -281,7 +281,7 @@ Completing a task? → Update tasks/TASKS.md → Update plan status → Stage al
 8. **Wrong changelog file** - Update only `changelog/v{N}.md` (no root CHANGELOG.md)
 9. **Amending pushed commits** - NEVER amend commits that have been pushed to remote
 10. **Multiple changelog entries per commit** - Each commit = one changelog entry. Split if needed
-11. **Forgetting to update tasks/TASKS.md** - When completing a task, move it to Completed section before committing
+11. **Forgetting to update .tasks/INDEX.md** - When completing a task, move it to Completed section before committing
 12. **Stale plan status** - Update plan status to COMPLETED when work is done
 13. **Untracked work** - Significant work should have a corresponding task for traceability
 14. **Outdated documentation** - Plugin changes may require docs updates; run docs-writer agent to check
