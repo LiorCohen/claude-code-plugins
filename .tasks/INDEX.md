@@ -42,7 +42,6 @@ Task details in [issues/](issues/) | Plans in [plans/](plans/)
 
 ## High Priority
 
-- [#11](issues/high/11.md): Missing deeper config integration
 - [#17](issues/high/17.md): Plans should follow TDD with test review first
 - [#59](issues/high/59.md): Audit and update all agents for compatibility
 
@@ -82,6 +81,7 @@ Task details in [issues/](issues/) | Plans in [plans/](plans/)
 
 ## Complete
 
+- [#11](issues/complete/11.md): Missing deeper config integration ✓ (2026-01-30)
 - [#60](issues/complete/60.md): Standardize TypeScript imports and tsconfig ✓ (2026-01-30)
 - [#62](issues/complete/62.md): Unified CLI system ✓ (2026-01-30)
 - [#49](issues/complete/49.md): Auto-commit hook ✓ (2026-01-29)
