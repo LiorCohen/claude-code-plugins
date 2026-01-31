@@ -190,15 +190,16 @@ describe('Documentation Consistency', () => {
   });
 
   /**
-   * WHY: The planner agent designs project structure. It must know
+   * WHY: The planning skill designs project structure. It must know
    * about database components to include them in project plans.
+   * Note: The planner agent was removed and planning logic moved to skills.
    */
-  it('planner agent knows about database', () => {
-    const agentMd = joinPath(PLUGIN_DIR, 'agents', 'planner.md');
-    const content = readFile(agentMd);
+  it('planning skill knows about database', () => {
+    const planningSkill = joinPath(SKILLS_DIR, 'planning', 'SKILL.md');
+    const content = readFile(planningSkill);
 
-    expect(content).toContain('Database');
-    expect(content.toLowerCase()).toContain('database');
+    // Planning skill should mention database is handled by server component
+    expect(content.toLowerCase()).toContain('db');
   });
 
   /**

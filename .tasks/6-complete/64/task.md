@@ -2,13 +2,18 @@
 id: 64
 title: Refactor planning system architecture
 priority: high
-status: open
+status: complete
 created: 2026-01-31
+completed: 2026-01-31
 depends_on: []
 blocks: []
 ---
 
-# Task 64: Refactor planning system architecture
+# Task 64: Refactor planning system architecture ✓
+
+## Summary
+
+Major refactor of the planning system architecture establishing clear separation between skills (interactive planning) and agents (non-interactive execution). Removed `planner` and `spec-writer` agents, merging their responsibilities into `change-creation` skill. SPEC.md is now a thorough technical specification with domain updates and testing strategy defined upfront. PLAN.md focuses on execution with implementation state tracking for session resumption and resource usage tracking.
 
 ## Description
 

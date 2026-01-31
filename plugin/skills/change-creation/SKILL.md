@@ -1,6 +1,6 @@
 ---
 name: change-creation
-description: Create change specification and implementation plan with proper structure and frontmatter. Supports feature, bugfix, refactor, and epic types.
+description: Create change specification and implementation plan with dynamic phase generation. Supports feature, bugfix, refactor, and epic types.
 ---
 
 # Change Creation Skill
@@ -9,9 +9,37 @@ description: Create change specification and implementation plan with proper str
 
 Create a complete change specification package consisting of:
 - Change directory: `changes/YYYY/MM/DD/<change-name>/`
-- Specification: `SPEC.md` with proper frontmatter and type-specific sections
-- Implementation plan: `PLAN.md` with 6-phase structure
+- Specification: `SPEC.md` with proper frontmatter, type-specific sections, and domain updates
+- Implementation plan: `PLAN.md` with dynamically generated phases
 - INDEX.md update with new change entry
+
+## Key Principles
+
+### Skills vs Agents Separation
+
+| Context | Responsibility |
+|---------|----------------|
+| **Skills** (main context) | All planning, spec creation, domain docs - interactive, needs user input |
+| **Agents** (subagent) | Execution only - non-interactive, implements approved plans |
+
+This skill handles all spec and plan creation. Implementation agents only execute the approved plan.
+
+### Domain Documentation During Planning
+
+Domain documentation is specified **in SPEC.md during planning**, not discovered during implementation:
+- Glossary terms are explicitly listed
+- Definition specs are identified upfront
+- Architecture changes are noted
+
+Implementation simply executes these specifications.
+
+### Dynamic Phase Generation
+
+Plans are generated dynamically based on:
+1. Project components from `sdd-settings.yaml`
+2. Which components are affected by the change
+3. Dependency order between components
+4. Contextual agent assignment
 
 ## Input
 
@@ -26,11 +54,15 @@ Create a complete change specification package consisting of:
 | `user_stories` | No | List of user stories (feature type only) |
 | `acceptance_criteria` | No | List of acceptance criteria |
 | `api_endpoints` | No | List of API endpoints affected |
+| `glossary_terms` | No | Domain terms to add/update in glossary |
+| `domain_definitions` | No | Definition specs to create/update |
+| `architecture_updates` | No | Architecture doc updates needed |
 | `external_source` | No | Path to archived external spec (audit trail only) |
-| `source_content` | No | Full markdown content from external spec section to embed in generated spec |
+| `source_content` | No | Full markdown content from external spec section |
 | `decomposition_id` | No | UUID linking related changes |
 | `prerequisites` | No | List of prerequisite changes (for dependencies) |
 | `affected_files` | No | List of files affected (bugfix/refactor types) |
+| `affected_components` | No | List of component names from sdd-settings.yaml |
 | `root_cause` | No | Root cause description (bugfix type only) |
 | `refactor_goals` | No | List of refactoring goals (refactor type only) |
 | `child_changes` | No | List of child change names (epic type only) |
@@ -63,10 +95,11 @@ Returns a result with:
 2. Format as `YYYY/MM/DD`
 3. Full path: `changes/YYYY/MM/DD/<name>/`
 
-### Step 3: Read Plugin Version
+### Step 3: Read Plugin Version and Settings
 
 1. Read SDD plugin version from `.claude-plugin/plugin.json`
-2. Use for `sdd_version` frontmatter field
+2. Read project components from `sdd-settings.yaml`
+3. Identify affected components (from input or infer from description)
 
 ### Step 4: Create Change Directory
 
@@ -90,6 +123,9 @@ issue: <issue or "TBD">
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 sdd_version: <plugin_version>
+affected_components:
+  - <component-1>
+  - <component-2>
 external_source: <path>  # Only if provided
 decomposition_id: <uuid>  # Only if provided
 ---
@@ -99,10 +135,24 @@ decomposition_id: <uuid>  # Only if provided
 
 **For `type: feature`:**
 
+This is a **technical specification**. It must be thorough and self-sufficient - anyone reading this spec should fully understand the change without needing to reference other documents.
+
 ```markdown
 ## Overview
 
 <description>
+
+### Background
+
+> Why is this change needed? What problem does it solve?
+
+[Explain the context and motivation]
+
+### Current State
+
+> What exists today? What are the limitations?
+
+[Describe the current implementation or lack thereof]
 
 ## Original Requirements
 
@@ -116,46 +166,292 @@ decomposition_id: <uuid>  # Only if provided
 
 ## User Stories
 
-> Include if `user_stories` provided, otherwise use template
+> Who benefits and how?
 
 - As a [role], I want [capability] so that [benefit]
 - ...
 
-## Acceptance Criteria
+## Functional Requirements
 
-> Include if `acceptance_criteria` provided, otherwise use template
+> What the system must do. Be specific and complete.
 
-- [ ] Given [context], when [action], then [result]
+### FR1: [Requirement Name]
+
+**Description:** [Detailed description]
+
+**Behavior:**
+- When [condition], the system shall [action]
 - ...
+
+**Constraints:**
+- [Any limitations or rules]
+
+### FR2: [Requirement Name]
+
+...
+
+## Non-Functional Requirements
+
+> Performance, security, scalability, etc.
+
+| Requirement | Target | Measurement |
+|-------------|--------|-------------|
+| Response time | < 200ms p95 | API latency monitoring |
+| Availability | 99.9% | Uptime monitoring |
+| Throughput | 1000 req/s | Load testing |
+
+## Technical Design
+
+### Architecture
+
+> How does this fit into the system? Include diagrams if helpful.
+
+```
+[Component A] ---> [Component B] ---> [Database]
+       |
+       v
+[External Service]
+```
+
+### Data Model
+
+> Database schema changes, new tables, modified columns
+
+**New Tables:**
+
+```sql
+CREATE TABLE table_name (
+  id UUID PRIMARY KEY,
+  field_1 VARCHAR(255) NOT NULL,
+  field_2 TIMESTAMP DEFAULT NOW(),
+  -- ...
+);
+```
+
+**Modified Tables:**
+
+| Table | Column | Change | Reason |
+|-------|--------|--------|--------|
+| existing_table | new_column | ADD | [Why] |
+
+**Indexes:**
+
+| Table | Index | Columns | Type |
+|-------|-------|---------|------|
+| table_name | idx_field_1 | field_1 | btree |
+
+### Algorithms / Business Logic
+
+> Key algorithms or complex business rules
+
+**[Algorithm/Rule Name]:**
+
+1. Step 1: [Description]
+2. Step 2: [Description]
+3. ...
+
+**Edge Cases:**
+- [Edge case 1]: [How it's handled]
+- [Edge case 2]: [How it's handled]
 
 ## API Contract
 
-> Include if `api_endpoints` provided, otherwise use template
+> Complete API specification
 
 ### Endpoints
 
-| Method | Path | Description |
+| Method | Path | Description | Auth |
+|--------|------|-------------|------|
+| POST | /api/v1/resource | Create resource | Bearer |
+| GET | /api/v1/resource/:id | Get resource | Bearer |
+
+### Request/Response Schemas
+
+**POST /api/v1/resource**
+
+Request:
+```json
+{
+  "field_1": "string (required)",
+  "field_2": "number (optional, default: 0)"
+}
+```
+
+Response (201):
+```json
+{
+  "id": "uuid",
+  "field_1": "string",
+  "field_2": "number",
+  "created_at": "ISO8601"
+}
+```
+
+Error Responses:
+| Status | Code | Description |
 |--------|------|-------------|
-| METHOD | /path | Description |
+| 400 | VALIDATION_ERROR | Invalid input |
+| 401 | UNAUTHORIZED | Missing/invalid token |
+| 409 | CONFLICT | Resource already exists |
 
-## Domain Concepts
+## Security Considerations
 
-> List any new domain terms introduced by this feature
+> Authentication, authorization, data protection
 
-- **Term**: Definition
+- **Authentication:** [How users are authenticated]
+- **Authorization:** [Who can access what]
+- **Data Protection:** [Sensitive data handling, encryption]
+- **Input Validation:** [Validation rules]
+
+## Error Handling
+
+> How errors are handled and communicated
+
+| Error Scenario | User Message | Log Level | Recovery |
+|----------------|--------------|-----------|----------|
+| Database unavailable | "Service temporarily unavailable" | ERROR | Retry with backoff |
+| Invalid input | "Validation failed: {details}" | WARN | Return 400 |
+
+## Observability
+
+### Logging
+
+| Event | Level | Fields |
+|-------|-------|--------|
+| Resource created | INFO | resource_id, user_id |
+| Validation failed | WARN | errors, input |
+
+### Metrics
+
+| Metric | Type | Labels |
+|--------|------|--------|
+| resource_created_total | counter | status |
+| resource_creation_duration | histogram | - |
+
+### Traces
+
+| Span | Attributes |
+|------|------------|
+| create_resource | resource_type, user_id |
+
+## Acceptance Criteria
+
+> Use Given/When/Then format. Each criterion must be independently testable.
+
+- [ ] **AC1:** Given [precondition], when [action], then [result]
+- [ ] **AC2:** Given [precondition], when [action], then [result]
+- ...
+
+## Domain Updates
+
+> Specify all domain documentation changes upfront. Implementation executes these exactly.
+
+### Glossary Terms
+
+> List exact terms to add or modify in `specs/domain/glossary.md`
+
+| Term | Definition | Action |
+|------|------------|--------|
+| Term Name | Complete definition including context and usage | add/update |
+
+### Definition Specs
+
+> List domain definition files to create or update in `specs/domain/definitions/`
+
+| File | Description | Action |
+|------|-------------|--------|
+| `<definition-name>.md` | What this definition covers | create/update |
+
+### Architecture Docs
+
+> List architecture documentation updates needed in `specs/architecture/`
+
+- [ ] Update `<doc-name>.md` with [description of change]
+
+## Testing Strategy
+
+> Comprehensive testing approach
+
+### Unit Tests
+
+| Component | Test Case | Expected Behavior |
+|-----------|-----------|-------------------|
+| [service] | [scenario] | [expected result] |
+| [service] | [edge case] | [expected result] |
+
+### Integration Tests
+
+| Scenario | Components | Expected Outcome |
+|----------|------------|------------------|
+| [scenario] | [A → B] | [result] |
+
+### E2E Tests
+
+| User Flow | Steps | Expected Result |
+|-----------|-------|-----------------|
+| [flow name] | 1. [step] 2. [step] | [outcome] |
+
+### Test Data
+
+> Required test fixtures or data
+
+| Entity | Required State | Purpose |
+|--------|---------------|---------|
+| User | Active, verified | Happy path testing |
+| User | Suspended | Error path testing |
+
+## Dependencies
+
+### Internal Dependencies
+
+| Component | Version | Reason |
+|-----------|---------|--------|
+| [service] | >= 1.2.0 | Requires [feature] |
+
+### External Dependencies
+
+| Service | API Version | Fallback |
+|---------|-------------|----------|
+| [external] | v2 | [how to handle unavailability] |
+
+## Migration / Rollback
+
+### Migration Steps
+
+1. [Step 1]
+2. [Step 2]
+
+### Rollback Plan
+
+1. [How to revert if issues occur]
+2. [Data rollback if needed]
+
+### Feature Flags
+
+| Flag | Default | Purpose |
+|------|---------|---------|
+| enable_feature_x | false | Gradual rollout |
 
 ## Out of Scope
 
 > Explicitly list what this feature does NOT include
 
-- Item 1
-- Item 2
+- Item 1: [Why it's out of scope]
+- Item 2: [Why it's out of scope]
 
 ## Open Questions
 
-> List any unresolved questions
+> Unresolved questions that need answers before/during implementation
 
-- Question 1?
+- [ ] Question 1?
+- [ ] Question 2?
+
+## References
+
+> Links to related specs, docs, or external resources
+
+- [Related Spec](path/to/spec.md)
+- [External Doc](https://example.com)
 ```
 
 **For `type: bugfix`:**
@@ -165,127 +461,240 @@ decomposition_id: <uuid>  # Only if provided
 
 <description>
 
+**Severity:** [Critical / High / Medium / Low]
+
 ## Bug Description
 
 ### Symptoms
 
-> Describe the observable behavior that indicates the bug
-
-- Symptom 1
-- Symptom 2
+- [What users observe]
 
 ### Expected Behavior
 
-> What should happen instead
+[What should happen instead]
 
 ### Steps to Reproduce
 
-1. Step 1
-2. Step 2
-3. Step 3
+1. [Step 1]
+2. [Step 2]
+3. **Observe:** [What goes wrong]
 
-### Root Cause
+## Root Cause
 
-> Include if `root_cause` provided, otherwise use template
+> Technical explanation of why the bug occurs
 
-[Describe the underlying cause of the bug]
+[Explanation]
 
-## Affected Areas
+**Location:** `path/to/file.ts:line`
 
-> Include if `affected_files` provided, otherwise use template
+## Proposed Fix
 
-| File | Impact |
+[Description of the fix approach]
+
+### Files to Change
+
+| File | Change |
 |------|--------|
-| path/to/file | Description of impact |
+| `path/to/file.ts` | [What will change] |
 
 ## Acceptance Criteria
 
-> Include if `acceptance_criteria` provided, otherwise use template
-
-- [ ] Bug no longer reproducible following steps above
+- [ ] Bug no longer reproducible
 - [ ] No regression in related functionality
-- [ ] [Additional criteria]
+- [ ] Regression test added
 
-## API Impact
+## Testing
 
-> Include if `api_endpoints` provided, otherwise note "None"
+### Regression Test
 
-### Affected Endpoints
-
-| Method | Path | Change |
-|--------|------|--------|
-| METHOD | /path | Description of change |
+| Test | Conditions | Expected |
+|------|------------|----------|
+| [name] | [trigger bug] | [correct behavior] |
 
 ## Out of Scope
 
-> Explicitly list what this fix does NOT address
-
-- Item 1
-- Item 2
+- [Related issues not fixed here]
 ```
 
 **For `type: refactor`:**
+
+This is a **technical specification** for a refactoring. It must document the current state, proposed changes, and ensure behavior is preserved.
 
 ```markdown
 ## Overview
 
 <description>
 
+### Motivation
+
+> Why is this refactor needed now?
+
+[Business or technical driver for this refactor]
+
 ## Refactoring Goals
 
-> Include if `refactor_goals` provided, otherwise use template
+> Specific, measurable goals
 
-- [ ] Goal 1 (e.g., Improve code readability)
-- [ ] Goal 2 (e.g., Reduce duplication)
-- [ ] Goal 3 (e.g., Better separation of concerns)
+| Goal | Success Metric | Priority |
+|------|----------------|----------|
+| Improve readability | Code review approval | High |
+| Reduce duplication | DRY violations reduced by X% | Medium |
+| Better separation | Each module has single responsibility | High |
 
-## Current State
+## Current State Analysis
 
-> Describe the current implementation and its issues
+### Architecture Overview
+
+> How the code is currently structured
+
+```
+[Current architecture diagram]
+```
+
+### Code Metrics
+
+| Metric | Current | Target |
+|--------|---------|--------|
+| Cyclomatic complexity | [value] | < [target] |
+| Lines per function (avg) | [value] | < [target] |
+| Test coverage | [value]% | >= [target]% |
 
 ### Problems with Current Approach
 
-- Problem 1
-- Problem 2
+| Problem | Impact | Files Affected |
+|---------|--------|----------------|
+| [Problem 1] | [Impact on dev/perf/maintenance] | [files] |
+| [Problem 2] | [Impact] | [files] |
 
-## Proposed Changes
+### Code Examples (Before)
 
-> Describe the refactoring approach
+> Show problematic patterns
+
+```typescript
+// Example of current problematic code
+[code snippet]
+```
+
+## Proposed Design
+
+### New Architecture
+
+> How the code will be structured after refactor
+
+```
+[New architecture diagram]
+```
+
+### Design Decisions
+
+| Decision | Rationale | Alternatives Considered |
+|----------|-----------|------------------------|
+| [Decision 1] | [Why] | [What else was considered] |
+
+### Code Examples (After)
+
+> Show improved patterns
+
+```typescript
+// Example of refactored code
+[code snippet]
+```
+
+## Transformation Plan
+
+### Step-by-Step Changes
+
+| Step | Files | Change | Backward Compatible |
+|------|-------|--------|---------------------|
+| 1 | [files] | [change] | Yes/No |
+| 2 | [files] | [change] | Yes/No |
 
 ### Affected Areas
 
-> Include if `affected_files` provided, otherwise use template
+| File/Module | Change Type | Risk Level |
+|-------------|-------------|------------|
+| `path/to/file.ts` | Restructure | Medium |
+| `path/to/module/` | Extract | Low |
 
-| File/Module | Change Type | Description |
-|-------------|-------------|-------------|
-| path/to/file | Restructure | Description |
+## Behavior Preservation
 
-## Acceptance Criteria
+### Invariants
 
-> Include if `acceptance_criteria` provided, otherwise use template
+> What must NOT change
 
-- [ ] All existing tests pass
-- [ ] No change in external behavior
-- [ ] [Specific refactoring goals met]
+- [ ] All existing API contracts unchanged
+- [ ] All existing tests pass without modification
+- [ ] Performance within [X]% of current
+
+### Verification Approach
+
+| Behavior | How to Verify |
+|----------|---------------|
+| API responses | Existing integration tests |
+| Performance | Benchmark before/after |
+| Edge cases | [Specific tests] |
+
+## Testing Strategy
+
+### Existing Tests
+
+| Test Suite | Expected Result |
+|------------|-----------------|
+| Unit tests | All pass, no changes needed |
+| Integration tests | All pass |
+
+### New Tests
+
+| Test | Purpose |
+|------|---------|
+| [test name] | Verify refactored component |
+
+### Manual Verification
+
+| Scenario | Steps | Expected |
+|----------|-------|----------|
+| [scenario] | [steps] | [result] |
 
 ## API Impact
 
-> Include if `api_endpoints` provided, otherwise note "None - internal refactor"
+> Usually "None - internal refactor"
 
-## Risks
+### Public API Changes
 
-> List potential risks of this refactor
+- [ ] No public API changes
+- [ ] API changes: [describe with migration path]
 
-| Risk | Mitigation |
-|------|------------|
-| Risk 1 | How to mitigate |
+## Risks and Mitigations
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| Subtle behavior change | Medium | High | Comprehensive testing |
+| Performance regression | Low | Medium | Benchmark comparison |
+
+## Rollback Plan
+
+1. [How to identify if rollback needed]
+2. [How to rollback]
 
 ## Out of Scope
 
-> Explicitly list what this refactor does NOT change
+> What this refactor explicitly does NOT change
 
-- Item 1
-- Item 2
+- [Related code that won't be touched]
+- [Future improvements not in this refactor]
+
+## Success Criteria
+
+- [ ] All refactoring goals met
+- [ ] All tests pass
+- [ ] No behavior changes
+- [ ] Code review approved
+- [ ] Performance validated
+
+## References
+
+- [Design doc or RFC if applicable]
+- [Related refactors]
 ```
 
 **For `type: epic`:**
@@ -305,7 +714,7 @@ decomposition_id: <uuid>  # Only if provided
 
 ## Acceptance Criteria
 
-> Include if `acceptance_criteria` provided, otherwise use template
+> Top-level epic criteria (child changes have their own)
 
 - [ ] **AC1:** Given [precondition], when [action], then [result]
 
@@ -314,6 +723,22 @@ decomposition_id: <uuid>  # Only if provided
 > Items that span multiple child changes
 
 - **[Concern]**: [How it's handled across changes]
+
+## Domain Updates
+
+> Epic-level domain updates (child changes may have additional)
+
+### Glossary Terms
+
+| Term | Definition | Action |
+|------|------------|--------|
+| Term Name | Brief definition | add/update |
+
+### Definition Specs
+
+| File | Description | Action |
+|------|-------------|--------|
+| `<definition-name>.md` | What this definition covers | create/update |
 
 ## Out of Scope
 
@@ -342,11 +767,38 @@ changes/YYYY/MM/DD/<epic-name>/
 
 Each child change uses the standard feature spec template with `parent_epic: ../SPEC.md` in frontmatter.
 
-### Step 6: Create PLAN.md
+### Step 6: Create PLAN.md with Dynamic Phases
 
-Create `changes/YYYY/MM/DD/<name>/PLAN.md`:
+Create `changes/YYYY/MM/DD/<name>/PLAN.md` using dynamic phase generation.
 
-#### Frontmatter
+#### Phase Generation Algorithm
+
+1. **Read project components** from `sdd-settings.yaml`
+2. **Filter to affected components** (from SPEC.md `affected_components`)
+3. **Order by dependency graph:**
+   ```
+   config ──────┐
+                │
+   contract ────┼──→ server (includes DB) ──→ helm
+                │           │
+                │           ↓
+                └───────→ webapp
+   ```
+4. **Assign agents** based on component type:
+
+| Component Type | Agent | Notes |
+|----------------|-------|-------|
+| contract | api-designer | API design and OpenAPI updates |
+| server | backend-dev | Backend implementation + DB (TDD) |
+| webapp | frontend-dev | Frontend implementation (TDD) |
+| helm | devops | Deployment and infrastructure |
+| config | contextual | Depends on what config affects |
+
+5. **Add final phases:**
+   - `tester` for integration/E2E testing
+   - `reviewer` (+ `db-advisor` if DB changes)
+
+#### Plan Frontmatter
 
 ```yaml
 ---
@@ -360,11 +812,7 @@ sdd_version: <plugin_version>
 ---
 ```
 
-#### Content Structure
-
-The plan structure varies slightly by type:
-
-**For `type: feature`:** (full 6-phase structure)
+#### Plan Content (Feature - Dynamic)
 
 ```markdown
 ## Overview
@@ -373,6 +821,13 @@ Implementation plan for: <title>
 
 Specification: [SPEC.md](./SPEC.md)
 
+## Affected Components
+
+<!-- Generated from sdd-settings.yaml -->
+- <component-1> (contract)
+- <component-2> (server)
+- <component-3> (webapp)
+
 ## Prerequisites
 
 > Only include if `prerequisites` provided
@@ -383,62 +838,136 @@ Complete implementation of the following changes before starting:
 
 ## Implementation Phases
 
-### Phase 0: Domain Documentation
-**Agent:** `spec-writer`
+<!-- Phases generated dynamically based on affected components -->
+<!-- Domain updates are executed from SPEC.md ## Domain Updates section -->
 
-- [ ] Review and update domain glossary
-- [ ] Document any new domain concepts
-- [ ] Ensure ubiquitous language is consistent
-
-### Phase 1: API Contract
+### Phase 1: [Component Name] - API Contract
 **Agent:** `api-designer`
+**Component:** <component-name>
 
-- [ ] Define OpenAPI paths and operations
-- [ ] Define request/response schemas
+Tasks:
+- [ ] Update OpenAPI spec with new endpoints/schemas
 - [ ] Generate TypeScript types
-- [ ] Review contract with team
 
-### Phase 2: Backend Implementation
+Deliverables:
+- Updated OpenAPI spec
+- Generated TypeScript types
+
+### Phase 2: [Component Name] - Backend Implementation
 **Agent:** `backend-dev`
+**Component:** <component-name>
 
-- [ ] Implement database models/migrations
-- [ ] Implement service layer
-- [ ] Implement API handlers
-- [ ] Add input validation
-- [ ] Add error handling
+Tasks:
+- [ ] Implement domain logic
+- [ ] Add data access layer
+- [ ] Wire up controllers
+- [ ] Write unit tests (TDD)
 
-### Phase 3: Frontend Implementation
+Deliverables:
+- Working API endpoints
+- Unit tests passing
+
+### Phase 3: [Component Name] - Frontend Implementation
 **Agent:** `frontend-dev`
+**Component:** <component-name>
 
-- [ ] Create UI components
-- [ ] Implement state management
-- [ ] Connect to API endpoints
-- [ ] Add loading/error states
-- [ ] Implement form validation
+Tasks:
+- [ ] Create components
+- [ ] Add hooks
+- [ ] Integrate with API
+- [ ] Write unit tests (TDD)
 
-### Phase 4: Testing
+Deliverables:
+- Working UI
+- Unit tests passing
+
+### Phase N-1: Integration & E2E Testing
 **Agent:** `tester`
 
-- [ ] Write unit tests for services
-- [ ] Write integration tests for API
-- [ ] Write E2E tests for critical paths
-- [ ] Verify all acceptance criteria pass
+Tasks:
+- [ ] Integration tests for API layer
+- [ ] E2E tests for user flows
 
-### Phase 5: Review & Documentation
-**Agent:** `reviewer`
+Deliverables:
+- Test suites passing
 
-- [ ] Code review
-- [ ] Update API documentation
-- [ ] Update user documentation (if needed)
-- [ ] Final QA sign-off
+### Phase N: Review
+**Agent:** `reviewer`, `db-advisor` (if DB changes)
 
-## Notes
+Tasks:
+- [ ] Spec compliance review
+- [ ] Database review (if applicable)
 
-- Phases build on each other sequentially
-- Update this plan as implementation progresses
+## Expected Files
+
+> List files expected to be created or modified by this change
+
+### Files to Create
+
+| File | Component | Description |
+|------|-----------|-------------|
+| `path/to/new-file.ts` | server | [Purpose] |
+
+### Files to Modify
+
+| File | Component | Description |
+|------|-----------|-------------|
+| `path/to/existing-file.ts` | server | [What changes] |
+
+## Implementation State
+
+> Updated during implementation to track progress. Enables session resumption.
+
+### Current Phase
+
+- **Phase:** [Not started | 1 | 2 | ... | Complete]
+- **Status:** [pending | in_progress | blocked | complete]
+- **Last Updated:** YYYY-MM-DD HH:MM
+
+### Completed Phases
+
+| Phase | Completed | Notes |
+|-------|-----------|-------|
+| 1 | [ ] | |
+| 2 | [ ] | |
+
+### Actual Files Changed
+
+> Updated during implementation with actual files created/modified
+
+| File | Action | Phase | Notes |
+|------|--------|-------|-------|
+| | | | |
+
+### Blockers
+
+> Any blockers encountered during implementation
+
+- (none)
+
+### Resource Usage
+
+> Track tokens, turns, and time consumed during implementation
+
+| Phase | Tokens (Input) | Tokens (Output) | Turns | Duration | Notes |
+|-------|----------------|-----------------|-------|----------|-------|
+| 1 | - | - | - | | |
+| 2 | - | - | - | | |
+| ... | - | - | - | | |
+| **Total** | **-** | **-** | **-** | **-** | |
+
+## Dependencies
+
+- [External dependencies or blockers]
+
+## Risks
+
+| Risk | Mitigation |
+|------|------------|
+| [Risk] | [How to mitigate] |
 ```
 
-**For `type: bugfix`:** (streamlined phases)
+#### Plan Content (Bugfix)
 
 ```markdown
 ## Overview
@@ -447,44 +976,72 @@ Implementation plan for bugfix: <title>
 
 Specification: [SPEC.md](./SPEC.md)
 
-## Prerequisites
+## Affected Components
 
-> Only include if `prerequisites` provided
-
-Complete implementation of the following changes before starting:
-- <prerequisite_1>
-- <prerequisite_2>
+- <component>
 
 ## Implementation Phases
 
 ### Phase 1: Investigation
-**Agent:** `backend-dev` or `frontend-dev`
+**Agent:** `backend-dev` or `frontend-dev` (based on component)
 
+Tasks:
 - [ ] Reproduce the bug locally
 - [ ] Identify root cause
 - [ ] Document findings in SPEC.md
 
+Deliverables:
+- Documented root cause
+- Clear reproduction steps
+
 ### Phase 2: Implementation
-**Agent:** `backend-dev` or `frontend-dev`
+**Agent:** `backend-dev` or `frontend-dev` (based on component)
 
+Tasks:
 - [ ] Implement the fix
+- [ ] Write regression test (TDD - test should fail before fix)
 - [ ] Update any affected API contracts (if needed)
-- [ ] Add input validation (if applicable)
 
-### Phase 3: Testing
+Deliverables:
+- Working fix
+- Regression test passing
+
+### Phase 3: Integration Testing
 **Agent:** `tester`
 
-- [ ] Add regression test for this bug
+Tasks:
 - [ ] Verify fix resolves the issue
 - [ ] Run existing test suite
 - [ ] Verify no regressions
 
+Deliverables:
+- All tests passing
+
 ### Phase 4: Review
 **Agent:** `reviewer`
 
+Tasks:
 - [ ] Code review
 - [ ] Verify acceptance criteria met
 - [ ] Final QA sign-off
+
+## Implementation State
+
+### Current Phase
+
+- **Phase:** [Not started | 1 | 2 | 3 | 4 | Complete]
+- **Status:** [pending | in_progress | blocked | complete]
+- **Last Updated:** YYYY-MM-DD HH:MM
+
+### Resource Usage
+
+| Phase | Tokens (Input) | Tokens (Output) | Turns | Duration |
+|-------|----------------|-----------------|-------|----------|
+| 1 | - | - | - | |
+| 2 | - | - | - | |
+| 3 | - | - | - | |
+| 4 | - | - | - | |
+| **Total** | **-** | **-** | **-** | **-** |
 
 ## Notes
 
@@ -492,7 +1049,7 @@ Complete implementation of the following changes before starting:
 - Update this plan as investigation reveals more details
 ```
 
-**For `type: refactor`:** (streamlined phases)
+#### Plan Content (Refactor)
 
 ```markdown
 ## Overview
@@ -501,53 +1058,81 @@ Implementation plan for refactor: <title>
 
 Specification: [SPEC.md](./SPEC.md)
 
-## Prerequisites
+## Affected Components
 
-> Only include if `prerequisites` provided
-
-Complete implementation of the following changes before starting:
-- <prerequisite_1>
-- <prerequisite_2>
+- <component>
 
 ## Implementation Phases
 
 ### Phase 1: Preparation
-**Agent:** `backend-dev` or `frontend-dev`
+**Agent:** `backend-dev` or `frontend-dev` (based on component)
 
+Tasks:
 - [ ] Ensure comprehensive test coverage exists
 - [ ] Document current behavior
 - [ ] Identify all affected areas
 
-### Phase 2: Implementation
-**Agent:** `backend-dev` or `frontend-dev`
+Deliverables:
+- Test coverage report
+- Affected area documentation
 
+### Phase 2: Implementation
+**Agent:** `backend-dev` or `frontend-dev` (based on component)
+
+Tasks:
 - [ ] Implement refactoring changes
 - [ ] Update any affected API contracts (if needed)
 - [ ] Maintain backward compatibility (if required)
 
-### Phase 3: Testing
+Deliverables:
+- Refactored code
+- All existing tests passing
+
+### Phase 3: Integration Testing
 **Agent:** `tester`
 
+Tasks:
 - [ ] Run existing test suite
 - [ ] Verify no behavior changes
-- [ ] Add tests for improved structure (if applicable)
 - [ ] Performance testing (if applicable)
+
+Deliverables:
+- All tests passing
+- No behavior changes verified
 
 ### Phase 4: Review
 **Agent:** `reviewer`
 
+Tasks:
 - [ ] Code review focusing on refactoring goals
 - [ ] Verify no regressions
 - [ ] Final QA sign-off
+
+## Implementation State
+
+### Current Phase
+
+- **Phase:** [Not started | 1 | 2 | 3 | 4 | Complete]
+- **Status:** [pending | in_progress | blocked | complete]
+- **Last Updated:** YYYY-MM-DD HH:MM
+
+### Resource Usage
+
+| Phase | Tokens (Input) | Tokens (Output) | Turns | Duration |
+|-------|----------------|-----------------|-------|----------|
+| 1 | - | - | - | |
+| 2 | - | - | - | |
+| 3 | - | - | - | |
+| 4 | - | - | - | |
+| **Total** | **-** | **-** | **-** | **-** |
 
 ## Notes
 
 - All tests must pass before and after refactoring
 - No functional changes should be introduced
-- Update this plan as implementation progresses
 ```
 
-**For `type: epic`:** (uses epic-planning skill)
+#### Plan Content (Epic)
 
 ```markdown
 ## Overview
@@ -581,9 +1166,17 @@ One PR per child change. Branch naming: `epic/<epic-name>/<change-name>`
 
 - [ ] Change 1: [change-name]
 - [ ] Change 2: [change-name]
-```
 
-After creating the epic PLAN.md, create child change directories under `changes/` with their own SPEC.md and PLAN.md (standard feature structure with `parent_epic: ../SPEC.md`).
+## Resource Usage
+
+> Track tokens, turns, and time per child change
+
+| Change | Tokens (Input) | Tokens (Output) | Turns | Duration | Notes |
+|--------|----------------|-----------------|-------|----------|-------|
+| [change-1] | - | - | - | | |
+| [change-2] | - | - | - | | |
+| **Total** | **-** | **-** | **-** | **-** | |
+```
 
 ### Step 7: Update INDEX.md
 
@@ -604,6 +1197,47 @@ plan_path: changes/YYYY/MM/DD/<name>/PLAN.md
 index_updated: true
 ```
 
+## PR Size Guidelines
+
+Each phase should result in a reviewable PR:
+
+| Metric | Target | Maximum |
+|--------|--------|---------|
+| Lines changed | < 400 | 800 |
+| Files changed | < 15 | 30 |
+| Acceptance criteria | < 5 | 8 |
+
+**If a phase exceeds limits:**
+1. Split into sub-phases (e.g., Phase 2a, Phase 2b)
+2. Each sub-phase gets its own PR
+3. Document splits in plan
+
+## Spec Validation Rules
+
+### Required Frontmatter Fields
+
+- `title` - Change name
+- `type` - feature, bugfix, refactor, or epic
+- `status` - active (after merge)
+- `domain` - Primary domain
+- `issue` - Tracking issue reference (required)
+- `created` - Creation date
+- `updated` - Last update date
+- `sdd_version` - SDD plugin version (required)
+
+### Git Lifecycle
+
+- **In PR** = draft (implicit, no status field)
+- **Merged to main** = active
+- Only explicit statuses: `active`, `deprecated`, `superseded`, `archived`
+
+### Acceptance Criteria Format
+
+Always use Given/When/Then:
+- [ ] **AC1:** Given [precondition], when [action], then [result]
+
+Each criterion must be independently testable.
+
 ## Examples
 
 ### Feature Example
@@ -616,6 +1250,15 @@ Input:
   description: Allow users to sign up, sign in, and manage sessions
   domain: Identity
   issue: PROJ-123
+  affected_components: [contract, server, webapp]
+  glossary_terms:
+    - term: Session Token
+      definition: JWT token representing an authenticated user session
+      action: add
+  domain_definitions:
+    - file: session.md
+      description: Session management and token lifecycle
+      action: create
 
 Output:
   spec_path: changes/2026/01/21/user-authentication/SPEC.md
@@ -637,6 +1280,7 @@ Input:
   affected_files:
     - src/services/auth/session.ts
     - src/middleware/auth.ts
+  affected_components: [server]
 
 Output:
   spec_path: changes/2026/01/21/fix-session-timeout/SPEC.md
@@ -644,61 +1288,10 @@ Output:
   index_updated: true
 ```
 
-### Refactor Example
-
-```
-Input:
-  name: extract-validation-layer
-  type: refactor
-  title: Extract Validation Layer
-  description: Move validation logic from controllers to dedicated validation layer
-  domain: Core
-  issue: TECH-789
-  refactor_goals:
-    - Centralize validation logic
-    - Improve testability
-    - Reduce code duplication
-  affected_files:
-    - src/controllers/*.ts
-    - src/validation/ (new)
-
-Output:
-  spec_path: changes/2026/01/21/extract-validation-layer/SPEC.md
-  plan_path: changes/2026/01/21/extract-validation-layer/PLAN.md
-  index_updated: true
-```
-
-### Epic Example
-
-```
-Input:
-  name: checkout-system
-  type: epic
-  title: Checkout System
-  description: Complete checkout flow with cart, payment, and order management
-  domain: Commerce
-  issue: PROJ-500
-  child_changes:
-    - shopping-cart
-    - payment-processing
-    - order-management
-
-Output:
-  spec_path: changes/2026/01/27/checkout-system/SPEC.md
-  plan_path: changes/2026/01/27/checkout-system/PLAN.md
-  index_updated: true
-  # Also creates:
-  # changes/2026/01/27/checkout-system/changes/shopping-cart/SPEC.md
-  # changes/2026/01/27/checkout-system/changes/shopping-cart/PLAN.md
-  # changes/2026/01/27/checkout-system/changes/payment-processing/SPEC.md
-  # changes/2026/01/27/checkout-system/changes/payment-processing/PLAN.md
-  # changes/2026/01/27/checkout-system/changes/order-management/SPEC.md
-  # changes/2026/01/27/checkout-system/changes/order-management/PLAN.md
-```
-
 ## Error Handling
 
 - If change directory already exists: Warn and ask for confirmation to overwrite
 - If INDEX.md doesn't exist: Create it with basic structure
 - If plugin.json can't be read: Use "unknown" for sdd_version and warn
+- If sdd-settings.yaml can't be read: Use default component assumptions and warn
 - If invalid type provided: Return error with valid options

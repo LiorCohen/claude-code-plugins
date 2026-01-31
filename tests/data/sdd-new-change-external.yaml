@@ -1,5 +1,5 @@
 
-# Token usage benchmarks for /sdd-new-change --spec command.
+# Token usage benchmarks for /sdd-new-change-external command.
 # Appended by workflow tests after each run.
 #
 # Fields:
@@ -10,4 +10,46 @@
 #   turn_count: Number of API round-trips
 #   usage: Token usage breakdown by model
 #   total: Aggregate token usage across all models
-runs: []
+runs:
+  - timestamp: "2026-01-31T14:34:53.418Z"
+    plugin_version: "5.6.0"
+    test_file: "tests/src/tests/workflows/sdd-new-change-external-spec.test.ts"
+    test_name: "new-change-external-spec"
+    turn_count: 53
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 2
+        output_tokens: 617
+        total_tokens: 619
+    total:
+      input_tokens: 2
+      output_tokens: 617
+      total_tokens: 619
+  - timestamp: "2026-01-31T14:48:30.575Z"
+    plugin_version: "5.6.0"
+    test_file: "tests/src/tests/workflows/sdd-new-change-external-spec.test.ts"
+    test_name: "new-change-external-spec"
+    turn_count: 58
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 2
+        output_tokens: 563
+        total_tokens: 565
+    total:
+      input_tokens: 2
+      output_tokens: 563
+      total_tokens: 565
+  - timestamp: "2026-01-31T15:06:33.574Z"
+    plugin_version: "5.6.0"
+    test_file: "tests/src/tests/workflows/sdd-new-change-external-spec.test.ts"
+    test_name: "new-change-external-spec"
+    turn_count: 54
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 2
+        output_tokens: 755
+        total_tokens: 757
+    total:
+      input_tokens: 2
+      output_tokens: 755
+      total_tokens: 757

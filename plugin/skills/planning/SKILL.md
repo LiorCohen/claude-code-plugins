@@ -1,8 +1,7 @@
 ---
 name: planning
-description: Templates for implementation plans.
+description: Templates and guidance for implementation plans with dynamic phase generation.
 ---
-
 
 # Planning Skill
 
@@ -14,11 +13,122 @@ Plans are stored alongside their specs:
 
 This keeps all change documentation (spec + plan) together in one location.
 
+## SPEC.md vs PLAN.md Separation
+
+| File | Purpose | Contains |
+|------|---------|----------|
+| **SPEC.md** | Nature of the change (tech spec) | Requirements, design, API contracts, data models, security, observability, tests, domain updates |
+| **PLAN.md** | Execution | Phases, agent assignments, execution order, expected files, implementation state |
+
+### SPEC.md: Thorough Technical Specification
+
+SPEC.md is a **complete technical specification**. It must be:
+
+- **Self-sufficient**: Anyone reading the spec understands the change fully without other docs
+- **Thorough**: Covers all aspects (functional, non-functional, security, errors, observability)
+- **Technical**: Includes schemas, algorithms, data models, API contracts
+- **Testable**: Every requirement has clear acceptance criteria
+
+Key sections:
+- Background and current state (context)
+- Functional and non-functional requirements
+- Technical design (architecture, data model, algorithms)
+- API contracts with request/response schemas
+- Security considerations
+- Error handling strategy
+- Observability (logging, metrics, traces)
+- Testing strategy with specific test cases
+- Domain updates (glossary, definitions)
+- Dependencies and migration plan
+
+### Domain Documentation in Specs
+
+Domain documentation is specified **in SPEC.md during planning**, not discovered during implementation.
+
+The SPEC.md file includes a `## Domain Updates` section that explicitly lists:
+- **Glossary Terms** - exact terms to add/modify in `specs/domain/glossary.md`
+- **Definition Specs** - domain definition files to create/update in `specs/domain/definitions/`
+- **Architecture Docs** - updates needed in `specs/architecture/`
+
+### Testing Strategy in Specs
+
+The SPEC.md file includes a `## Testing Strategy` section that defines:
+- **Unit Tests** - what behaviors need unit tests (implemented via TDD during execution)
+- **Integration Tests** - what integrations need testing
+- **E2E Tests** - what user flows need end-to-end tests
+
+This approach ensures:
+1. All requirements (domain, tests, verification) are fully understood before implementation
+2. Implementation simply executes the specified updates (no discovery)
+3. Clear traceability from spec to implementation
+
+## Dynamic Phase Generation
+
+Plans are generated dynamically based on the project's `sdd-settings.yaml` configuration.
+
+### Generation Algorithm
+
+1. **Read project components** from `sdd-settings.yaml`
+2. **Identify affected components** for this change (from SPEC.md)
+3. **Order by dependency graph:**
+   ```
+   config ──────┐
+                │
+   contract ────┼──→ server (includes DB) ──→ helm
+                │           │
+                │           ↓
+                └───────→ webapp
+   ```
+4. **Assign agents** based on component + change nature:
+
+| Component | Primary Agent | Notes |
+|-----------|---------------|-------|
+| contract | api-designer | API design and OpenAPI updates |
+| server | backend-dev | Backend implementation + DB (TDD) |
+| webapp | frontend-dev | Frontend implementation (TDD) |
+| helm | devops | Deployment and infrastructure |
+| config | contextual | backend-dev, frontend-dev, or devops based on what config affects |
+
+5. **Add final phases:**
+   - `tester` for integration/E2E testing
+   - `reviewer` (+ `db-advisor` if DB changes)
+
+### Testing Strategy
+
+| Test Type | When | Agent |
+|-----------|------|-------|
+| Unit tests | During implementation (TDD) | backend-dev, frontend-dev |
+| Integration tests | After all implementation phases | tester |
+| E2E tests | After all implementation phases | tester |
+
 ## Phase Structure
 
 - Each phase is independently reviewable
-- Contract changes come first
+- Domain updates execute first (from SPEC.md)
+- Component phases follow dependency order
 - Phases build on each other sequentially
+
+## Implementation State Tracking
+
+Plans include sections for tracking implementation progress:
+
+### Expected Files
+- **Files to Create** - new files this change will add
+- **Files to Modify** - existing files this change will update
+
+### Implementation State
+- **Current Phase** - which phase is in progress
+- **Status** - pending, in_progress, blocked, complete
+- **Completed Phases** - checklist of completed phases
+- **Actual Files Changed** - updated during implementation with real files
+- **Blockers** - any issues blocking progress
+- **Resource Usage** - tokens (input/output), turns, and duration per phase
+
+This enables:
+1. Session resumption from any point
+2. Audit trail of what actually changed
+3. Progress visibility for stakeholders
+4. Resource usage analysis (cost and time estimation for similar changes)
 
 ## PR Size Guidelines
 
@@ -61,36 +171,25 @@ sdd_version: [X.Y.Z]
 **Spec:** [link to spec]
 **Issue:** [link to issue]
 
+## Affected Components
+
+<!-- Generated from sdd-settings.yaml based on change scope -->
+- contract
+- server
+- webapp
+
 ## Phases
 
-### Phase 0: Domain Documentation (Prerequisite)
-**Agent:** `spec-writer`
-
-**CRITICAL:** This phase MUST be completed before any code implementation begins.
-
-Tasks:
-- [ ] Update `specs/domain/glossary.md` with new/modified terms
-- [ ] Create/update definition specs in `specs/domain/definitions/`
-- [ ] Document use cases in `specs/domain/use-cases/` (if applicable)
-- [ ] Update `specs/architecture/` if architectural changes needed
-
-Deliverables:
-- Updated domain glossary
-- Definition specifications for all new domain concepts
-- Use case documentation (if applicable)
-
-**Verification:**
-- [ ] All new terms from the change spec are in the glossary
-- [ ] All new domain concepts have definition specs
-- [ ] Existing definitions updated if behavior changes
+<!-- Phases are generated dynamically based on affected components -->
+<!-- Domain updates are executed from SPEC.md before code phases -->
 
 ### Phase 1: API Contract
 **Agent:** `api-designer`
+**Component:** contract
 
 Tasks:
-- [ ] Update the contract component's `openapi.yaml` (path depends on component name in `sdd-settings.yaml`, e.g., `components/contract/openapi.yaml`)
-- [ ] Add schemas for [definitions]
-- [ ] Generate types
+- [ ] Update OpenAPI spec with new endpoints/schemas
+- [ ] Generate TypeScript types
 
 Deliverables:
 - Updated OpenAPI spec
@@ -98,39 +197,44 @@ Deliverables:
 
 ### Phase 2: Backend Implementation
 **Agent:** `backend-dev`
+**Component:** server
 
 Tasks:
-- [ ] Add domain definitions to `model/definitions/`
-- [ ] Implement use-cases in `model/use-cases/`
-- [ ] Add DAL methods
-- [ ] Wire up controller
+- [ ] Implement domain logic
+- [ ] Add data access layer
+- [ ] Wire up controllers
+- [ ] Write unit tests (TDD)
 
 Deliverables:
 - Working API endpoints
+- Unit tests passing
 
 ### Phase 3: Frontend Implementation
 **Agent:** `frontend-dev`
+**Component:** webapp
 
 Tasks:
 - [ ] Create components
 - [ ] Add hooks
 - [ ] Integrate with API
+- [ ] Write unit tests (TDD)
 
 Deliverables:
 - Working UI
+- Unit tests passing
 
-### Phase 4: Testing
+### Phase 4: Integration & E2E Testing
 **Agent:** `tester`
 
 Tasks:
-- [ ] Integration tests
-- [ ] E2E tests
+- [ ] Integration tests for API layer
+- [ ] E2E tests for user flows
 
 Deliverables:
 - Test suites passing
 
 ### Phase 5: Review
-**Agent:** `reviewer`, `db-advisor`
+**Agent:** `reviewer`, `db-advisor` (if DB changes)
 
 Tasks:
 - [ ] Spec compliance review
@@ -169,10 +273,15 @@ sdd_version: [X.Y.Z]
 **Spec:** [link to spec]
 **Issue:** [link to issue]
 
+## Affected Components
+
+<!-- List components where the bug manifests -->
+- [component]
+
 ## Phases
 
 ### Phase 1: Investigation
-**Agent:** `backend-dev` or `frontend-dev`
+**Agent:** `backend-dev` or `frontend-dev` (based on component)
 
 Tasks:
 - [ ] Reproduce the bug locally
@@ -184,27 +293,26 @@ Deliverables:
 - Clear reproduction steps
 
 ### Phase 2: Implementation
-**Agent:** `backend-dev` or `frontend-dev`
+**Agent:** `backend-dev` or `frontend-dev` (based on component)
 
 Tasks:
 - [ ] Implement the fix
+- [ ] Write regression test (TDD - test should fail before fix)
 - [ ] Update any affected API contracts (if needed)
-- [ ] Add input validation (if applicable)
 
 Deliverables:
 - Working fix
+- Regression test passing
 
-### Phase 3: Testing
+### Phase 3: Integration Testing
 **Agent:** `tester`
 
 Tasks:
-- [ ] Add regression test for this bug
 - [ ] Verify fix resolves the issue
 - [ ] Run existing test suite
 - [ ] Verify no regressions
 
 Deliverables:
-- Regression test added
 - All tests passing
 
 ### Phase 4: Review
@@ -243,10 +351,15 @@ sdd_version: [X.Y.Z]
 **Spec:** [link to spec]
 **Issue:** [link to issue]
 
+## Affected Components
+
+<!-- List components being refactored -->
+- [component]
+
 ## Phases
 
 ### Phase 1: Preparation
-**Agent:** `backend-dev` or `frontend-dev`
+**Agent:** `backend-dev` or `frontend-dev` (based on component)
 
 Tasks:
 - [ ] Ensure comprehensive test coverage exists
@@ -258,7 +371,7 @@ Deliverables:
 - Affected area documentation
 
 ### Phase 2: Implementation
-**Agent:** `backend-dev` or `frontend-dev`
+**Agent:** `backend-dev` or `frontend-dev` (based on component)
 
 Tasks:
 - [ ] Implement refactoring changes
@@ -267,14 +380,14 @@ Tasks:
 
 Deliverables:
 - Refactored code
+- All existing tests passing
 
-### Phase 3: Testing
+### Phase 3: Integration Testing
 **Agent:** `tester`
 
 Tasks:
 - [ ] Run existing test suite
 - [ ] Verify no behavior changes
-- [ ] Add tests for improved structure (if applicable)
 - [ ] Performance testing (if applicable)
 
 Deliverables:

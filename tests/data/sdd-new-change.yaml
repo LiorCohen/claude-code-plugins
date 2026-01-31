@@ -235,3 +235,73 @@ runs:
       input_tokens: 42
       output_tokens: 690
       total_tokens: 732
+  - timestamp: "2026-01-31T14:31:07.389Z"
+    plugin_version: "5.6.0"
+    test_file: "tests/src/tests/workflows/sdd-new-change.test.ts"
+    test_name: "new-change-feature"
+    turn_count: 28
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 30
+        output_tokens: 424
+        total_tokens: 454
+    total:
+      input_tokens: 30
+      output_tokens: 424
+      total_tokens: 454
+  - timestamp: "2026-01-31T14:32:34.046Z"
+    plugin_version: "5.6.0"
+    test_file: "tests/src/tests/workflows/sdd-new-change.test.ts"
+    test_name: "new-change-feature"
+    turn_count: 27
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 29
+        output_tokens: 313
+        total_tokens: 342
+    total:
+      input_tokens: 29
+      output_tokens: 313
+      total_tokens: 342
+  - timestamp: "2026-01-31T14:39:22.687Z"
+    plugin_version: "5.6.0"
+    test_file: "tests/src/tests/workflows/sdd-new-change.test.ts"
+    test_name: "new-change-feature"
+    turn_count: 29
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 31
+        output_tokens: 421
+        total_tokens: 452
+    total:
+      input_tokens: 31
+      output_tokens: 421
+      total_tokens: 452
+  - timestamp: "2026-01-31T14:46:09.819Z"
+    plugin_version: "5.6.0"
+    test_file: "tests/src/tests/workflows/sdd-new-change.test.ts"
+    test_name: "new-change-feature"
+    turn_count: 31
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 33
+        output_tokens: 484
+        total_tokens: 517
+    total:
+      input_tokens: 33
+      output_tokens: 484
+      total_tokens: 517
+  - timestamp: "2026-01-31T15:03:01.079Z"
+    plugin_version: "5.6.0"
+    test_file: "tests/src/tests/workflows/sdd-new-change.test.ts"
+    test_name: "new-change-feature"
+    turn_count: 32
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 34
+        output_tokens: 508
+        total_tokens: 542
+    total:
+      input_tokens: 34
+      output_tokens: 508
+      total_tokens: 542

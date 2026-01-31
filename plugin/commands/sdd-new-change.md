@@ -184,25 +184,35 @@ Prompt for additional details based on change type:
 - Issue reference (required)
 - Domain (e.g., "Identity", "Billing", "Core")
 - Brief description (1-2 sentences)
+- Affected components (from `sdd-settings.yaml` - e.g., contract, server, webapp)
+
+**Domain documentation prompts (for feature and epic types):**
+- "What new glossary terms does this change introduce?" (optional - can leave empty)
+- "What domain definitions need to be created or updated?" (optional - can leave empty)
+- "Are there any architecture documentation updates needed?" (optional - can leave empty)
 
 **Additional prompts by type:**
 
 **For `feature`:**
-- (No additional required prompts - user stories and acceptance criteria can be added in the spec)
+- Domain documentation prompts (above)
+- (User stories and acceptance criteria can be added in the spec)
 
 **For `bugfix`:**
 - "What are the symptoms of this bug?"
 - "What is the expected behavior?"
 - (Root cause can be documented later after investigation)
+- (Domain updates typically not needed for bugfixes)
 
 **For `refactor`:**
 - "What are the main goals of this refactor?"
 - "Which files/modules are primarily affected?"
+- (Domain updates typically not needed for refactors)
 
 **For `epic`:**
 - "What is the overall goal of this epic?"
 - "What child changes (features) should this epic contain?" (collect names and brief descriptions)
 - "Are there dependencies between the child changes?"
+- Domain documentation prompts (above)
 
 ### 4. Create Change Spec and Plan
 
@@ -215,6 +225,12 @@ title: <change name formatted as title>
 description: <collected description>
 domain: <collected domain>
 issue: <collected issue reference>
+affected_components: <list of components from sdd-settings.yaml>
+
+# Domain documentation (for feature/epic types):
+glossary_terms: <collected terms, if any>
+domain_definitions: <collected definitions, if any>
+architecture_updates: <collected updates, if any>
 
 # For bugfix type:
 root_cause: <to be determined during investigation>
@@ -227,8 +243,8 @@ affected_files: <collected files/modules>
 
 The `change-creation` skill will:
 1. Create change directory: `changes/YYYY/MM/DD/<change-name>/`
-2. Create SPEC.md with proper frontmatter and type-specific sections
-3. Create PLAN.md with type-appropriate phases
+2. Create SPEC.md with proper frontmatter, type-specific sections, and Domain Updates section
+3. Create PLAN.md with dynamically generated phases based on affected components
 4. Update INDEX.md with the new change entry (includes type indicator)
 
 See `skills/change-creation/SKILL.md` for detailed specification.

@@ -28,7 +28,6 @@
 
 ## High Priority
 
-- [#64](1-inbox/64/): Refactor planning system architecture
 - [#17](1-inbox/17/): Plans should follow TDD with test review first
 - [#59](1-inbox/59/): Audit and update all agents for compatibility
 - [#44](1-inbox/44/): Helm chart template + observability stack
@@ -79,6 +78,7 @@
 
 ## Complete
 
+- [#64](6-complete/64/): Refactor planning system architecture ✓ (2026-01-31)
 - [#65](6-complete/65/): Move external spec handling from sdd-init to sdd-new-change ✓ (2026-01-31)
 - [#11](6-complete/11/): Missing deeper config integration ✓ (2026-01-30)
 - [#60](6-complete/60/): Standardize TypeScript imports and tsconfig ✓ (2026-01-30)
