@@ -1,11 +1,11 @@
 ---
 name: sdd-run
-description: Run sdd-system CLI commands.
+description: Manage local development environment and validate artifacts.
 ---
 
 # /sdd-run
 
-Unified command to run sdd-system CLI operations.
+Manage your local development environment and validate artifacts.
 
 ## Usage
 
@@ -13,90 +13,43 @@ Unified command to run sdd-system CLI operations.
 /sdd-run <namespace> <action> [args] [options]
 ```
 
-## Namespaces
+## When to Use
 
-| Namespace | Description |
-|-----------|-------------|
-| `scaffolding` | Project and domain scaffolding |
-| `spec` | Spec validation, indexing, snapshots |
-| `version` | Version bumping |
-| `database` | Database component operations |
-| `contract` | Contract component operations |
-| `hook` | Hook handlers (internal use) |
+While workflow commands (`/sdd-init`, `/sdd-implement-change`, etc.) orchestrate multi-step processes with agents, `/sdd-run` gives you direct control over local dev operations—spinning up databases, running migrations, or validating your API contract.
 
-## Examples
+## Database Operations
 
-### Spec Operations
+Manage your local PostgreSQL database:
 
 ```bash
-# Validate a specific spec
-/sdd-run spec validate specs/feature.md
-
-# Validate all specs
-/sdd-run spec validate --all --specs-dir specs/
-
-# Generate index
-/sdd-run spec index --specs-dir specs/
-
-# Generate snapshot
-/sdd-run spec snapshot --specs-dir specs/
-```
-
-### Scaffolding
-
-```bash
-# Create new project structure
-/sdd-run scaffolding project --config /tmp/config.json
-
-# Populate domain specs
-/sdd-run scaffolding domain --config /tmp/domain-config.json
-```
-
-### Version
-
-```bash
-# Bump patch version
-/sdd-run version bump patch
-
-# Bump minor version
-/sdd-run version bump minor
-
-# Bump major version
-/sdd-run version bump major
-```
-
-### Database Operations
-
-```bash
-# Deploy PostgreSQL
+# Start a local database
 /sdd-run database setup my-db
 
 # Run migrations
 /sdd-run database migrate my-db
 
-# Seed database
+# Seed with test data
 /sdd-run database seed my-db
 
 # Reset database (teardown + setup + migrate + seed)
 /sdd-run database reset my-db
 
-# Port forward to local
-/sdd-run database port-forward my-db
-
-# Open psql shell
+# Open psql shell for debugging
 /sdd-run database psql my-db
 
-# Teardown
+# Port forward to access remote database locally
+/sdd-run database port-forward my-db
+
+# Tear down when done
 /sdd-run database teardown my-db
 ```
 
-### Contract Operations
+## Contract Validation
+
+Validate your OpenAPI specification:
 
 ```bash
-# Generate TypeScript types from OpenAPI spec
-/sdd-run contract generate-types my-api
-
-# Validate OpenAPI spec
+# Validate the API contract
 /sdd-run contract validate my-api
 ```
 
@@ -118,16 +71,14 @@ node --enable-source-maps "${CLAUDE_PLUGIN_ROOT}/system/dist/cli.js" <namespace>
 
 Where `CLAUDE_PLUGIN_ROOT` is the path to the SDD plugin directory.
 
-## Help
+---
 
-To see available actions for a namespace:
+## Internal Namespaces
 
-```bash
-/sdd-run <namespace> --help
-```
+The following namespaces are used internally by other commands and should not be invoked directly:
 
-To see all namespaces:
-
-```bash
-/sdd-run --help
-```
+- `scaffolding` - Used by `/sdd-init` for project setup
+- `spec` - Used for spec validation, indexing, and snapshots
+- `version` - Used by the commit skill for version bumping
+- `hook` - Hook handlers for internal use
+- `contract generate-types` - Invoked automatically during implementation plans

@@ -151,35 +151,48 @@ See [Configuration Guide](config-guide.md) for detailed usage.
 
 ## /sdd-run
 
-Run sdd-system CLI operations.
+Manage your local development environment and validate artifacts.
 
 ```
 /sdd-run <namespace> <action> [args] [options]
 ```
 
-**Namespaces:**
-- `scaffolding` - Project and domain scaffolding
-- `spec` - Spec validation, indexing, snapshots
-- `version` - Version bumping
-- `database` - Database component operations
-- `contract` - Contract component operations
+**When to use:** While workflow commands (`/sdd-init`, `/sdd-implement-change`, etc.) orchestrate multi-step processes with agents, `/sdd-run` gives you direct control over local dev operations—spinning up databases, running migrations, or validating your API contract.
 
-**Examples:**
+### Database Operations
+
+Manage your local PostgreSQL database:
+
 ```bash
-# Validate all specs
-/sdd-run spec validate --all --specs-dir specs/
-
-# Generate spec index
-/sdd-run spec index --specs-dir specs/
-
-# Bump patch version
-/sdd-run version bump patch
-
-# Deploy database
+# Start a local database
 /sdd-run database setup my-db
 
-# Generate types from OpenAPI
-/sdd-run contract generate-types my-api
+# Run migrations
+/sdd-run database migrate my-db
+
+# Seed with test data
+/sdd-run database seed my-db
+
+# Reset database (teardown + setup + migrate + seed)
+/sdd-run database reset my-db
+
+# Open psql shell for debugging
+/sdd-run database psql my-db
+
+# Port forward to access remote database locally
+/sdd-run database port-forward my-db
+
+# Tear down when done
+/sdd-run database teardown my-db
+```
+
+### Contract Validation
+
+Validate your OpenAPI specification:
+
+```bash
+# Validate the API contract
+/sdd-run contract validate my-api
 ```
 
 **Global Options:**
