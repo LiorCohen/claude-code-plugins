@@ -1,0 +1,3 @@
+# yaml-language-server: $schema=../../schemas/config.schema.json
+# Local development overrides
+# Inherits from envs/default/ and overrides specific values

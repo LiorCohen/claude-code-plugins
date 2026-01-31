@@ -1,0 +1,220 @@
+/**
+ * Config diff command.
+ *
+ * Show differences between two environments.
+ *
+ * Usage:
+ *   sdd-system config diff <env1> <env2>
+ */
+
+import { readFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { parse } from 'yaml';
+import type { CommandResult, GlobalOptions } from '@/lib/args';
+import { parseNamedArgs } from '@/lib/args';
+
+interface DiffEntry {
+  readonly path: string;
+  readonly type: 'added' | 'removed' | 'changed';
+  readonly env1Value?: unknown;
+  readonly env2Value?: unknown;
+}
+
+type ConfigObject = Record<string, unknown>;
+
+/**
+ * Deep merge two objects (for generating merged configs).
+ */
+const deepMerge = (base: ConfigObject, override: ConfigObject): ConfigObject => {
+  const result: ConfigObject = { ...base };
+
+  for (const [key, value] of Object.entries(override)) {
+    if (value === null) {
+      delete result[key];
+    } else if (
+      typeof value === 'object' &&
+      !Array.isArray(value) &&
+      typeof result[key] === 'object' &&
+      !Array.isArray(result[key]) &&
+      result[key] !== null
+    ) {
+      result[key] = deepMerge(
+        result[key] as ConfigObject,
+        value as ConfigObject
+      );
+    } else {
+      result[key] = value;
+    }
+  }
+
+  return result;
+};
+
+/**
+ * Recursively compare two objects and collect differences.
+ */
+const compareObjects = (
+  obj1: Record<string, unknown>,
+  obj2: Record<string, unknown>,
+  path: string = ''
+): readonly DiffEntry[] => {
+  const diffs: DiffEntry[] = [];
+  const allKeys = new Set([...Object.keys(obj1), ...Object.keys(obj2)]);
+
+  for (const key of allKeys) {
+    const currentPath = path ? `${path}.${key}` : key;
+    const val1 = obj1[key];
+    const val2 = obj2[key];
+
+    if (!(key in obj1)) {
+      diffs.push({ path: currentPath, type: 'added', env2Value: val2 });
+    } else if (!(key in obj2)) {
+      diffs.push({ path: currentPath, type: 'removed', env1Value: val1 });
+    } else if (
+      typeof val1 === 'object' &&
+      typeof val2 === 'object' &&
+      !Array.isArray(val1) &&
+      !Array.isArray(val2) &&
+      val1 !== null &&
+      val2 !== null
+    ) {
+      // Recurse into nested objects
+      diffs.push(
+        ...compareObjects(
+          val1 as Record<string, unknown>,
+          val2 as Record<string, unknown>,
+          currentPath
+        )
+      );
+    } else if (JSON.stringify(val1) !== JSON.stringify(val2)) {
+      diffs.push({ path: currentPath, type: 'changed', env1Value: val1, env2Value: val2 });
+    }
+  }
+
+  return diffs;
+};
+
+const formatValue = (value: unknown): string => {
+  if (typeof value === 'object') {
+    return JSON.stringify(value);
+  }
+  return String(value);
+};
+
+export const diff = async (
+  args: readonly string[],
+  options: GlobalOptions
+): Promise<CommandResult> => {
+  const { positional, named } = parseNamedArgs(args);
+
+  if (positional.length < 2) {
+    return {
+      success: false,
+      error: 'Usage: sdd-system config diff <env1> <env2>',
+    };
+  }
+
+  const env1 = positional[0]!;
+  const env2 = positional[1]!;
+  const configDir = named['config-dir'] ?? process.cwd();
+
+  const envsDir = join(configDir, 'components', 'config', 'envs');
+  const defaultConfigPath = join(envsDir, 'default', 'config.yaml');
+  const env1ConfigPath = join(envsDir, env1, 'config.yaml');
+  const env2ConfigPath = join(envsDir, env2, 'config.yaml');
+
+  // Check files exist
+  if (!existsSync(defaultConfigPath)) {
+    return {
+      success: false,
+      error: `Default config not found: ${defaultConfigPath}`,
+    };
+  }
+
+  if (!existsSync(env1ConfigPath)) {
+    return {
+      success: false,
+      error: `Environment config not found: ${env1ConfigPath}`,
+    };
+  }
+
+  if (!existsSync(env2ConfigPath)) {
+    return {
+      success: false,
+      error: `Environment config not found: ${env2ConfigPath}`,
+    };
+  }
+
+  try {
+    // Load and merge configs
+    const defaultConfig = parse(readFileSync(defaultConfigPath, 'utf-8')) ?? {};
+    const env1Config = parse(readFileSync(env1ConfigPath, 'utf-8')) ?? {};
+    const env2Config = parse(readFileSync(env2ConfigPath, 'utf-8')) ?? {};
+
+    const merged1 = deepMerge(defaultConfig, env1Config);
+    const merged2 = deepMerge(defaultConfig, env2Config);
+
+    // Compare
+    const diffs = compareObjects(merged1, merged2);
+
+    if (options.json) {
+      return {
+        success: true,
+        data: {
+          env1,
+          env2,
+          differences: diffs,
+          hasDifferences: diffs.length > 0,
+        },
+      };
+    }
+
+    // Text output
+    console.log(`Config Diff: ${env1} vs ${env2}`);
+    console.log('='.repeat(50));
+
+    if (diffs.length === 0) {
+      console.log('\nNo differences found.');
+      return { success: true, message: 'No differences found' };
+    }
+
+    const added = diffs.filter((d) => d.type === 'added');
+    const removed = diffs.filter((d) => d.type === 'removed');
+    const changed = diffs.filter((d) => d.type === 'changed');
+
+    if (added.length > 0) {
+      console.log(`\nAdded in ${env2} (${added.length}):`);
+      for (const d of added) {
+        console.log(`  + ${d.path}: ${formatValue(d.env2Value)}`);
+      }
+    }
+
+    if (removed.length > 0) {
+      console.log(`\nRemoved in ${env2} (${removed.length}):`);
+      for (const d of removed) {
+        console.log(`  - ${d.path}: ${formatValue(d.env1Value)}`);
+      }
+    }
+
+    if (changed.length > 0) {
+      console.log(`\nChanged (${changed.length}):`);
+      for (const d of changed) {
+        console.log(`  ~ ${d.path}:`);
+        console.log(`      ${env1}: ${formatValue(d.env1Value)}`);
+        console.log(`      ${env2}: ${formatValue(d.env2Value)}`);
+      }
+    }
+
+    console.log('');
+    return {
+      success: true,
+      message: `Found ${diffs.length} difference(s)`,
+    };
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    return {
+      success: false,
+      error: `Failed to diff configs: ${errorMessage}`,
+    };
+  }
+};

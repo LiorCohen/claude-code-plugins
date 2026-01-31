@@ -74,6 +74,7 @@ Instead of one general-purpose AI, SDD uses 10 specialized agents:
 | `/sdd-new-change --type [type] --name [name]` | Create change spec and plan |
 | `/sdd-implement-change [change-dir]` | Execute implementation plan |
 | `/sdd-verify-change [change-dir]` | Verify implementation matches spec |
+| `/sdd-config <operation>` | Manage configuration (generate, validate, diff) |
 
 ---
 
@@ -88,7 +89,6 @@ SDD commands create many files. To reduce permission prompts, add this to your `
       "Write(changes/**)",
       "Write(specs/**)",
       "Write(components/**)",
-      "Write(config/**)",
       "Edit(changes/**)",
       "Edit(specs/**)",
       "Edit(components/**)",
@@ -114,6 +114,7 @@ See **[Permissions Setup](./plugin/hooks/PERMISSIONS.md)** for full configuratio
 - **[Commands](./docs/commands.md)** - Full command reference
 - **[Agents](./docs/agents.md)** - What each agent does
 - **[Components](./docs/components.md)** - Component types reference
+- **[Configuration Guide](./docs/config-guide.md)** - Config system details
 - **[Permissions Setup](./plugin/hooks/PERMISSIONS.md)** - Reduce permission prompts
 
 ---
@@ -133,13 +134,13 @@ your-project/
 │   │   └── definitions/      # Domain definitions
 │   └── architecture/         # Architecture decisions
 ├── components/
+│   ├── config/               # Configuration (YAML + TypeScript types)
 │   ├── contract/             # OpenAPI specs (workspace package)
 │   ├── server/               # Node.js backend
 │   ├── webapp/               # React frontend
 │   ├── database/             # PostgreSQL migrations
 │   ├── helm/                 # Kubernetes charts
 │   └── testing/              # Testkube definitions
-├── config/                   # YAML configuration
 └── .github/workflows/        # CI/CD pipelines
 ```
 

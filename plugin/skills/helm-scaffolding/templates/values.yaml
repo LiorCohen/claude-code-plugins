@@ -1,0 +1,47 @@
+# Default values - safe for development
+# Override in values-{env}.yaml for other environments
+
+# Infrastructure: NODE_ENV for library behavior (NOT application config)
+nodeEnv: development
+
+# Replica count
+replicaCount: 1
+
+# Container image
+image:
+  repository: {{CHART_NAME}}
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 3000
+
+# Resource limits
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Probes
+livenessProbe:
+  httpGet:
+    path: /health/live
+    port: 9090
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: 9090
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+# Application config (populated at deploy time via --set-file config=<file>)
+# This gets mounted as /app/config/config.yaml
+config: {}

@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schemas/config.schema.json
+# Base configuration - other environments inherit from this
+
+global: {}  # Reserved for future cross-cutting concerns
+
+# Component sections - users add properties as needed
+# Section names match component directory names exactly

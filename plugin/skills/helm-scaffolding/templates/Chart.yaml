@@ -1,0 +1,6 @@
+apiVersion: v2
+name: {{CHART_NAME}}
+description: {{CHART_DESCRIPTION}}
+type: application
+version: 0.1.0
+appVersion: "{{APP_VERSION}}"

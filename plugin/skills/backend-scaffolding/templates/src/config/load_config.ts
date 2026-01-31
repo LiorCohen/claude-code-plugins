@@ -1,21 +1,45 @@
-import dotenv from 'dotenv';
+import { readFileSync, existsSync } from 'node:fs';
+import { parse } from 'yaml';
+import Ajv from 'ajv';
 
+// Config type - components should define their own specific types in @{project}/config/types
+// and import them via workspace dependency
 export type Config = Readonly<{
-  readonly port: number;
-  readonly probesPort: number;
-  readonly nodeEnv: string;
-  readonly logLevel: string;
-  readonly databaseUrl: string;
+  readonly port?: number;
+  readonly probesPort?: number;
+  readonly logLevel?: string;
+  readonly database?: Readonly<{
+    readonly host?: string;
+    readonly port?: number;
+    readonly name?: string;
+    readonly user?: string;
+    readonly passwordSecret?: string;
+    readonly pool?: number;
+  }>;
 }>;
 
 export const loadConfig = (): Config => {
-  dotenv.config();
+  const configPath = process.env.SDD_CONFIG_PATH;
+  if (!configPath) {
+    throw new Error('SDD_CONFIG_PATH environment variable is required');
+  }
 
-  const port = parseInt(process.env.PORT ?? '3000', 10);
-  const probesPort = parseInt(process.env.PROBES_PORT ?? '9090', 10);
-  const nodeEnv = process.env.NODE_ENV ?? 'development';
-  const logLevel = process.env.LOG_LEVEL ?? 'info';
-  const databaseUrl = process.env.DATABASE_URL ?? 'postgresql://postgres:postgres@localhost:5432/{{PROJECT_NAME}}';
+  if (!existsSync(configPath)) {
+    throw new Error(`Config file not found: ${configPath}`);
+  }
 
-  return { port, probesPort, nodeEnv, logLevel, databaseUrl };
+  const config = parse(readFileSync(configPath, 'utf-8')) as Config;
+
+  // Validate against schema if present (schema placed alongside config by sdd-system)
+  const schemaPath = configPath.replace(/\.yaml$/, '.schema.json');
+  if (existsSync(schemaPath)) {
+    const schema = JSON.parse(readFileSync(schemaPath, 'utf-8')) as object;
+    const ajv = new Ajv();
+    const validate = ajv.compile(schema);
+    if (!validate(config)) {
+      throw new Error(`Config validation failed: ${JSON.stringify(validate.errors)}`);
+    }
+  }
+
+  return config;
 };

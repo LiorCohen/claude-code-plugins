@@ -15,6 +15,7 @@ Components are the building blocks of an SDD project. Each component lives under
 
 | Component | Description |
 |-----------|-------------|
+| `config` | Centralized configuration (mandatory singleton) |
 | `contract` | OpenAPI specification |
 | `server` | Node.js backend (CMDO pattern) |
 | `webapp` | React frontend (MVVM pattern) |
@@ -23,7 +24,7 @@ Components are the building blocks of an SDD project. Each component lives under
 | `testing` | Testkube test setup and definitions |
 | `cicd` | GitHub Actions CI/CD workflows |
 
-All component types support multiple instances. See [Multi-Instance Components](#multi-instance-components) below.
+Most component types support multiple instances. See [Multi-Instance Components](#multi-instance-components) below. The `config` component is a mandatory singleton.
 
 ## Component Details
 
@@ -59,7 +60,33 @@ PostgreSQL database component with migrations, seeds, and management scripts. Ha
 
 ### Config
 
-YAML-based configuration management with validation schemas. Always included in every project. Config lives at `config/` in the project root and is **not** a component.
+YAML-based configuration management with validation schemas. **Mandatory singleton** - every project has exactly one config component.
+
+**Directory:** `components/config/` (always, no name variants)
+
+**Features:**
+- Environment layering (`envs/default/` → `envs/{env}/`)
+- JSON Schema validation
+- TypeScript type exports for type-safe config access
+- Single env var (`SDD_CONFIG_PATH`) for servers
+
+**Structure:**
+```
+components/config/
+├── package.json          # Workspace package for type imports
+├── tsconfig.json
+├── envs/
+│   ├── default/config.yaml    # Base configuration
+│   ├── local/config.yaml      # Local dev overrides
+│   └── {env}/config.yaml      # Other environments
+├── schemas/
+│   └── config.schema.json
+└── types/
+    ├── index.ts
+    └── server.ts         # Per-component types
+```
+
+See [Configuration Guide](config-guide.md) for details.
 
 ### Helm
 

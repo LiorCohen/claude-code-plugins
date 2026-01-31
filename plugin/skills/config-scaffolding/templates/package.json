@@ -1,0 +1,14 @@
+{
+  "name": "@{{PROJECT_NAME}}/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./types": "./types/index.ts"
+  },
+  "typesVersions": {
+    "*": {
+      "types": ["./types/index.ts"]
+    }
+  }
+}

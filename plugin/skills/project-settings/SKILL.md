@@ -28,6 +28,8 @@ project:
   type: "fullstack"            # fullstack | backend | frontend | custom
 
 components:
+  - type: config
+    name: config
   - type: contract
     name: task-api
   - type: server
@@ -42,7 +44,7 @@ components:
     name: task-ci
 ```
 
-**Config** is not a component. It always exists at `config/` in the project root and is created automatically.
+The **config** component is mandatory and always the first in the list. It lives at `components/config/`.
 
 ## Component Format
 
@@ -50,7 +52,7 @@ Components are a list of objects. Each object has two required properties:
 
 | Property | Required | Description |
 |----------|----------|-------------|
-| `type` | Yes | One of: `contract`, `server`, `webapp`, `database`, `helm`, `testing`, `cicd` |
+| `type` | Yes | One of: `config`, `contract`, `server`, `webapp`, `database`, `helm`, `testing`, `cicd` |
 | `name` | Yes | Instance name (lowercase, hyphens only) |
 
 **Directory derivation:** `components/{type}-{name}/` when type ≠ name, `components/{type}/` when type = name.
@@ -134,6 +136,8 @@ Input:
   project_domain: "Task Management"
   project_type: "fullstack"
   components:
+    - type: config
+      name: config
     - type: contract
       name: task-api
     - type: server
@@ -160,6 +164,8 @@ Input:
   project_domain: "Platform"
   project_type: "custom"
   components:
+    - type: config
+      name: config
     - type: contract
       name: customer-api
     - type: contract
@@ -231,6 +237,8 @@ settings:
     domain: "Task Management"
     type: "fullstack"
   components:
+    - type: config
+      name: config
     - type: contract
       name: task-api
     - type: server
@@ -313,8 +321,10 @@ None (reads from settings)
 **Output:**
 
 ```yaml
-config_dir: "config"                              # always present, at project root
 directories:
+  - type: config
+    name: config
+    dir: "components/config"
   - type: contract
     name: task-api
     dir: "components/contract-task-api"
@@ -359,7 +369,16 @@ Valid values for `project.type`:
 ### Component Values
 
 Each component is an object with:
-- `type` (required) — one of: `contract`, `server`, `webapp`, `database`, `helm`, `testing`, `cicd`
+- `type` (required) — one of: `config`, `contract`, `server`, `webapp`, `database`, `helm`, `testing`, `cicd`
 - `name` (required) — lowercase, hyphens only, no spaces. Should be domain-specific and descriptive (e.g., `order-service`, `user-dashboard`), not generic (e.g., avoid `api`, `public`, `primary`). When there's only one instance of a type, name = type is technically valid but discouraged — it's not future-proof if a second instance is added later. Prefer a domain-specific name even for single instances.
 
 Directory: `components/{type}/` when name = type, `components/{type}-{name}/` otherwise.
+
+### Config Component (Mandatory Singleton)
+
+The `config` component is **mandatory** and must appear exactly once in every project:
+- Type: `config`
+- Name: `config` (always, no variations allowed)
+- Directory: `components/config/`
+
+This component holds centralized configuration for all other components. It is scaffolded first during project initialization and cannot be removed.

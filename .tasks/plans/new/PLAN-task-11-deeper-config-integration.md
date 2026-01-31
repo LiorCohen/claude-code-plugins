@@ -1,8 +1,9 @@
 ---
 task_id: 11
 title: Deeper config integration
-status: new
+status: done
 created: 2026-01-30
+completed: 2026-01-30
 ---
 
 # Plan: Deeper Config Integration (Task 11)

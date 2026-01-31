@@ -11,6 +11,7 @@
  *   hook          Hook handlers (validate-write, prompt-commit)
  *   database      Database component operations
  *   contract      Contract component operations
+ *   config        Config component operations
  */
 
 import { parseArgs, type CommandResult, type GlobalOptions, outputResult } from '@/lib/args';
@@ -23,8 +24,9 @@ import { handleVersion } from '@/commands/version';
 import { handleHook } from '@/commands/hook';
 import { handleDatabase } from '@/commands/database';
 import { handleContract } from '@/commands/contract';
+import { handleConfig } from '@/commands/config';
 
-const NAMESPACES = ['scaffolding', 'spec', 'version', 'hook', 'database', 'contract'] as const;
+const NAMESPACES = ['scaffolding', 'spec', 'version', 'hook', 'database', 'contract', 'config'] as const;
 type Namespace = (typeof NAMESPACES)[number];
 
 const HELP_TEXT = `
@@ -62,6 +64,12 @@ Namespaces:
     generate-types  Generate TypeScript types from OpenAPI spec
     validate        Validate OpenAPI spec
 
+  config        Config component operations
+    generate    Generate merged config for target environment
+    validate    Validate config against schemas
+    diff        Show differences between environments
+    add-env     Add a new environment directory
+
 Global Options:
   --json        JSON output mode
   --verbose     Verbose logging
@@ -88,6 +96,7 @@ const COMMAND_HANDLERS: Readonly<Record<Namespace, CommandHandler>> = {
   hook: handleHook,
   database: handleDatabase,
   contract: handleContract,
+  config: handleConfig,
 };
 
 const showHelp = (options: GlobalOptions): CommandResult => {

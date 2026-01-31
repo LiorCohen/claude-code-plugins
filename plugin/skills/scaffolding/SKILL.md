@@ -13,11 +13,13 @@ This skill coordinates multiple component scaffolding skills:
 
 | Skill | Purpose | Templates Location |
 |-------|---------|-------------------|
-| `project-scaffolding` | Root files, specs, config | `skills/project-scaffolding/templates/` |
+| `project-scaffolding` | Root files, specs | `skills/project-scaffolding/templates/` |
+| `config-scaffolding` | Config component (mandatory) | `skills/config-scaffolding/templates/` |
 | `backend-scaffolding` | Server components (CMDO) | `skills/backend-scaffolding/templates/` |
 | `frontend-scaffolding` | Webapp components (MVVM) | `skills/frontend-scaffolding/templates/` |
 | `contract-scaffolding` | OpenAPI contract | `skills/contract-scaffolding/templates/` |
 | `database-scaffolding` | PostgreSQL database | `skills/database-scaffolding/templates/` |
+| `helm-scaffolding` | Helm charts for K8s deployment | `skills/helm-scaffolding/templates/` |
 
 ## When to Use
 
@@ -36,6 +38,7 @@ cat > /tmp/sdd-scaffold-config.json << 'EOF'
     "primary_domain": "<user-provided-domain>",
     "target_dir": "<absolute-path-to-project-directory>",
     "components": [
+        {"type": "config", "name": "config"},
         {"type": "contract", "name": "task-api"},
         {"type": "server", "name": "task-service"},
         {"type": "webapp", "name": "task-dashboard"},
@@ -61,7 +64,7 @@ rm /tmp/sdd-scaffold-config.json
 | `project_description` | No | Brief description (defaults to "A {name} project") |
 | `primary_domain` | No | Primary business domain (defaults to "General") |
 | `target_dir` | Yes | Absolute path to create project in |
-| `components` | Yes | List of components to create (see below for formats) |
+| `components` | Yes | List of components to create (config is mandatory, always first) |
 | `skills_dir` | Yes | Path to the skills directory (templates are colocated) |
 
 ## Component Format
@@ -70,37 +73,44 @@ Components are specified as a list of objects with `type` and `name` (both requi
 
 ```yaml
 components:
+  - type: config
+    name: config                     # -> components/config/ (MANDATORY)
   - type: contract
-    name: task-api                  # -> components/contract-task-api/
+    name: task-api                   # -> components/contract-task-api/
   - type: server
-    name: task-service              # -> components/server-task-service/
+    name: task-service               # -> components/server-task-service/
   - type: webapp
-    name: task-dashboard            # -> components/webapp-task-dashboard/
+    name: task-dashboard             # -> components/webapp-task-dashboard/
   - type: database
-    name: task-db                   # -> components/database-task-db/
+    name: task-db                    # -> components/database-task-db/
+  - type: helm
+    name: task-service               # -> components/helm-task-service/
   - type: testing
-    name: testing                   # -> testing config
+    name: testing                    # -> testing config
   - type: cicd
-    name: cicd                      # -> CI/CD workflows
+    name: cicd                       # -> CI/CD workflows
 ```
 
 **Multiple instances of the same type:**
 ```yaml
 components:
+  - type: config
+    name: config                      # Always exactly one config
   - type: server
-    name: order-service             # -> components/server-order-service/
+    name: order-service               # -> components/server-order-service/
   - type: server
-    name: notification-worker       # -> components/server-notification-worker/
+    name: notification-worker         # -> components/server-notification-worker/
   - type: webapp
-    name: admin-portal              # -> components/webapp-admin-portal/
+    name: admin-portal                # -> components/webapp-admin-portal/
   - type: webapp
-    name: customer-app              # -> components/webapp-customer-app/
+    name: customer-app                # -> components/webapp-customer-app/
 ```
 
 ### Directory Naming
 
 | Component | Directory Created |
 |-----------|-------------------|
+| `{type: config, name: config}` | `components/config/` |
 | `{type: server, name: server}` | `components/server/` |
 | `{type: server, name: order-service}` | `components/server-order-service/` |
 | `{type: webapp, name: admin-portal}` | `components/webapp-admin-portal/` |
@@ -111,25 +121,26 @@ components:
 - Names must be lowercase, hyphens allowed, no spaces
 - When `name` matches `type`, directory is `components/{type}/`
 - When `name` differs from `type`, directory is `components/{type}-{name}/`
+- Config component is **mandatory** - exactly one, always `{type: config, name: config}`
 
 ## Available Components
 
 | Component | Scaffolding Skill | Multiple Instances |
 |-----------|-------------------|-------------------|
+| `config` | `config-scaffolding` | No (mandatory singleton) |
 | `contract` | `contract-scaffolding` | Yes |
 | `server` | `backend-scaffolding` | Yes |
 | `webapp` | `frontend-scaffolding` | Yes |
 | `database` | `database-scaffolding` | Yes |
-| `helm` | (inline) | Yes |
+| `helm` | `helm-scaffolding` | Yes |
 | `testing` | (inline) | Yes |
 | `cicd` | (inline) | Yes |
-
-> **Note:** Config is not a component. It is always created at `config/` in the project root by `project-scaffolding`.
 
 ## Component Presets
 
 **Full-Stack Application (default):**
 ```yaml
+- {type: config, name: config}
 - {type: contract, name: task-api}
 - {type: server, name: task-service}
 - {type: webapp, name: task-dashboard}
@@ -140,6 +151,7 @@ components:
 
 **Backend API Only:**
 ```yaml
+- {type: config, name: config}
 - {type: contract, name: task-api}
 - {type: server, name: task-service}
 - {type: testing, name: testing}
@@ -148,6 +160,7 @@ components:
 
 **Frontend Only:**
 ```yaml
+- {type: config, name: config}
 - {type: webapp, name: task-dashboard}
 - {type: testing, name: testing}
 - {type: cicd, name: cicd}
@@ -155,6 +168,7 @@ components:
 
 **Multi-Backend:**
 ```yaml
+- {type: config, name: config}
 - {type: contract, name: order-api}
 - {type: server, name: order-service}
 - {type: server, name: notification-worker}
@@ -164,6 +178,7 @@ components:
 
 **Multi-Frontend:**
 ```yaml
+- {type: config, name: config}
 - {type: contract, name: storefront-api}
 - {type: server, name: storefront-service}
 - {type: webapp, name: admin-portal}
@@ -174,9 +189,22 @@ components:
 
 **Backend with Database:**
 ```yaml
+- {type: config, name: config}
 - {type: contract, name: inventory-api}
 - {type: server, name: inventory-service}
 - {type: database, name: inventory-db}
+- {type: testing, name: testing}
+- {type: cicd, name: cicd}
+```
+
+**Full-Stack with Helm Deployment:**
+```yaml
+- {type: config, name: config}
+- {type: contract, name: task-api}
+- {type: server, name: task-service}
+- {type: webapp, name: task-dashboard}
+- {type: database, name: task-db}
+- {type: helm, name: task-service}
 - {type: testing, name: testing}
 - {type: cicd, name: cicd}
 ```
@@ -185,12 +213,14 @@ components:
 
 The script executes in this order:
 
-1. **Project scaffolding** - Root files, specs, `config/` directory (always first)
-2. **Contract scaffolding** - OpenAPI spec (if selected)
-3. **Backend scaffolding** - Server components (for each instance)
-4. **Frontend scaffolding** - Webapp components (for each instance)
-5. **Database scaffolding** - Migrations, seeds, scripts (if selected)
-6. **Infrastructure** - Helm, testing, CI/CD (inline, if selected)
+1. **Project scaffolding** - Root files, specs (always first)
+2. **Config scaffolding** - Config component at `components/config/` (always second, mandatory)
+3. **Contract scaffolding** - OpenAPI spec (if selected)
+4. **Backend scaffolding** - Server components (for each instance)
+5. **Frontend scaffolding** - Webapp components (for each instance)
+6. **Database scaffolding** - Migrations, seeds, scripts (if selected)
+7. **Helm scaffolding** - Kubernetes deployment charts (for each instance)
+8. **Infrastructure** - Testing, CI/CD (inline, if selected)
 
 ## Template Locations
 
@@ -202,8 +232,15 @@ skills/
 │   ├── SKILL.md
 │   └── templates/
 │       ├── project/          # README.md, CLAUDE.md, package.json
-│       ├── specs/            # INDEX.md, SNAPSHOT.md, glossary.md
-│       └── config/           # config.yaml, schemas/
+│       └── specs/            # INDEX.md, SNAPSHOT.md, glossary.md
+├── config-scaffolding/
+│   ├── SKILL.md
+│   └── templates/
+│       ├── package.json      # Workspace package
+│       ├── tsconfig.json     # TypeScript config
+│       ├── envs/             # Environment configs
+│       ├── schemas/          # JSON schemas
+│       └── types/            # TypeScript types
 ├── backend-scaffolding/
 │   ├── SKILL.md
 │   └── templates/            # Server component files
@@ -216,6 +253,9 @@ skills/
 ├── database-scaffolding/
 │   ├── SKILL.md
 │   └── templates/            # migrations/, seeds/
+├── helm-scaffolding/
+│   ├── SKILL.md
+│   └── templates/            # Chart.yaml, values.yaml, templates/
 └── scaffolding/
     └── SKILL.md              # This file (orchestrator)
 ```

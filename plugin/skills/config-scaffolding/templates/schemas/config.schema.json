@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "config.schema.json",
+  "title": "Project Configuration Schema",
+  "description": "Schema for SDD project configuration. Users extend this as config evolves.",
+  "type": "object",
+  "properties": {
+    "global": {
+      "type": "object",
+      "description": "Reserved for future cross-cutting concerns",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

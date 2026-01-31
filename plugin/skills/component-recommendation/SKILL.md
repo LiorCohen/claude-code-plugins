@@ -48,6 +48,8 @@ discovery_results:
 ```yaml
 project_type: "fullstack"  # fullstack | backend | frontend | custom
 components:
+  - type: config
+    name: config             # MANDATORY - always exactly one, always first
   - type: contract
     name: contract
   - type: server
@@ -68,6 +70,8 @@ components:
 
 ```yaml
 components:
+  - type: config
+    name: config              # MANDATORY - always exactly one
   - type: contract
     name: public-api          # -> components/contract-public-api/
   - type: contract
@@ -101,11 +105,12 @@ components:
 
 | Component | Description | Scaffolding Skill | Multi-Instance |
 |-----------|-------------|-------------------|----------------|
+| `config` | YAML configuration (MANDATORY) | `config-scaffolding` | No (singleton) |
 | `contract` | OpenAPI specification | `contract-scaffolding` | Yes |
 | `server` | Node.js backend (CMDO pattern) | `backend-scaffolding` | Yes |
 | `webapp` | React frontend (MVVM pattern) | `frontend-scaffolding` | Yes |
 | `database` | PostgreSQL migrations/seeds | `database-scaffolding` | Yes |
-| `helm` | Kubernetes Helm charts | (inline) | Yes |
+| `helm` | Kubernetes Helm charts | `helm-scaffolding` | Yes |
 | `testing` | Testkube test setup | (inline) | Yes |
 | `cicd` | GitHub Actions workflows | (inline) | Yes |
 
@@ -113,11 +118,12 @@ components:
 
 | Component | Requires | Notes |
 |-----------|----------|-------|
+| Config | - | MANDATORY - always included automatically |
 | Contract | Server | OpenAPI spec needs a backend to implement it |
-| Server | Contract | Backend requires API contract |
+| Server | Contract, Config | Backend requires API contract and config |
 | Webapp | - | Can work standalone with external API |
 | Database | Server | PostgreSQL database for backend data persistence |
-| Helm | Server | Kubernetes deployment is for backend services |
+| Helm | Server, Config | Kubernetes deployment needs config for ConfigMaps |
 | Testing | Server or Webapp | Tests need something to test |
 | CI/CD | Server or Webapp | Workflows need something to build/test |
 
@@ -291,6 +297,8 @@ Recommendation:
 Output:
   project_type: "fullstack"
   components:
+    - type: config
+      name: config
     - type: contract
       name: contract
     - type: server
@@ -328,6 +336,8 @@ User: "storefront" and "merchant"
 Output:
   project_type: "fullstack"
   components:
+    - type: config
+      name: config
     - type: contract
       name: contract
     - type: server
@@ -365,6 +375,8 @@ User: Yes, but add database too
 Output:
   project_type: "backend"
   components:
+    - type: config
+      name: config
     - type: contract
       name: contract
     - type: server
@@ -394,6 +406,8 @@ User: Multiple - api for requests, worker for background jobs, scheduler for rep
 Output:
   project_type: "custom"
   components:
+    - type: config
+      name: config
     - type: contract
       name: contract
     - type: server
@@ -424,3 +438,4 @@ Output:
 - It does not create any files
 - The output is used by `project-settings` and `scaffolding` skills
 - Always validate dependencies before accepting the final configuration
+- **Config is MANDATORY**: Always include `{type: config, name: config}` as the first component - it is auto-included and users cannot remove it

@@ -1,11 +1,11 @@
 ---
 name: project-scaffolding
-description: Scaffolds project-level structure (root files, specs, config).
+description: Scaffolds project-level structure (root files, specs).
 ---
 
 # Project Scaffolding Skill
 
-Creates the non-component parts of an SDD project: root files, specs directory, and config directory.
+Creates the non-component parts of an SDD project: root files and specs directory.
 
 ## When to Use
 
@@ -38,19 +38,9 @@ specs/
 └── external/             # External specs (if imported)
 ```
 
-### Config Directory
+## Note on Config
 
-```
-config/
-├── config.yaml           # Base configuration
-├── config-local.yaml     # Local development overrides
-├── config-testing.yaml   # Test environment overrides
-├── config-production.yaml # Production overrides
-└── schemas/
-    ├── schema.json       # Combined schema
-    ├── app-schema.json   # Application schema
-    └── ops-schema.json   # Operations schema
-```
+Configuration is now handled by the `config-scaffolding` skill which creates the mandatory `components/config/` component. This project-scaffolding skill no longer creates a root-level `config/` directory.
 
 ## Template Variables
 
@@ -85,13 +75,8 @@ skills/project-scaffolding/templates/
 │   ├── README.md
 │   ├── CLAUDE.md
 │   └── package.json
-├── specs/
-│   ├── INDEX.md
-│   ├── SNAPSHOT.md
-│   └── glossary.md
-└── config/
-    ├── config.yaml
-    ├── config-*.yaml
-    └── schemas/
-        └── *.json
+└── specs/
+    ├── INDEX.md
+    ├── SNAPSHOT.md
+    └── glossary.md
 ```

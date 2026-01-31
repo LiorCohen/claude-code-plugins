@@ -42,6 +42,7 @@ my-app/
 │   ├── domain/              # Business terminology and definitions
 │   └── architecture/        # Architecture decisions
 ├── components/              # Your application code
+│   ├── config/              # Configuration (YAML + types)
 │   ├── contract/            # API definitions (OpenAPI)
 │   ├── server/              # Backend code
 │   ├── webapp/              # Frontend code
@@ -49,7 +50,6 @@ my-app/
 │   ├── helm/                # Kubernetes Helm charts
 │   ├── testing/             # Test setup and definitions
 │   └── cicd/                # CI/CD workflows
-├── config/                  # YAML configuration
 └── sdd-settings.yaml        # Project configuration
 ```
 
@@ -74,3 +74,4 @@ This creates a spec and implementation plan. Review them before proceeding.
 - [Workflows](workflows.md) - Learn the feature, bugfix, and refactor workflows
 - [Commands](commands.md) - Full command reference
 - [Agents](agents.md) - Understand the specialized agents
+- [Configuration Guide](config-guide.md) - How the config system works

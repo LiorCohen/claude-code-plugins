@@ -103,8 +103,66 @@ Verify implementation matches the spec.
 
 ---
 
+## /sdd-config
+
+Manage project configuration.
+
+```
+/sdd-config <operation> [options]
+```
+
+**Operations:**
+- `generate` - Generate merged config for an environment
+- `validate` - Validate config against schemas
+- `diff` - Show differences between environments
+- `add-env` - Add a new environment
+
+**Examples:**
+```bash
+# Generate config for local development
+/sdd-config generate --env local --component server-task-service --output ./local-config.yaml
+
+# Validate all environments
+/sdd-config validate
+
+# Compare local vs production
+/sdd-config diff local production
+
+# Add staging environment
+/sdd-config add-env staging
+```
+
+See [Configuration Guide](config-guide.md) for detailed usage.
+
+---
+
+## /sdd-run
+
+Run a server or webapp component with config.
+
+```
+/sdd-run <component> [--env <env>]
+```
+
+**Arguments:**
+- `<component>` (required) - Component to run (e.g., `server-task-service`)
+- `--env` (optional) - Environment to use (default: `local`)
+
+**What it does:**
+1. Generates merged config for the component
+2. Sets `SDD_CONFIG_PATH` environment variable
+3. Runs the component's dev script
+
+**Example:**
+```
+/sdd-run server-task-service --env local
+```
+
+---
+
 ## Next Steps
 
 - [Getting Started](getting-started.md) - First project tutorial
 - [Workflows](workflows.md) - How to use these commands together
 - [Agents](agents.md) - The specialized agents behind the commands
+- [Configuration Guide](config-guide.md) - Config system details

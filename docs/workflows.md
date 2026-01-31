@@ -122,6 +122,49 @@ The command reads the epic PLAN.md for dependency order and implements child cha
 
 Verifies each child change individually, then checks that the combined implementation satisfies all epic-level acceptance criteria.
 
+## Configuration Workflow
+
+Use this when you need to add or modify configuration.
+
+### 1. Add Config Property
+
+Edit `components/config/envs/default/config.yaml`:
+
+```yaml
+server-task-service:
+  port: 3000
+  newProperty: value
+```
+
+### 2. Add Environment Override (if needed)
+
+Edit `components/config/envs/local/config.yaml`:
+
+```yaml
+server-task-service:
+  newProperty: localValue
+```
+
+### 3. Update Types
+
+Edit `components/config/types/server.ts`:
+
+```typescript
+export type ServerConfig = Readonly<{
+  port?: number;
+  newProperty?: string;
+}>;
+```
+
+### 4. Generate and Run
+
+```bash
+/sdd-config generate --env local --component server-task-service --output ./local-config.yaml
+SDD_CONFIG_PATH=./local-config.yaml npm run dev
+```
+
+See the [Configuration Guide](config-guide.md) for complete details.
+
 ## Tips
 
 **Small changes are better.** A feature that takes 6 phases is harder to review than three 2-phase features.
@@ -130,7 +173,10 @@ Verifies each child change individually, then checks that the combined implement
 
 **Trust the agents.** Each agent has specific expertise. Let `backend-dev` handle server code, `frontend-dev` handle UI.
 
+**Config before code.** When adding features that need configuration, add the config properties first, then implement the feature.
+
 ## Next Steps
 
 - [Commands](commands.md) - Full command reference
 - [Agents](agents.md) - What each agent does
+- [Configuration Guide](config-guide.md) - Config system details

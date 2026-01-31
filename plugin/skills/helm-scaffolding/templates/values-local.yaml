@@ -1,0 +1,17 @@
+# Local development values
+# Override defaults for local Kubernetes development (minikube, kind, etc.)
+
+nodeEnv: development
+
+# Use local image
+image:
+  pullPolicy: Never
+
+# Minimal resources for local
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
