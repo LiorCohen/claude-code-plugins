@@ -10,7 +10,7 @@
 
 ## Ready
 
-(none)
+- [#65](3-ready/65/): Move external spec handling from sdd-init to sdd-new-change
 
 ---
 
@@ -29,7 +29,6 @@
 ## High Priority
 
 - [#64](1-inbox/64/): Refactor planning system architecture
-- [#65](1-inbox/65/): Move external spec handling from sdd-init to sdd-new-change
 - [#17](1-inbox/17/): Plans should follow TDD with test review first
 - [#59](1-inbox/59/): Audit and update all agents for compatibility
 - [#44](1-inbox/44/): Helm chart template + observability stack

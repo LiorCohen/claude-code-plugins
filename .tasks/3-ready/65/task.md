@@ -2,7 +2,7 @@
 id: 65
 title: Move external spec handling from sdd-init to sdd-new-change
 priority: high
-status: open
+status: ready
 created: 2026-01-31
 depends_on: []
 blocks: []
