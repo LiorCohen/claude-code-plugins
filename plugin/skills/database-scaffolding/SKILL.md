@@ -117,6 +117,56 @@ components/
 
 The server's DAL layer imports types and executes queries against the schema defined in the database component.
 
+## Config Schema
+
+When scaffolding a database component, the following config section is added to `components/config/`:
+
+### Minimal Config (envs/default/config.yaml)
+
+```yaml
+database-{name}:
+  host: localhost
+  port: 5432
+  name: appdb
+  user: app
+  passwordSecret: db-credentials
+  pool: 10
+```
+
+### TypeScript Type (types/database.ts)
+
+```typescript
+export type DatabaseConfig = Readonly<{
+  host: string;
+  port: number;
+  name: string;
+  user: string;
+  passwordSecret: string;
+  pool: number;
+}>;
+```
+
+### JSON Schema (schemas/config.schema.json)
+
+```json
+{
+  "database-{name}": {
+    "type": "object",
+    "properties": {
+      "host": { "type": "string" },
+      "port": { "type": "number", "default": 5432 },
+      "name": { "type": "string" },
+      "user": { "type": "string" },
+      "passwordSecret": { "type": "string" },
+      "pool": { "type": "number", "default": 10 }
+    },
+    "required": ["host", "port", "name", "user", "passwordSecret"]
+  }
+}
+```
+
+---
+
 ## Related Skills
 
 - [postgresql](../postgresql/SKILL.md) - SQL patterns, deployment, and best practices

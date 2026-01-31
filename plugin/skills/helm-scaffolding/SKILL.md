@@ -83,6 +83,52 @@ skills/helm-scaffolding/templates/
     └── configmap.yaml
 ```
 
+## Config Schema
+
+Helm components don't use `components/config/` directly. Instead, they define values files that receive config at deploy time.
+
+### Minimal Values (values.yaml)
+
+```yaml
+replicaCount: 1
+nodeEnv: development
+
+image:
+  repository: ghcr.io/org/app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3000
+
+probes:
+  port: 9090
+
+config: {}  # Injected at deploy time from components/config/
+```
+
+### Environment Values (values-{env}.yaml)
+
+```yaml
+# values-production.yaml
+replicaCount: 3
+nodeEnv: production
+
+image:
+  tag: "1.0.0"
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+```
+
+---
+
 ## Related Skills
 
 - `helm-standards` - Standards for Helm charts

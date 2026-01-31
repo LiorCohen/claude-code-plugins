@@ -359,6 +359,85 @@ Wrap business operations with spans using `@opentelemetry/api`.
 
 ---
 
+## Implementation Order
+
+When implementing a new feature, follow this order to minimize rework and ensure clean architecture:
+
+### Step 1: Contract First (API Design)
+
+Start in `components/contract/`:
+
+1. **Define the endpoint** in `openapi.yaml` - request/response schemas
+2. **Generate types** with `npm run generate:types`
+3. **Import types** into server via workspace package
+
+This ensures types flow from contract → server → frontend.
+
+### Step 2: Model (Business Logic)
+
+Start in `src/model/`:
+
+1. **Add definitions** - Types specific to this feature in `definitions/`
+2. **Create use-case** - One file per use-case in `use-cases/`
+3. **Define Dependencies interface** - What the use-case needs injected
+4. **Write tests** - Test use-case with mocked dependencies
+
+Model is pure business logic with no external dependencies.
+
+### Step 3: DAL (Data Access)
+
+In `src/dal/`:
+
+1. **Add database functions** - One function per file
+2. **Map to domain types** - Convert DB rows ↔ domain objects
+3. **Use parameterized queries** - Never string concatenation
+
+### Step 4: Controller (Wiring)
+
+In `src/controller/`:
+
+1. **Add HTTP handler** - In appropriate `http_handlers/` file
+2. **Create Dependencies** - Wire DAL + external services
+3. **Call use-case** - Pass Dependencies and request data
+4. **Map response** - Convert use-case result to HTTP response
+
+### Step 5: Operator (If Needed)
+
+In `src/operator/`:
+
+Only modify if the feature requires:
+- New external service clients
+- New lifecycle events
+- New infrastructure capabilities
+
+### Implementation Checklist
+
+| Step | Location | What to Do |
+|------|----------|------------|
+| 1 | `contract/openapi.yaml` | Define endpoint, request/response schemas |
+| 2 | `model/definitions/` | Add feature-specific types |
+| 3 | `model/use-cases/` | Implement business logic |
+| 4 | `model/dependencies.ts` | Extend Dependencies if needed |
+| 5 | `dal/` | Add database functions |
+| 6 | `controller/http_handlers/` | Add HTTP handler |
+| 7 | `controller/create_controller.ts` | Wire Dependencies |
+| 8 | Tests | Test each layer independently |
+
+### Anti-Patterns to Avoid
+
+- **Starting with HTTP handler** - Leads to business logic in controller
+- **Skipping contract** - Types become inconsistent between layers
+- **DAL before Model** - Data structure drives design instead of business needs
+- **Modifying Operator for features** - Operator is infrastructure, not features
+
+---
+
+## Config Schema
+
+Server components require configuration from `components/config/`. See [backend-scaffolding](../backend-scaffolding/SKILL.md) for the minimal config schema generated when scaffolding a server component.
+
+---
+
 ## Summary Checklist
 
 Before committing backend code, verify:
@@ -374,3 +453,4 @@ Before committing backend code, verify:
 - [ ] Telemetry initialized in Operator before other modules
 - [ ] All layers use structured logging with required fields
 - [ ] No sensitive data in logs
+- [ ] Implementation followed correct order: Contract → Model → DAL → Controller

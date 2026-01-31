@@ -122,6 +122,53 @@ skills/frontend-scaffolding/templates/
     └── api/
 ```
 
+## Config Schema
+
+When scaffolding a webapp component, the following config section is added to `components/config/`:
+
+### Minimal Config (envs/default/config.yaml)
+
+```yaml
+webapp-{name}:
+  apiBaseUrl: /api
+```
+
+### TypeScript Type (types/webapp.ts)
+
+```typescript
+export type WebappConfig = Readonly<{
+  apiBaseUrl: string;
+}>;
+```
+
+### JSON Schema (schemas/config.schema.json)
+
+```json
+{
+  "webapp-{name}": {
+    "type": "object",
+    "properties": {
+      "apiBaseUrl": { "type": "string", "default": "/api" }
+    },
+    "required": ["apiBaseUrl"]
+  }
+}
+```
+
+### Optional Extensions
+
+Features may extend the config as needed:
+
+```yaml
+webapp-{name}:
+  apiBaseUrl: /api
+  features:
+    darkMode: true
+    analytics: false
+```
+
+---
+
 ## Related Skills
 
 - `frontend-standards` - MVVM architecture and TanStack patterns

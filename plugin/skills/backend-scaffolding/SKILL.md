@@ -109,6 +109,65 @@ skills/backend-scaffolding/templates/
     └── dal/
 ```
 
+## Config Schema
+
+When scaffolding a server component, the following config section is added to `components/config/`:
+
+### Minimal Config (envs/default/config.yaml)
+
+```yaml
+server-{name}:
+  port: 3000
+  probesPort: 9090
+  logLevel: info
+```
+
+### TypeScript Type (types/server.ts)
+
+```typescript
+export type ServerConfig = Readonly<{
+  port: number;
+  probesPort: number;
+  logLevel: 'debug' | 'info' | 'warn' | 'error';
+}>;
+```
+
+### JSON Schema (schemas/config.schema.json)
+
+```json
+{
+  "server-{name}": {
+    "type": "object",
+    "properties": {
+      "port": { "type": "number", "default": 3000 },
+      "probesPort": { "type": "number", "default": 9090 },
+      "logLevel": { "enum": ["debug", "info", "warn", "error"], "default": "info" }
+    },
+    "required": ["port", "probesPort", "logLevel"]
+  }
+}
+```
+
+### Optional Extensions
+
+Features may extend the config as needed:
+
+```yaml
+server-{name}:
+  port: 3000
+  probesPort: 9090
+  logLevel: info
+  database:
+    host: localhost
+    port: 5432
+    name: appdb
+    user: app
+    passwordSecret: db-credentials
+    pool: 10
+```
+
+---
+
 ## Related Skills
 
 - `backend-standards` - Coding standards for backend development
