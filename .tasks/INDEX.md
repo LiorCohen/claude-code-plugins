@@ -6,6 +6,7 @@ Task details in [issues/](issues/) | Plans in [plans/](plans/)
 
 ## Inbox (unsorted)
 
+- [#63](issues/inbox/63.md): Consolidate overlapping skills
 - [#10](issues/inbox/10.md): Missing /sdd-help command
 - [#12](issues/inbox/12.md): User onboarding and process state tracking
 - [#13](issues/inbox/13.md): sdd-init should provide thorough repo guide
