@@ -2,11 +2,12 @@
 id: 41
 title: sdd-new-change should handle external specs
 priority: inbox
-status: open
+status: consolidated
 created: 2026-01-25
+consolidated_into: 65
 ---
 
-# Task 41: sdd-new-change should handle external specs
+# Task 41: sdd-new-change should handle external specs → consolidated into #65
 
 ## Description
 

@@ -3,10 +3,10 @@ id: 25
 title: Planner must block on open questions in specs
 status: consolidated
 created: 2026-01-25
-consolidated_into: 15
+consolidated_into: 64
 ---
 
-# Task 25: Planner must block on open questions in specs → consolidated into #15
+# Task 25: Planner must block on open questions in specs → consolidated into #64
 
 <!-- Original content preserved below -->
 

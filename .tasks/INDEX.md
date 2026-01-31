@@ -28,15 +28,16 @@
 
 ## High Priority
 
+- [#64](1-inbox/64/): Refactor planning system architecture
 - [#17](1-inbox/17/): Plans should follow TDD with test review first
 - [#59](1-inbox/59/): Audit and update all agents for compatibility
-- [#15](1-inbox/15/): Planner is too rigid and template-driven
 - [#44](1-inbox/44/): Helm chart template + observability stack
 
 ---
 
 ## Medium Priority
 
+- [#65](1-inbox/65/): Move external spec handling from sdd-init to sdd-new-change
 - [#16](1-inbox/16/): Plan changes should cascade to dependent items
 - [#27](1-inbox/27/): JSON Schema for skills + validation skill
 - [#56](1-inbox/56/): Create architecture skill with meaningful guidance
@@ -68,7 +69,6 @@
 - [#38](1-inbox/38/): Integration and E2E testing should be separate components
 - [#39](1-inbox/39/): Capture ad-hoc code changes and sync specs
 - [#40](1-inbox/40/): Fix sdd-new-change test - spec format mismatch
-- [#41](1-inbox/41/): sdd-new-change should handle external specs
 - [#43](1-inbox/43/): CI/CD components and .github folder integration
 - [#47](1-inbox/47/): Local environment create/start/stop workflow
 - [#50](1-inbox/50/): Move sdd-settings.yaml to .sdd/ directory
@@ -108,17 +108,19 @@
 - [#5](8-consolidated/5/) → #7
 - [#6](8-consolidated/6/) → #7
 - [#8](8-consolidated/8/) → #6
+- [#15](8-consolidated/15/) → #64
+- [#25](8-consolidated/25/) → #64
 - [#28](8-consolidated/28/) → #27
-- [#30](8-consolidated/30/) → #15
+- [#29](8-consolidated/29/) → #10
+- [#30](8-consolidated/30/) → #64
 - [#32](8-consolidated/32/) → #26
+- [#34](8-consolidated/34/) → #59
 - [#36](8-consolidated/36/) → #35
+- [#37](8-consolidated/37/) → #16
+- [#41](8-consolidated/41/) → #65
 - [#42](8-consolidated/42/) → #9
 - [#46](8-consolidated/46/) → #44
+- [#53](8-consolidated/53/) → #44
 - [#58](8-consolidated/58/) → #62
 - [#61](8-consolidated/61/) → #62
-- [#25](8-consolidated/25/) → #15
-- [#37](8-consolidated/37/) → #16
-- [#29](8-consolidated/29/) → #10
-- [#34](8-consolidated/34/) → #59
-- [#53](8-consolidated/53/) → #44
 - [#13](8-consolidated/13/) → #12

@@ -2,11 +2,12 @@
 id: 15
 title: Planner is too rigid and template-driven
 priority: high
-status: open
+status: consolidated
 created: 2026-01-25
+consolidated_into: 64
 ---
 
-# Task 15: Planner is too rigid and template-driven
+# Task 15: Planner is too rigid and template-driven → consolidated into #64
 
 ## Description
 
