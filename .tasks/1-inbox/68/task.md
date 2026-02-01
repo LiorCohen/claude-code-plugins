@@ -1,6 +1,7 @@
 ---
 id: 68
 title: Plans should focus on WHAT, not HOW
+priority: high
 status: open
 created: 2026-02-01
 depends_on: []

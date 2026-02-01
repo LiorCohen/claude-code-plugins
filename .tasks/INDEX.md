@@ -28,6 +28,7 @@
 
 ## High Priority
 
+- [#68](1-inbox/68/): Plans should focus on WHAT, not HOW
 - [#67](1-inbox/67/): Store user instructions in plans, specs, and .sdd/
 - [#17](1-inbox/17/): Plans should follow TDD with test review first
 - [#59](1-inbox/59/): Audit and update all agents for compatibility
@@ -58,7 +59,6 @@
 ## Inbox (unprioritized)
 
 - [#69](1-inbox/69/): Fix sdd-init workflow test timeout
-- [#68](1-inbox/68/): Plans should focus on WHAT, not HOW
 - [#12](1-inbox/12/): User onboarding and process state tracking
 - [#14](1-inbox/14/): Unclear when to run type generation
 - [#20](1-inbox/20/): Plugin installation debugging skill + workflow fix
