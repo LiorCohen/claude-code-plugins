@@ -10,7 +10,7 @@
 
 ## Ready
 
-(none)
+- [#47](3-ready/47/): Local environment create/start/stop workflow
 
 ---
 
@@ -31,7 +31,6 @@
 - [#67](1-inbox/67/): Store user instructions in plans, specs, and .sdd/
 - [#17](1-inbox/17/): Plans should follow TDD with test review first
 - [#59](1-inbox/59/): Audit and update all agents for compatibility
-- [#47](1-inbox/47/): Local environment create/start/stop workflow
 
 ---
 

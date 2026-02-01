@@ -2,7 +2,7 @@
 id: 47
 title: Local environment create/start/stop workflow
 priority: high
-status: open
+status: ready
 created: 2026-01-25
 ---
 
