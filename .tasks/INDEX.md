@@ -16,7 +16,7 @@
 
 ## Implementing
 
-- [#68](4-implementing/68/): Plans should focus on WHAT, not HOW
+(none)
 
 ---
 
@@ -79,6 +79,7 @@
 
 ## Complete
 
+- [#68](6-complete/68/): Plans should focus on WHAT, not HOW ✓ (2026-02-01)
 - [#47](6-complete/47/): Local environment create/start/stop workflow ✓ (2026-02-01)
 - [#44](6-complete/44/): Component settings system + Helm charts ✓ (2026-02-01)
 - [#50](6-complete/50/): Move sdd-settings.yaml to .sdd/ directory ✓ (2026-02-01)
