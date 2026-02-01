@@ -174,6 +174,7 @@ components:
 - Component names must be multi-word (hyphenated), e.g., `main-server`, `background-worker`, `admin-dashboard`
 - Single-word names are discouraged as they're ambiguous and prone to conflicts
 - Exception: `config` (singleton, always one per project)
+- Helm charts can share names with the component they deploy (e.g., helm chart `admin-dashboard` deploys webapp `admin-dashboard`) - the `type` field distinguishes them
 
 **Directory structure:**
 - All components live at `components/<type-plural>/<name>/`
@@ -199,7 +200,7 @@ components:
 - When creating a helm chart, validation checks that the referenced component exists and has `helm: true`
 - If a component has `helm: true`, there should be a corresponding helm chart (warning if missing)
 - If a component has `helm: false`, there must not be a corresponding helm chart (error if exists)
-- Helm chart `deploy_modes` must be a subset of the server's `modes` array
+- Helm chart `deploy_modes` must be a subset of the server's available modes (for hybrid: the `modes` array; for non-hybrid: the single `server_type` mode)
 - Server `databases` must reference existing database components
 - Server `provides_contracts` and `consumes_contracts` must reference existing contract components
 - Webapp `contracts` must reference existing contract components
@@ -438,6 +439,13 @@ export type ComponentSettings =
   | { readonly type: 'database'; readonly settings: DatabaseSettings }
   | { readonly type: 'contract'; readonly settings: ContractSettings }
   | { readonly type: 'config'; readonly settings: Record<string, never> };
+
+// Component with name and settings
+export interface Component<S = ComponentSettings['settings']> {
+  readonly name: string;
+  readonly type: ComponentSettings['type'];
+  readonly settings: S;
+}
 ```
 
 **`plugin/system/src/settings/defaults.ts`:**
@@ -558,7 +566,8 @@ main-server:
 ```yaml
 # components/config/envs/default/config.yaml
 background-worker:
-  port: 3000
+  queue:                       # Worker connects to queue, not HTTP port
+    url: amqp://localhost:5672
   apis:
     public-api:                # Section per consumed contract
       base_url: http://main-server:3000

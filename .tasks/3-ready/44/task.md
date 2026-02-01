@@ -33,7 +33,7 @@ Introduce **component settings** as a first-class concept that drives scaffoldin
 - [ ] Backend scaffolding adapts to settings (DAL layer conditional, etc.)
 - [ ] Config initialization adapts to settings (DB section conditional, etc.)
 - [ ] Helm charts generated based on settings (ingress.yaml conditional, etc.)
-- [ ] Sync commands for incremental scaffolding when settings change
+- [ ] Automatic sync when settings change (internal, triggered by /sdd-settings)
 - [ ] `/sdd-settings` command for viewing/modifying settings
 - [ ] Documentation updated (helm-standards, project-settings, devops.md)
 
