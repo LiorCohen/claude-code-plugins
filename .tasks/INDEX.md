@@ -10,7 +10,7 @@
 
 ## Ready
 
-(none)
+- [#68](3-ready/68/): Plans should focus on WHAT, not HOW
 
 ---
 
@@ -28,7 +28,6 @@
 
 ## High Priority
 
-- [#68](1-inbox/68/): Plans should focus on WHAT, not HOW
 - [#67](1-inbox/67/): Store user instructions in plans, specs, and .sdd/
 - [#17](1-inbox/17/): Plans should follow TDD with test review first
 - [#59](1-inbox/59/): Audit and update all agents for compatibility
@@ -37,6 +36,8 @@
 
 ## Medium Priority
 
+- [#70](1-inbox/70/): Git checkpoint workflow for AI-assisted development
+- [#71](1-inbox/71/): Anti-stop hook to prevent accidental session termination
 - [#16](1-inbox/16/): Plan changes should cascade to dependent items
 - [#27](1-inbox/27/): JSON Schema for skills + validation skill
 - [#56](1-inbox/56/): Create architecture skill with meaningful guidance
@@ -58,6 +59,7 @@
 
 ## Inbox (unprioritized)
 
+- [#72](1-inbox/72/): Fix broken test benchmarks
 - [#69](1-inbox/69/): Fix sdd-init workflow test timeout
 - [#12](1-inbox/12/): User onboarding and process state tracking
 - [#14](1-inbox/14/): Unclear when to run type generation
