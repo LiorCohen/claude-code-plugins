@@ -4,7 +4,7 @@ title: Move sdd-settings.yaml to .sdd/ directory
 priority: medium
 status: planning
 created: 2026-01-25
-depends_on: [35]
+depends_on: []
 ---
 
 # Task 50: Move sdd-settings.yaml to .sdd/ directory

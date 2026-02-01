@@ -4,7 +4,7 @@ title: Checksumming and drift detection for specs/components
 priority: inbox
 status: open
 created: 2026-01-25
-blocks: [39, 50]
+blocks: [39]
 ---
 
 # Task 35: Checksumming and drift detection for specs/components
