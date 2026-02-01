@@ -4,7 +4,7 @@
 
 ## Planning
 
-- [#50](2-planning/50/): Move sdd-settings.yaml to .sdd/ directory
+(none)
 
 ---
 
@@ -78,6 +78,7 @@
 
 ## Complete
 
+- [#50](6-complete/50/): Move sdd-settings.yaml to .sdd/ directory ✓ (2026-02-01)
 - [#64](6-complete/64/): Refactor planning system architecture ✓ (2026-01-31)
 - [#65](6-complete/65/): Move external spec handling from sdd-init to sdd-new-change ✓ (2026-01-31)
 - [#11](6-complete/11/): Missing deeper config integration ✓ (2026-01-30)
