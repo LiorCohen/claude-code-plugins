@@ -53,6 +53,115 @@ Validate your OpenAPI specification:
 /sdd-run contract validate my-api
 ```
 
+## Environment Commands
+
+Manage local Kubernetes development environments.
+
+### Create Environment
+
+```bash
+/sdd-run env create [--name=cluster-name] [--provider=kind|minikube|docker-desktop] [--skip-infra]
+```
+
+Creates a local k8s cluster and installs the observability stack (Victoria Metrics + Victoria Logs).
+
+Options:
+- `--name`: Cluster name (default: sdd-local)
+- `--provider`: Cluster provider (default: auto-detected)
+  - `kind`: Kubernetes IN Docker (fast, lightweight)
+  - `minikube`: Full-featured local k8s
+  - `docker-desktop`: Uses Docker Desktop's built-in Kubernetes
+- `--skip-infra`: Skip installing observability stack
+
+### Destroy Environment
+
+```bash
+/sdd-run env destroy [--name=cluster-name]
+```
+
+Completely removes the local cluster (not available for docker-desktop).
+
+### Start/Stop Environment
+
+```bash
+/sdd-run env start [--name=cluster-name]
+/sdd-run env stop [--name=cluster-name]
+```
+
+Pause and resume the cluster. State is preserved when stopped.
+
+### Environment Status
+
+```bash
+/sdd-run env status [--name=cluster-name]
+```
+
+Shows cluster status, node health, and deployed workloads.
+
+### Deploy Applications
+
+```bash
+/sdd-run env deploy [chart-name] [--namespace=<app-name>] [--skip-db] [--skip-migrate] [--exclude=name,...]
+```
+
+Deploys the full application stack in order:
+1. **Databases** - Sets up PostgreSQL instances for each `type: database` component
+2. **Migrations** - Runs database migrations
+3. **Helm charts** - Deploys application charts from `components/helm_charts/`
+
+Options:
+- `--namespace`: Override namespace (default: app name from sdd-settings.yaml)
+- `--skip-db`: Skip database setup (useful for redeploying apps only)
+- `--skip-migrate`: Skip running migrations
+- `--exclude`: Comma-separated list of charts to skip (for hybrid development)
+
+### Hybrid Development
+
+Run most services in k8s while developing one locally:
+
+```bash
+# Deploy everything except main-server
+/sdd-run env deploy --exclude=main-server-api
+
+# Start port forwards
+/sdd-run env forward
+
+# Run your service locally
+cd components/servers/main-server && npm run dev
+```
+
+### Undeploy Applications
+
+```bash
+/sdd-run env undeploy [chart-name] [--namespace=<app-name>]
+```
+
+Removes deployed applications (keeps infrastructure).
+
+### Port Forwarding
+
+```bash
+/sdd-run env forward [start|stop|list] [--namespace=<app-name>]
+```
+
+Manages port forwards for local access to services.
+
+### Generate Local Config
+
+```bash
+/sdd-run env config
+```
+
+Generates `components/config/envs/local/config.yaml` with localhost URLs matching port-forwarded services.
+
+### Install Infrastructure
+
+```bash
+/sdd-run env infra [--reinstall]
+```
+
+Install or reinstall the observability infrastructure stack.
+
 ## Global Options
 
 | Option | Description |

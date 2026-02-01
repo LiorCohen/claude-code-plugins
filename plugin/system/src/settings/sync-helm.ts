@@ -10,13 +10,8 @@ import type {
   HelmSettings,
   HelmServerSettings,
   ServerSettings,
-} from '../types/settings.js';
-import {
-  isServerComponent,
-  isHelmComponent,
-  isHelmServerSettings,
-} from '../types/settings.js';
-import { getComponentDir } from './sync.js';
+} from '../types/settings';
+import { isServerComponent, isHelmComponent, isHelmServerSettings } from '../types/settings';
 
 /** Templates that should be included based on settings */
 export interface HelmTemplateSet {

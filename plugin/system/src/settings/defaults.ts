@@ -13,7 +13,7 @@ import type {
   DatabaseSettings,
   ContractSettings,
   ConfigSettings,
-} from '../types/settings.js';
+} from '../types/settings';
 
 // =============================================================================
 // Server Defaults

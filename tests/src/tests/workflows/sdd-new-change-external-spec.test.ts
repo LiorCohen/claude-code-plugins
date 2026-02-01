@@ -155,7 +155,6 @@ project:
     );
 
     // Initialize git (sdd-new-change checks git branch)
-    const { execSync } = await import('child_process');
     execSync('git init && git checkout -b feature/external-spec-test', {
       cwd: testProject.path,
       encoding: 'utf-8',

@@ -159,6 +159,7 @@ components/helm_charts/umbrella/
 | Variable | Description |
 |----------|-------------|
 | `{{CHART_NAME}}` | Helm chart name |
+| `{{CHART_DESCRIPTION}}` | Helm chart description |
 | `{{DEPLOYS_COMPONENT}}` | Name of component this chart deploys |
 | `{{APP_VERSION}}` | Application version |
 | `{{PROJECT_NAME}}` | Project name |
@@ -205,7 +206,7 @@ skills/helm-scaffolding/
 
 ### Server Config Injection
 
-Config is mounted as a file at `/app/config/config.yaml`:
+Config is mounted as a file at `/app/config/config.yaml`. The application reads config using the `SDD_CONFIG_PATH` environment variable:
 
 ```yaml
 # templates/configmap.yaml
@@ -213,6 +214,8 @@ data:
   config.yaml: |
     {{- toYaml .Values.config | nindent 4 }}
 ```
+
+The ConfigMap is mounted in deployments and `SDD_CONFIG_PATH` is set automatically.
 
 Deployment workflow:
 ```bash

@@ -37,7 +37,7 @@ export type {
   SddMetadata,
   ProjectMetadata,
   SettingsFile,
-} from '../types/settings.js';
+} from '../types/settings';
 
 // Re-export type guards
 export {
@@ -49,7 +49,7 @@ export {
   isConfigComponent,
   isHelmServerSettings,
   isHelmWebappSettings,
-} from '../types/settings.js';
+} from '../types/settings';
 
 // Re-export defaults
 export {
@@ -64,20 +64,20 @@ export {
   DEFAULT_DATABASE_SETTINGS,
   DEFAULT_CONTRACT_SETTINGS,
   DEFAULT_CONFIG_SETTINGS,
-} from './defaults.js';
+} from './defaults';
 
 // Re-export schema
-export { settingsFileSchema, schemas } from './schema.js';
+export { settingsFileSchema, schemas } from './schema';
 
 // Re-export validation
 export type {
   SettingsValidationError,
   SettingsValidationResult,
-} from './validate.js';
-export { validateSettings, formatValidationResult } from './validate.js';
+} from './validate';
+export { validateSettings, formatValidationResult } from './validate';
 
 // Re-export sync utilities
-export type { SyncResult, SettingsDiff } from './sync.js';
+export type { SyncResult, SettingsDiff } from './sync';
 export {
   diffSettings,
   getComponentDir,
@@ -85,10 +85,10 @@ export {
   generateServerConfigSection,
   generateWebappConfigSection,
   formatSyncPreview,
-} from './sync.js';
+} from './sync';
 
 // Re-export helm sync utilities
-export type { HelmTemplateSet } from './sync-helm.js';
+export type { HelmTemplateSet } from './sync-helm';
 export {
   getServerHelmTemplates,
   getWebappHelmTemplates,
@@ -97,4 +97,4 @@ export {
   generateWebappHelmValues,
   shouldHaveUmbrellaChart,
   generateUmbrellaChartDependencies,
-} from './sync-helm.js';
+} from './sync-helm';

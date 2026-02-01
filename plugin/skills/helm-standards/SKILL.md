@@ -322,7 +322,7 @@ helm install my-release ./components/helm_charts/main-server-api \
 
 ## Secret References
 
-Config contains secret **names**, not values:
+Config contains secret **names**, not values. Applications use K8s `secretKeyRef` to load the actual values:
 
 ```yaml
 # values-production.yaml
@@ -330,6 +330,16 @@ config:
   database:
     host: db.production.internal
     passwordSecret: "my-db-credentials"  # K8s Secret name
+```
+
+```yaml
+# templates/deployment.yaml - Using secretKeyRef
+env:
+  - name: DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: {{ .Values.config.database.passwordSecret }}
+        key: password
 ```
 
 ## Best Practices

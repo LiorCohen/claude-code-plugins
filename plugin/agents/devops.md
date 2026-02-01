@@ -86,13 +86,46 @@ App Helm charts include:
 
 All servers automatically expose metrics on port 9090 regardless of settings. Business API runs on port 3000 when `provides_contracts` is non-empty.
 
-### Cluster-Level (Task #47)
+### Cluster-Level
 
-Cluster observability infrastructure is handled separately:
+Cluster observability infrastructure is managed via `/sdd-run env` commands:
 
 - Victoria Metrics in `telemetry` namespace (Prometheus-compatible)
 - Victoria Logs in `telemetry` namespace (log aggregation)
 - Collectors that pick up ServiceMonitor CRDs and stdout logs
+
+## Local Environment Workflow
+
+Use `/sdd-run env` commands to manage local Kubernetes environments:
+
+```bash
+# Create local cluster with observability stack
+/sdd-run env create
+
+# Deploy full application stack (databases, migrations, helm charts)
+/sdd-run env deploy
+
+# Start port forwards for local access
+/sdd-run env forward
+
+# Check status
+/sdd-run env status
+
+# Hybrid development: exclude a service to run locally
+/sdd-run env deploy --exclude=main-server-api
+/sdd-run env forward
+cd components/servers/main-server && npm run dev
+
+# Lifecycle management
+/sdd-run env stop     # Pause (preserves state)
+/sdd-run env start    # Resume
+/sdd-run env destroy  # Full cleanup
+```
+
+The deploy command reads `.sdd/sdd-settings.yaml` to:
+1. Set up databases for each `type: database` component
+2. Run migrations
+3. Deploy helm charts for each `type: helm` component
 
 ## Testkube Setup
 

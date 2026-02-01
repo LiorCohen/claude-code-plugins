@@ -11,13 +11,8 @@ import type {
   WebappSettings,
   HelmSettings,
   SettingsFile,
-} from '../types/settings.js';
-import {
-  isServerComponent,
-  isWebappComponent,
-  isHelmComponent,
-  isHelmServerSettings,
-} from '../types/settings.js';
+} from '../types/settings';
+import { isServerComponent, isHelmComponent } from '../types/settings';
 
 /** Result of a sync operation */
 export interface SyncResult {
@@ -54,11 +49,11 @@ export const diffSettings = (
 
   const addedComponents: Component[] = [];
   const removedComponents: Component[] = [];
-  const modifiedComponents: {
-    name: string;
-    type: string;
-    changes: string[];
-  }[] = [];
+  const modifiedComponents: Array<{
+    readonly name: string;
+    readonly type: string;
+    readonly changes: readonly string[];
+  }> = [];
 
   // Find added and modified components
   for (const [key, newComp] of newByKey) {
@@ -71,7 +66,7 @@ export const diffSettings = (
         modifiedComponents.push({
           name: newComp.name,
           type: newComp.type,
-          changes,
+          changes: changes as readonly string[],
         });
       }
     }
@@ -84,7 +79,11 @@ export const diffSettings = (
     }
   }
 
-  return { addedComponents, removedComponents, modifiedComponents };
+  return {
+    addedComponents: addedComponents as readonly Component[],
+    removedComponents: removedComponents as readonly Component[],
+    modifiedComponents: modifiedComponents as SettingsDiff['modifiedComponents'],
+  };
 };
 
 /**
@@ -289,7 +288,7 @@ export const generateServerConfigSection = (
  * Generate config section for a webapp component based on its settings.
  */
 export const generateWebappConfigSection = (
-  name: string,
+  _name: string,
   settings: WebappSettings
 ): Record<string, unknown> => {
   const config: Record<string, unknown> = {};

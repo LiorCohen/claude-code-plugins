@@ -12,6 +12,7 @@
  *   database      Database component operations
  *   contract      Contract component operations
  *   config        Config component operations
+ *   env           Local environment management
  */
 
 import { parseArgs, type CommandResult, type GlobalOptions, outputResult } from '@/lib/args';
@@ -25,8 +26,9 @@ import { handleHook } from '@/commands/hook';
 import { handleDatabase } from '@/commands/database';
 import { handleContract } from '@/commands/contract';
 import { handleConfig } from '@/commands/config';
+import { handleEnvironment } from '@/commands/env';
 
-const NAMESPACES = ['scaffolding', 'spec', 'version', 'hook', 'database', 'contract', 'config'] as const;
+const NAMESPACES = ['scaffolding', 'spec', 'version', 'hook', 'database', 'contract', 'config', 'env'] as const;
 type Namespace = (typeof NAMESPACES)[number];
 
 const HELP_TEXT = `
@@ -70,6 +72,19 @@ Namespaces:
     diff        Show differences between environments
     add-env     Add a new environment directory
 
+  env           Local environment management
+    create      Create local k8s cluster + install infra
+    destroy     Delete cluster entirely
+    start       Resume stopped cluster
+    stop        Pause cluster (preserves state)
+    restart     Restart cluster (stop + start)
+    status      Show cluster and deployment status
+    deploy      Deploy application Helm charts
+    undeploy    Remove application deployments
+    forward     Port-forward services for local access
+    config      Generate local environment config
+    infra       Install/reinstall observability stack
+
 Global Options:
   --json        JSON output mode
   --verbose     Verbose logging
@@ -97,6 +112,7 @@ const COMMAND_HANDLERS: Readonly<Record<Namespace, CommandHandler>> = {
   database: handleDatabase,
   contract: handleContract,
   config: handleConfig,
+  env: handleEnvironment,
 };
 
 const showHelp = (options: GlobalOptions): CommandResult => {

@@ -10,7 +10,7 @@
 
 ## Ready
 
-- [#47](3-ready/47/): Local environment create/start/stop workflow
+(none)
 
 ---
 
@@ -57,6 +57,8 @@
 
 ## Inbox (unprioritized)
 
+- [#69](1-inbox/69/): Fix sdd-init workflow test timeout
+- [#68](1-inbox/68/): Plans should focus on WHAT, not HOW
 - [#12](1-inbox/12/): User onboarding and process state tracking
 - [#14](1-inbox/14/): Unclear when to run type generation
 - [#20](1-inbox/20/): Plugin installation debugging skill + workflow fix
@@ -75,6 +77,7 @@
 
 ## Complete
 
+- [#47](6-complete/47/): Local environment create/start/stop workflow ✓ (2026-02-01)
 - [#44](6-complete/44/): Component settings system + Helm charts ✓ (2026-02-01)
 - [#50](6-complete/50/): Move sdd-settings.yaml to .sdd/ directory ✓ (2026-02-01)
 - [#64](6-complete/64/): Refactor planning system architecture ✓ (2026-01-31)
