@@ -24,3 +24,7 @@ Need to audit all skills, identify overlapping functionality, and consolidate in
 - [ ] Update any references to consolidated skills (commands, agents, docs)
 - [ ] Ensure no guidance is lost during consolidation
 - [ ] Document the rationale for each consolidation decision
+
+## Consolidated
+
+- #48: Organize plugin skills directory by cohesion - group related skills into subdirectories, improve discoverability

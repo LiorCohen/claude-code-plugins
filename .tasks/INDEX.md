@@ -4,7 +4,7 @@
 
 ## Planning
 
-(none)
+- [#44](2-planning/44/): Component settings system + Helm charts
 
 ---
 
@@ -28,9 +28,9 @@
 
 ## High Priority
 
+- [#67](1-inbox/67/): Store user instructions in plans, specs, and .sdd/
 - [#17](1-inbox/17/): Plans should follow TDD with test review first
 - [#59](1-inbox/59/): Audit and update all agents for compatibility
-- [#44](1-inbox/44/): Helm chart template + observability stack
 - [#47](1-inbox/47/): Local environment create/start/stop workflow
 
 ---
@@ -50,7 +50,6 @@
 - [#3](1-inbox/3/): Docs missing: CMDO Guide
 - [#24](1-inbox/24/): Add plugin Slack support
 - [#31](1-inbox/31/): Welcome prompt after plugin installation
-- [#48](1-inbox/48/): Organize plugin skills directory by cohesion
 - [#10](1-inbox/10/): Missing /sdd-help command
 - [#22](1-inbox/22/): Add critic agent to marketplace
 - [#26](1-inbox/26/): Better session separators/visual indicators
@@ -72,7 +71,6 @@
 - [#43](1-inbox/43/): CI/CD components and .github folder integration
 - [#52](1-inbox/52/): Clean up .gitkeep and placeholder content
 - [#54](1-inbox/54/): Missing postgresql-standards skill
-- [#57](1-inbox/57/): Add /sdd-settings command
 
 ---
 
@@ -125,3 +123,5 @@
 - [#58](8-consolidated/58/) → #62
 - [#61](8-consolidated/61/) → #62
 - [#13](8-consolidated/13/) → #12
+- [#48](8-consolidated/48/) → #63
+- [#57](8-consolidated/57/) → #44

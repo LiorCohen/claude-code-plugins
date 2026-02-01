@@ -2,11 +2,14 @@
 id: 48
 title: Organize plugin skills directory by cohesion
 priority: low
-status: open
+status: consolidated
 created: 2026-01-25
+consolidated_into: 63
 ---
 
-# Task 48: Organize plugin skills directory by cohesion
+# Task 48: Organize plugin skills directory by cohesion → consolidated into #63
+
+<!-- Original content preserved below -->
 
 ## Description
 

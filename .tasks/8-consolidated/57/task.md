@@ -1,12 +1,14 @@
 ---
 id: 57
 title: Add /sdd-settings command
-priority: inbox
-status: open
+status: consolidated
 created: 2026-01-25
+consolidated_into: 44
 ---
 
-# Task 57: Add /sdd-settings command
+# Task 57: Add /sdd-settings command → consolidated into #44
+
+<!-- Original content preserved below -->
 
 ## Description
 
