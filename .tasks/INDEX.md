@@ -10,13 +10,13 @@
 
 ## Ready
 
-- [#68](3-ready/68/): Plans should focus on WHAT, not HOW
+(none)
 
 ---
 
 ## Implementing
 
-(none)
+- [#68](4-implementing/68/): Plans should focus on WHAT, not HOW
 
 ---
 

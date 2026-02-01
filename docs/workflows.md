@@ -35,7 +35,7 @@ You'll be asked about:
 
 The command creates two files:
 - `SPEC.md` - What you're building
-- `PLAN.md` - How to build it (phased implementation)
+- `PLAN.md` - Execution phases and agent coordination
 
 Review both. This is your last chance to catch misunderstandings before code is written.
 

@@ -189,29 +189,60 @@ created: 2026-01-28
 
 ## Problem Summary
 
-Brief description of what needs to be done.
+Brief description of what problem this solves.
 
 ## Files to Modify
 
 | File | Changes |
 |------|---------|
-| path/to/file.ts | Description of changes |
+| path/to/file.ts | Description of what changes |
 
-## Implementation
+## Changes
 
-### Phase 1: Description
+### 1. [Component/Area Name]
 
-Details...
+What behavioral or functional changes are being made.
+Focus on WHAT is changing, not HOW to implement it.
 
-### Phase 2: Description
+### 2. [Component/Area Name]
 
-Details...
+Additional changes...
+
+## Dependencies
+
+What must happen before what. List any sequencing requirements.
+
+## Tests
+
+### Unit Tests
+- [ ] `test_description_of_behavior`
+- [ ] `test_another_behavior`
+
+### Integration Tests
+- [ ] `test_components_work_together`
+
+### E2E Tests (if applicable)
+- [ ] `test_user_facing_flow`
 
 ## Verification
 
-1. How to verify phase 1 works
-2. How to verify phase 2 works
+- [ ] Outcome 1 is achieved
+- [ ] Outcome 2 is achieved
 ```
+
+### Plan Content Guidelines
+
+**Plans focus on WHAT, not HOW:**
+
+| Include in Plans | Do NOT Include in Plans |
+|------------------|-------------------------|
+| What files/components are affected | Full code implementations |
+| What behavior is changing | Line-by-line instructions |
+| What tests verify the changes | Algorithm details |
+| Dependencies and sequencing | Specific function signatures |
+| Brief code snippets as constraints | Step-by-step coding instructions |
+
+**Tests are required:** Every plan must include an extensive list of tests. Tests define expected behavior (WHAT) and can be reviewed before implementation begins.
 
 ---
 

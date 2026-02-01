@@ -15,10 +15,27 @@ This keeps all change documentation (spec + plan) together in one location.
 
 ## SPEC.md vs PLAN.md Separation
 
-| File | Purpose | Contains |
-|------|---------|----------|
-| **SPEC.md** | Nature of the change (tech spec) | Requirements, design, API contracts, data models, security, observability, tests, domain updates |
-| **PLAN.md** | Execution | Phases, agent assignments, execution order, expected files, implementation state |
+| File | Purpose | Contains | Does NOT Contain |
+|------|---------|----------|------------------|
+| **SPEC.md** | What to build and how | Requirements, design, API contracts, implementation details, test cases | Execution order, agent assignments |
+| **PLAN.md** | Execution coordination | Phases, agent assignments, dependencies, expected files, progress tracking | Implementation details, code patterns, specific coding tasks |
+
+> **Key principle:** Because plans focus on execution coordination (not implementation details), the SPEC.md must be comprehensive enough that an implementer can complete each phase by reading only the spec. Plans reference specs; they don't duplicate them.
+
+### Plan Content Guidelines
+
+**Acceptable in plans:**
+- Brief code snippets as constraints or guidelines (e.g., "interface must include X field")
+- High-level examples showing intent
+- File paths and component names
+- Phase sequencing and dependencies
+- Extensive test lists (tests define WHAT, not HOW)
+
+**Not appropriate in plans:**
+- Full implementations or complete code blocks
+- Step-by-step coding instructions
+- Line-by-line change lists
+- Algorithm implementations (belong in spec)
 
 ### SPEC.md: Thorough Technical Specification
 
@@ -187,11 +204,9 @@ sdd_version: [X.Y.Z]
 **Agent:** `api-designer`
 **Component:** contract
 
-Tasks:
-- [ ] Update OpenAPI spec with new endpoints/schemas
-- [ ] Generate TypeScript types
+**Outcome:** API contracts defined per SPEC.md
 
-Deliverables:
+**Deliverables:**
 - Updated OpenAPI spec
 - Generated TypeScript types
 
@@ -199,13 +214,9 @@ Deliverables:
 **Agent:** `backend-dev`
 **Component:** server
 
-Tasks:
-- [ ] Implement domain logic
-- [ ] Add data access layer
-- [ ] Wire up controllers
-- [ ] Write unit tests (TDD)
+**Outcome:** Backend functionality complete per SPEC.md
 
-Deliverables:
+**Deliverables:**
 - Working API endpoints
 - Unit tests passing
 
@@ -213,36 +224,41 @@ Deliverables:
 **Agent:** `frontend-dev`
 **Component:** webapp
 
-Tasks:
-- [ ] Create components
-- [ ] Add hooks
-- [ ] Integrate with API
-- [ ] Write unit tests (TDD)
+**Outcome:** Frontend functionality complete per SPEC.md
 
-Deliverables:
+**Deliverables:**
 - Working UI
 - Unit tests passing
 
 ### Phase 4: Integration & E2E Testing
 **Agent:** `tester`
 
-Tasks:
-- [ ] Integration tests for API layer
-- [ ] E2E tests for user flows
+**Outcome:** All integration and E2E tests passing
 
-Deliverables:
+**Deliverables:**
 - Test suites passing
 
 ### Phase 5: Review
 **Agent:** `reviewer`, `db-advisor` (if DB changes)
 
-Tasks:
-- [ ] Spec compliance review
-- [ ] Database review (if applicable)
+**Outcome:** Implementation verified against SPEC.md
 
 ## Dependencies
 
 - [External dependencies or blockers]
+
+## Tests
+
+<!-- Extensive test list - tests define WHAT, not HOW -->
+
+### Unit Tests
+- [ ] `test_[behavior_description]`
+
+### Integration Tests
+- [ ] `test_[integration_description]`
+
+### E2E Tests
+- [ ] `test_[user_flow_description]`
 
 ## Risks
 
@@ -283,45 +299,43 @@ sdd_version: [X.Y.Z]
 ### Phase 1: Investigation
 **Agent:** `backend-dev` or `frontend-dev` (based on component)
 
-Tasks:
-- [ ] Reproduce the bug locally
-- [ ] Identify root cause
-- [ ] Document findings in SPEC.md
+**Outcome:** Root cause identified and documented in SPEC.md
 
-Deliverables:
+**Deliverables:**
 - Documented root cause
 - Clear reproduction steps
 
 ### Phase 2: Implementation
 **Agent:** `backend-dev` or `frontend-dev` (based on component)
 
-Tasks:
-- [ ] Implement the fix
-- [ ] Write regression test (TDD - test should fail before fix)
-- [ ] Update any affected API contracts (if needed)
+**Outcome:** Bug fixed with regression test per SPEC.md
 
-Deliverables:
+**Deliverables:**
 - Working fix
 - Regression test passing
 
 ### Phase 3: Integration Testing
 **Agent:** `tester`
 
-Tasks:
-- [ ] Verify fix resolves the issue
-- [ ] Run existing test suite
-- [ ] Verify no regressions
+**Outcome:** All tests passing, no regressions
 
-Deliverables:
+**Deliverables:**
 - All tests passing
 
 ### Phase 4: Review
 **Agent:** `reviewer`
 
-Tasks:
-- [ ] Code review
-- [ ] Verify acceptance criteria met
-- [ ] Final QA sign-off
+**Outcome:** Fix verified against SPEC.md acceptance criteria
+
+## Tests
+
+<!-- Extensive test list - tests define WHAT, not HOW -->
+
+### Regression Tests
+- [ ] `test_[bug_does_not_recur]`
+
+### Unit Tests
+- [ ] `test_[fixed_behavior]`
 
 ## Notes
 
@@ -361,46 +375,46 @@ sdd_version: [X.Y.Z]
 ### Phase 1: Preparation
 **Agent:** `backend-dev` or `frontend-dev` (based on component)
 
-Tasks:
-- [ ] Ensure comprehensive test coverage exists
-- [ ] Document current behavior
-- [ ] Identify all affected areas
+**Outcome:** Test coverage verified, affected areas documented per SPEC.md
 
-Deliverables:
+**Deliverables:**
 - Test coverage report
 - Affected area documentation
 
 ### Phase 2: Implementation
 **Agent:** `backend-dev` or `frontend-dev` (based on component)
 
-Tasks:
-- [ ] Implement refactoring changes
-- [ ] Update any affected API contracts (if needed)
-- [ ] Maintain backward compatibility (if required)
+**Outcome:** Refactoring complete per SPEC.md, all tests passing
 
-Deliverables:
+**Deliverables:**
 - Refactored code
 - All existing tests passing
 
 ### Phase 3: Integration Testing
 **Agent:** `tester`
 
-Tasks:
-- [ ] Run existing test suite
-- [ ] Verify no behavior changes
-- [ ] Performance testing (if applicable)
+**Outcome:** No behavior changes, all tests passing
 
-Deliverables:
+**Deliverables:**
 - All tests passing
 - No behavior changes verified
 
 ### Phase 4: Review
 **Agent:** `reviewer`
 
-Tasks:
-- [ ] Code review focusing on refactoring goals
-- [ ] Verify no regressions
-- [ ] Final QA sign-off
+**Outcome:** Refactoring goals verified, no regressions
+
+## Tests
+
+<!-- Extensive test list - tests define WHAT, not HOW -->
+<!-- For refactors, existing tests should already cover behavior -->
+
+### Existing Tests (must pass)
+- [ ] All unit tests pass before refactor
+- [ ] All unit tests pass after refactor
+
+### Performance Tests (if applicable)
+- [ ] `test_[performance_not_degraded]`
 
 ## Notes
 
