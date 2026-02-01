@@ -1,0 +1,16 @@
+apiVersion: v2
+name: {{PROJECT_NAME}}
+description: Umbrella chart for {{PROJECT_NAME}} - installs all components
+type: application
+version: 0.1.0
+appVersion: "{{APP_VERSION}}"
+
+# Dependencies are managed by Helm
+# Each component chart is referenced as a local file dependency
+dependencies:
+{{#each HELM_COMPONENTS}}
+  - name: {{name}}
+    version: "0.1.0"
+    repository: "file://../{{name}}"
+    condition: {{name}}.enabled
+{{/each}}

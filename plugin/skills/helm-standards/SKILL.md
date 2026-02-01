@@ -1,11 +1,109 @@
 ---
 name: helm-standards
-description: Standards for Helm charts in SDD projects.
+description: Standards for Helm charts in SDD projects, including settings-driven patterns.
 ---
 
 # Helm Standards Skill
 
-Standards for Helm charts in SDD projects.
+Standards for Helm charts in SDD projects. Charts are generated based on **component settings** defined in `.sdd/sdd-settings.yaml`.
+
+## Settings-Driven Chart Generation
+
+Helm charts are scaffolded based on helm component settings:
+
+```yaml
+# .sdd/sdd-settings.yaml
+components:
+  - name: main-server-api
+    type: helm
+    settings:
+      deploys: main-server      # Server component to deploy
+      deploy_type: server
+      deploy_modes: [api]       # Modes to deploy (for hybrid servers)
+      ingress: true             # External HTTP access
+```
+
+### Chart-per-Server Pattern
+
+Each deployment configuration gets its own helm chart. A single server can have multiple helm charts with different configurations:
+
+```yaml
+# API-only deployment (external-facing)
+- name: main-server-api
+  type: helm
+  settings:
+    deploys: main-server
+    deploy_type: server
+    deploy_modes: [api]
+    ingress: true
+
+# Worker-only deployment (internal)
+- name: main-server-worker
+  type: helm
+  settings:
+    deploys: main-server
+    deploy_type: server
+    deploy_modes: [worker]
+    ingress: false
+
+# Hybrid deployment (api + worker in same pod)
+- name: main-server-hybrid
+  type: helm
+  settings:
+    deploys: main-server
+    deploy_type: server
+    deploy_modes: [api, worker]
+    ingress: true
+```
+
+### Settings Impact on Chart Structure
+
+| Setting | Chart Impact |
+|---------|-------------|
+| `deploy_modes: [api]` | Single Deployment with HTTP port |
+| `deploy_modes: [worker]` | Single Deployment without HTTP port |
+| `deploy_modes: [api, worker]` | Separate Deployments (independent scaling) |
+| `deploy_modes: [cron]` | CronJob instead of Deployment |
+| `ingress: true` | Includes `ingress.yaml` |
+| `ingress: false` | No ingress (internal service only) |
+
+## Directory Structure
+
+Helm charts live at `components/helm_charts/<name>/`:
+
+```
+components/helm_charts/
+├── main-server-api/          # API deployment
+│   ├── Chart.yaml
+│   ├── values.yaml
+│   └── templates/
+│       ├── _helpers.tpl
+│       ├── deployment.yaml
+│       ├── service.yaml
+│       ├── ingress.yaml
+│       ├── configmap.yaml
+│       └── servicemonitor.yaml
+├── main-server-worker/       # Worker deployment (no ingress)
+│   ├── Chart.yaml
+│   ├── values.yaml
+│   └── templates/
+│       ├── _helpers.tpl
+│       ├── deployment.yaml
+│       ├── configmap.yaml
+│       └── servicemonitor.yaml
+├── admin-dashboard/          # Webapp deployment
+│   ├── Chart.yaml
+│   ├── values.yaml
+│   └── templates/
+│       ├── _helpers.tpl
+│       ├── deployment.yaml
+│       ├── service.yaml
+│       ├── ingress.yaml
+│       └── configmap.yaml
+└── umbrella/                 # Optional: installs all charts
+    ├── Chart.yaml
+    └── values.yaml
+```
 
 ## Values File Conventions
 
@@ -26,140 +124,227 @@ nodeEnv: development          # NODE_ENV for libraries (Express caching, etc.)
 config: {}                    # Merged config from components/config/envs/{env}/
 ```
 
-## Environment Variables
+## Server Chart Values
 
-| Var | Source | Purpose |
-|-----|--------|---------|
-| `NODE_ENV` | `.Values.nodeEnv` | Library behavior (Express caching, etc.) |
-| `SDD_CONFIG_PATH` | Static `/app/config/config.yaml` | Path to mounted config |
+### Single Mode Server
+
+```yaml
+replicaCount: 1
+nodeEnv: development
+
+image:
+  repository: main-server
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3000
+
+observability:
+  metrics:
+    enabled: true
+    port: 9090
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+config: {}
+```
+
+### Hybrid Server (Multiple Modes)
+
+```yaml
+nodeEnv: development
+
+image:
+  repository: main-server
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# Each mode gets independent scaling
+api:
+  enabled: true
+  replicaCount: 2
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+worker:
+  enabled: true
+  replicaCount: 5
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+service:
+  type: ClusterIP
+  port: 3000
+
+observability:
+  metrics:
+    enabled: true
+    port: 9090
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+
+config: {}
+```
+
+## Webapp Chart Values
+
+```yaml
+replicaCount: 1
+nodeEnv: development
+
+image:
+  repository: nginx
+  tag: alpine
+  pullPolicy: IfNotPresent
+
+assets:
+  type: bundled              # bundled | entrypoint
+  path: /usr/share/nginx/html
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: app.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+
+config: {}                   # Injected into HTML at deploy time
+```
+
+## Observability Integration
+
+All server charts include observability by default:
+
+### ServiceMonitor (Prometheus/Victoria Metrics)
+
+```yaml
+# templates/servicemonitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "common.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "common.selectorLabels" . | nindent 6 }}
+  endpoints:
+    - port: metrics
+      interval: {{ .Values.observability.metrics.serviceMonitor.interval }}
+      path: /metrics
+```
+
+### Metrics Endpoint
+
+All servers expose metrics on port 9090:
+- `/metrics` - Prometheus format metrics
+- `/health/live` - Liveness probe
+- `/health/ready` - Readiness probe
+
+### Structured Logging
+
+Applications output JSON logs to stdout. The cluster's log collector (Victoria Logs) picks them up automatically.
+
+**Note:** Cluster-level observability infrastructure is set up separately (see task #47).
 
 ## Config Injection Pattern
 
-Config is mounted via ConfigMap:
+### Server Config
+
+Config is mounted via ConfigMap at `/app/config/config.yaml`:
 
 ```yaml
 # templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-config
+  name: {{ include "common.fullname" . }}-config
 data:
   config.yaml: |
     {{- toYaml .Values.config | nindent 4 }}
 ```
 
-```yaml
-# templates/deployment.yaml
-volumeMounts:
-  - name: config
-    mountPath: /app/config
-    readOnly: true
-volumes:
-  - name: config
-    configMap:
-      name: {{ .Release.Name }}-config
+### Webapp Config
+
+Config is injected into HTML at deploy time:
+
+1. Webapp exports: `export const startApp = (config: AppConfig) => { ... }`
+2. Helm chart's index.html has: `startApp(__SDD_CONFIG__)`
+3. Init container replaces `__SDD_CONFIG__` with JSON from ConfigMap
+
+## Populating Config at Deploy Time
+
+```bash
+# Generate config for production environment
+sdd-system config generate --env production --component main-server \
+  --output helm-values-config.yaml
+
+# Deploy with config
+helm install my-release ./components/helm_charts/main-server-api \
+  -f values-production.yaml \
+  --set-file config=helm-values-config.yaml
 ```
 
-## Environment Variable Injection
+## Environment Variables
 
-```yaml
-# templates/deployment.yaml
-env:
-  - name: NODE_ENV
-    value: {{ .Values.nodeEnv }}
-  - name: SDD_CONFIG_PATH
-    value: /app/config/config.yaml
-```
+| Var | Source | Purpose |
+|-----|--------|---------|
+| `NODE_ENV` | `.Values.nodeEnv` | Library behavior (Express caching, etc.) |
+| `SDD_CONFIG_PATH` | Static `/app/config/config.yaml` | Path to mounted config |
+| `SDD_SERVER_MODE` | Set per deployment | For hybrid: which mode (api, worker, cron) |
 
 ## Secret References
 
 Config contains secret **names**, not values:
 
 ```yaml
-# values.yaml or values-production.yaml
+# values-production.yaml
 config:
   database:
     host: db.production.internal
     passwordSecret: "my-db-credentials"  # K8s Secret name
 ```
 
-Deployment maps to actual secret:
-
-```yaml
-# templates/deployment.yaml
-env:
-  - name: DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: {{ .Values.config.database.passwordSecret }}
-        key: password
-```
-
-## Populating Config at Deploy Time
-
-Use `/sdd-config generate` to create merged config, then inject into Helm:
-
-```bash
-# Generate config for production environment
-sdd-system config generate --env production --component server-task-service \
-  --output helm-values-config.yaml
-
-# Deploy with config
-helm install my-release ./components/helm-task-service \
-  -f values-production.yaml \
-  --set-file config=helm-values-config.yaml
-```
-
-Alternative: Use Helm's `--values` with a complete values file that includes the config section.
-
-## Chart Structure
-
-```
-components/helm-{name}/
-├── Chart.yaml                # Chart metadata
-├── values.yaml               # Default values (nodeEnv: development)
-├── values-local.yaml         # Local dev overrides (optional)
-├── values-staging.yaml       # Staging overrides (add as needed)
-├── values-production.yaml    # Production overrides (add as needed)
-└── templates/
-    ├── deployment.yaml       # Pod spec with config mount
-    ├── service.yaml          # Service definition
-    └── configmap.yaml        # Config file mount
-```
-
-## NODE_ENV Handling
-
-**NODE_ENV is an infrastructure exception**, not application config. It exists because third-party libraries check it for performance optimizations.
-
-**Key principle:** Application code NEVER reads NODE_ENV. It's injected by infrastructure for library behavior only.
-
-| Environment | NODE_ENV Setting |
-|-------------|------------------|
-| Local development | Not set (libraries default to development) |
-| Staging | `development` (safer for debugging) |
-| Production | `production` (enables optimizations) |
-
-**What NODE_ENV controls (library behavior, NOT app logic):**
-- Express view caching
-- Express error verbosity
-- Some npm packages' internal optimizations
-
-**What NODE_ENV does NOT control (use config YAML instead):**
-- Logging level → `config.logging.level`
-- Feature flags → `config.features.*`
-- API endpoints → `config.api.baseUrl`
-- Any application behavior
-
 ## Best Practices
 
-1. **Never hardcode environment-specific values** in templates
-2. **Use values files** for all environment differences
-3. **Keep secrets external** - reference K8s Secrets by name only
-4. **Config component is source of truth** - Helm just mounts it
-5. **Validate config before deploy** - Use `/sdd-config validate` in CI/CD
+1. **Chart-per-deployment** - Separate charts for different deployment configurations
+2. **Settings-driven templates** - Use component settings to determine what's included
+3. **Never hardcode environment values** - Use values files for all environment differences
+4. **Keep secrets external** - Reference K8s Secrets by name only
+5. **Config component is source of truth** - Helm just mounts it
+6. **Validate config before deploy** - Use `/sdd-config validate` in CI/CD
+7. **Independent scaling** - Use separate deployments for hybrid modes
 
 ## Related Skills
 
+- `helm-scaffolding` - Scaffolds Helm chart structure
 - `config-scaffolding` - Creates the config component
 - `config-standards` - Standards for configuration management
-- `helm-scaffolding` - Scaffolds Helm chart structure
+- `backend-scaffolding` - Creates the server component that charts deploy

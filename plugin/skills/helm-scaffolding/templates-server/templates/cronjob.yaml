@@ -1,0 +1,50 @@
+# CronJob for Cron mode in a hybrid server
+# Used when deploy_modes includes 'cron'
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "common.fullname" . }}-cron
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cron
+spec:
+  schedule: "{{ .Values.cron.schedule | default "0 * * * *" }}"
+  concurrencyPolicy: {{ .Values.cron.concurrencyPolicy | default "Forbid" }}
+  successfulJobsHistoryLimit: {{ .Values.cron.successfulJobsHistoryLimit | default 3 }}
+  failedJobsHistoryLimit: {{ .Values.cron.failedJobsHistoryLimit | default 1 }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "common.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: cron
+        spec:
+          {{- include "common.imagePullSecrets" . | nindent 10 }}
+          restartPolicy: OnFailure
+          containers:
+            - name: {{ .Chart.Name }}-cron
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              args: ["--mode", "cron"]
+              env:
+                - name: NODE_ENV
+                  value: {{ .Values.nodeEnv }}
+                - name: SDD_CONFIG_PATH
+                  value: /app/config/config.yaml
+                - name: SDD_SERVER_MODE
+                  value: cron
+              volumeMounts:
+                - name: config
+                  mountPath: /app/config
+                  readOnly: true
+              resources:
+                {{- if .Values.cron }}
+                {{- toYaml .Values.cron.resources | nindent 16 }}
+                {{- else }}
+                {{- toYaml .Values.resources | nindent 16 }}
+                {{- end }}
+          volumes:
+            - name: config
+              configMap:
+                name: {{ include "common.fullname" . }}-config

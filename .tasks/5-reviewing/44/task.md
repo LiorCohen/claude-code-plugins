@@ -2,7 +2,7 @@
 id: 44
 title: Component settings system + Helm charts
 priority: high
-status: ready
+status: reviewing
 created: 2026-01-25
 depends_on: []
 blocks: []

@@ -1,0 +1,66 @@
+# Default values for {{CHART_NAME}} webapp
+# This is a YAML-formatted file.
+
+# Infrastructure: NODE_ENV for library behavior (NOT application config)
+nodeEnv: development
+
+# Replica count
+replicaCount: 1
+
+# Container image (nginx serving static files)
+image:
+  repository: nginx
+  tag: alpine
+  pullPolicy: IfNotPresent
+
+# Webapp assets
+assets:
+  # bundled: All static files in container
+  # entrypoint: Only index.html, assets from CDN
+  type: bundled
+  # Path to static files in container
+  path: /usr/share/nginx/html
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: {{CHART_NAME}}.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Resource limits
+resources:
+  limits:
+    cpu: 200m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+# Probes
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+# Application config (injected into HTML at deploy time)
+# This becomes window.__SDD_CONFIG__ in the browser
+config: {}

@@ -1,0 +1,17 @@
+# Umbrella chart values for {{PROJECT_NAME}}
+# This file enables/disables sub-charts and provides shared values
+
+# Global values (available to all sub-charts as .Values.global)
+global:
+  # Image registry prefix for all images
+  imageRegistry: ""
+  # Image pull secrets for private registries
+  imagePullSecrets: []
+  # Default storage class
+  storageClass: ""
+
+# Enable/disable individual components
+{{#each HELM_COMPONENTS}}
+{{name}}:
+  enabled: true
+{{/each}}

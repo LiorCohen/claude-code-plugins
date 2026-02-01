@@ -1,0 +1,26 @@
+# Service for servers that provide contracts
+# Only included when provides_contracts is non-empty
+{{- if .Values.service }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "common.fullname" . }}
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: {{ .Values.observability.metrics.port }}
+      targetPort: probes
+      protocol: TCP
+      name: metrics
+  selector:
+    {{- include "common.selectorLabels" . | nindent 4 }}
+    {{- if .Values.api }}
+    app.kubernetes.io/component: api
+    {{- end }}
+{{- end }}

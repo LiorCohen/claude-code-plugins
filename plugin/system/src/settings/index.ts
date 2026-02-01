@@ -1,0 +1,100 @@
+/**
+ * Settings module - manages component settings in sdd-settings.yaml.
+ *
+ * This module provides:
+ * - Type definitions for component settings
+ * - Default settings for each component type
+ * - JSON Schema for validation
+ * - Validation functions with cross-reference checking
+ */
+
+// Re-export types
+export type {
+  ServerMode,
+  ServerType,
+  ServerSettings,
+  WebappSettings,
+  HelmAssets,
+  HelmServerSettings,
+  HelmWebappSettings,
+  HelmSettings,
+  DatabaseProvider,
+  DatabaseSettings,
+  ContractVisibility,
+  ContractSettings,
+  ConfigSettings,
+  ComponentType,
+  ComponentSettingsMap,
+  ComponentSettings,
+  ComponentBase,
+  ServerComponent,
+  WebappComponent,
+  HelmComponent,
+  DatabaseComponent,
+  ContractComponent,
+  ConfigComponent,
+  Component,
+  SddMetadata,
+  ProjectMetadata,
+  SettingsFile,
+} from '../types/settings.js';
+
+// Re-export type guards
+export {
+  isServerComponent,
+  isWebappComponent,
+  isHelmComponent,
+  isDatabaseComponent,
+  isContractComponent,
+  isConfigComponent,
+  isHelmServerSettings,
+  isHelmWebappSettings,
+} from '../types/settings.js';
+
+// Re-export defaults
+export {
+  DEFAULT_API_SERVER_SETTINGS,
+  DEFAULT_WORKER_SERVER_SETTINGS,
+  DEFAULT_CRON_SERVER_SETTINGS,
+  DEFAULT_HYBRID_SERVER_SETTINGS,
+  getDefaultServerSettings,
+  DEFAULT_WEBAPP_SETTINGS,
+  DEFAULT_HELM_SERVER_SETTINGS,
+  DEFAULT_HELM_WEBAPP_SETTINGS,
+  DEFAULT_DATABASE_SETTINGS,
+  DEFAULT_CONTRACT_SETTINGS,
+  DEFAULT_CONFIG_SETTINGS,
+} from './defaults.js';
+
+// Re-export schema
+export { settingsFileSchema, schemas } from './schema.js';
+
+// Re-export validation
+export type {
+  SettingsValidationError,
+  SettingsValidationResult,
+} from './validate.js';
+export { validateSettings, formatValidationResult } from './validate.js';
+
+// Re-export sync utilities
+export type { SyncResult, SettingsDiff } from './sync.js';
+export {
+  diffSettings,
+  getComponentDir,
+  previewSync,
+  generateServerConfigSection,
+  generateWebappConfigSection,
+  formatSyncPreview,
+} from './sync.js';
+
+// Re-export helm sync utilities
+export type { HelmTemplateSet } from './sync-helm.js';
+export {
+  getServerHelmTemplates,
+  getWebappHelmTemplates,
+  getHelmTemplates,
+  generateServerHelmValues,
+  generateWebappHelmValues,
+  shouldHaveUmbrellaChart,
+  generateUmbrellaChartDependencies,
+} from './sync-helm.js';

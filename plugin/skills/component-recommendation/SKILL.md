@@ -1,19 +1,19 @@
 ---
 name: component-recommendation
-description: Recommend and configure technical components based on product requirements.
+description: Recommend and configure technical components with settings based on product requirements.
 ---
 
 # Component Recommendation Skill
 
-Maps product requirements to technical architecture, recommending appropriate components and handling user adjustments.
+Maps product requirements to technical architecture, recommending appropriate components with their settings and handling user adjustments.
 
 ## Purpose
 
 Based on product discovery results:
-- Recommend appropriate technical components
-- Validate component dependencies
+- Recommend appropriate technical components with settings
+- Validate component dependencies and settings
 - Handle multiple component instances (e.g., multiple servers or webapps)
-- Return final component configuration
+- Return final component configuration including settings
 
 ## When to Use
 
@@ -45,61 +45,114 @@ discovery_results:
 
 ## Output
 
-```yaml
-project_type: "fullstack"  # fullstack | backend | frontend | custom
-components:
-  - type: config
-    name: config             # MANDATORY - always exactly one, always first
-  - type: contract
-    name: contract
-  - type: server
-    name: server
-    depends_on: [contract]
-  - type: webapp
-    name: webapp
-    depends_on: [contract]
-  - type: database
-    name: database
-  - type: testing
-    name: testing
-  - type: cicd
-    name: cicd
-```
-
-**For multiple instances of the same type:**
+Components now include `settings` based on their type:
 
 ```yaml
+project_type: "fullstack"
 components:
-  - type: config
-    name: config              # MANDATORY - always exactly one
-  - type: contract
-    name: public-api          # -> components/contract-public-api/
-  - type: contract
-    name: internal-api        # -> components/contract-internal-api/
-  - type: server
-    name: order-service       # -> components/server-order-service/
-    depends_on: [contract-public-api, contract-internal-api]
-  - type: server
-    name: notification-service # -> components/server-notification-service/
-    depends_on: [contract-internal-api]
-  - type: webapp
-    name: admin-portal        # -> components/webapp-admin-portal/
-    depends_on: [contract-internal-api]
-  - type: webapp
-    name: customer-portal     # -> components/webapp-customer-portal/
-    depends_on: [contract-public-api]
-  - type: database
-    name: analytics-db        # -> components/database-analytics-db/
-  - type: database
-    name: orders-db           # -> components/database-orders-db/
+  # === CONFIG (mandatory singleton) ===
+  - name: config
+    type: config
+    settings: {}
+
+  # === CONTRACT ===
+  - name: task-api
+    type: contract
+    settings:
+      visibility: internal       # public | internal
+
+  # === DATABASE ===
+  - name: task-db
+    type: database
+    settings:
+      provider: postgresql
+      dedicated: false
+
+  # === SERVER ===
+  - name: task-server
+    type: server
+    settings:
+      server_type: api           # api | worker | cron | hybrid
+      databases: [task-db]       # Database components this server uses
+      provides_contracts: [task-api]  # Contracts this server implements
+      consumes_contracts: []     # Contracts this server calls
+      helm: true
+
+  # === WEBAPP ===
+  - name: task-dashboard
+    type: webapp
+    settings:
+      contracts: [task-api]      # Contracts this webapp uses
+      helm: true
+
+  # === HELM (one per deployment configuration) ===
+  - name: task-server-api
+    type: helm
+    settings:
+      deploys: task-server       # Server/webapp component to deploy
+      deploy_type: server        # server | webapp
+      deploy_modes: [api]        # For servers: which modes
+      ingress: true
+
+  - name: task-dashboard-web
+    type: helm
+    settings:
+      deploys: task-dashboard
+      deploy_type: webapp
+      ingress: true
+      assets: bundled            # bundled | entrypoint
+
+  # === TESTING ===
+  - name: task-tests
+    type: testing
+
+  # === CICD ===
+  - name: task-ci
+    type: cicd
 ```
 
-- Both `type` and `name` are ALWAYS required
-- When `name` matches `type`, directory is `components/{type}/`
-- When `name` differs from `type`, directory is `components/{type}-{name}/`
-- `depends_on` lists the directory names of contract components this component imports types from
-- Server and webapp components MUST include `depends_on` with at least one contract component
-- The `depends_on` values become workspace package dependencies (e.g., `depends_on: [contract]` → `"@project/contract": "workspace:*"`)
+## Component Settings
+
+### Server Settings
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `server_type` | `api\|worker\|cron\|hybrid` | `api` | Communication pattern(s) |
+| `modes` | `(api\|worker\|cron)[]` | — | For hybrid: 2+ modes |
+| `databases` | string[] | `[]` | Database components used |
+| `provides_contracts` | string[] | `[]` | Contracts implemented |
+| `consumes_contracts` | string[] | `[]` | Contracts called |
+| `helm` | boolean | `true` | Generate helm chart |
+
+### Webapp Settings
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `contracts` | string[] | `[]` | Contracts used |
+| `helm` | boolean | `true` | Generate helm chart |
+
+### Helm Settings
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `deploys` | string | — | Component to deploy (required) |
+| `deploy_type` | `server\|webapp` | — | Type being deployed (required) |
+| `deploy_modes` | `(api\|worker\|cron)[]` | — | For servers: which modes |
+| `ingress` | boolean | `true` | External HTTP access |
+| `assets` | `bundled\|entrypoint` | `bundled` | For webapps only |
+
+### Database Settings
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `provider` | `postgresql` | `postgresql` | Database provider |
+| `dedicated` | boolean | `false` | Needs own DB server |
+
+### Contract Settings
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `visibility` | `public\|internal` | `internal` | External consumers allowed |
 
 ## Available Components
 
@@ -114,322 +167,198 @@ components:
 | `testing` | Testkube test setup | (inline) | Yes |
 | `cicd` | GitHub Actions workflows | (inline) | Yes |
 
-## Component Dependencies
-
-| Component | Requires | Notes |
-|-----------|----------|-------|
-| Config | - | MANDATORY - always included automatically |
-| Contract | Server | OpenAPI spec needs a backend to implement it |
-| Server | Contract, Config | Backend requires API contract and config |
-| Webapp | - | Can work standalone with external API |
-| Database | Server | PostgreSQL database for backend data persistence |
-| Helm | Server, Config | Kubernetes deployment needs config for ConfigMaps |
-| Testing | Server or Webapp | Tests need something to test |
-| CI/CD | Server or Webapp | Workflows need something to build/test |
-
 ## Workflow
 
 ### Step 1: Analyze Requirements
 
 Map discovered information to technical needs:
 
-| Discovery Element | Technical Implication |
-|-------------------|----------------------|
-| Multiple user types with different capabilities | Consider separate frontend apps |
-| Data persistence mentioned | Database component needed |
-| Third-party integrations | May need specific configuration |
-| API/backend workflows | Server component needed |
-| User-facing interface | Webapp component needed |
+| Discovery Element | Technical Implication | Settings Impact |
+|-------------------|----------------------|-----------------|
+| Multiple user types with different UIs | Consider separate webapps | Each webapp has `contracts` |
+| Data persistence mentioned | Database component | Server has `databases` |
+| Background processing | Worker server | `server_type: worker` or `hybrid` |
+| Scheduled jobs | Cron server | `server_type: cron` or `hybrid` |
+| API/backend workflows | Server with contract | `provides_contracts` |
+| Calling external APIs | | `consumes_contracts` |
+| External HTTP access | Ingress needed | `ingress: true` |
+| Internal service only | No ingress | `ingress: false` |
 
-### Step 2: Present Recommendation
-
-Based on analysis, present a recommendation with justification:
+### Step 2: Present Recommendation with Settings
 
 ```
 Based on what you've described, I recommend:
 
 **Components:**
-- **Backend API** - to handle <specific workflows from discovery>
-- **Web Frontend** - for <specific user types from discovery>
-- **Database** - to persist <specific entities from discovery>
-[Additional components with justification based on discovery]
+- **Backend API Server** - to handle <workflows>
+  - Provides: task-api contract
+  - Uses: task-db database
+  - Mode: API server with HTTP ingress
 
-Does this match what you had in mind, or would you like to adjust?
+- **Web Frontend** - for <user types>
+  - Consumes: task-api contract
+  - Deployment: Bundled assets with ingress
+
+- **Database** - to persist <entities>
+  - PostgreSQL (shared in local dev)
+
+[Additional components with justification]
+
+Does this match what you had in mind?
 ```
 
 ### Step 3: Handle Adjustments
 
-If user wants changes:
+If user wants changes, update both components and settings:
 
-1. **Adding components**: Add to the list
-2. **Removing components**: Remove, but check for dependencies
-3. **Validate dependencies** (see table above):
-   - If Server is selected, Contract is auto-included
-   - If Helm is selected, Server must be included
-   - If Contract is selected without Server, warn and ask for confirmation
-
-Re-present the adjusted recommendation until user confirms.
+1. **Adding database to server**: Add to `databases` array
+2. **Adding contract**: Ask if provides or consumes
+3. **Enabling background processing**: Change `server_type` to `hybrid`, add `worker` to `modes`
+4. **Disabling ingress**: Set `ingress: false` on helm chart
 
 ### Step 4: Multiple Component Instances
 
-Check if multiple instances are needed based on discovery:
-
-**For Webapp (if multiple user types need different UIs):**
-
-If discovery revealed distinct user types that need separate interfaces:
+**For Server (if multiple processing needs):**
 
 ```
-I noticed you have <user-type-1> and <user-type-2>. Should these be separate web apps, or one app with different views?
+Should the backend be a single service or multiple?
+- Single API server
+- API + Worker (hybrid mode in one deployment)
+- Separate API and Worker servers (independent scaling)
 ```
 
-- If separate: Ask "What should I call them? (e.g., 'admin', 'public')"
-- Creates: `components/webapp-admin/`, `components/webapp-public/`, etc.
+If hybrid: One server with `server_type: hybrid`, `modes: [api, worker]`
+If separate: Two servers, potentially two helm charts with different `deploy_modes`
 
-**For Server (if architecture suggests microservices):**
+**For Helm (multiple deployment configurations):**
 
-If discovery suggests need for separate backend services:
+A single server can have multiple helm charts:
+- `main-server-api` with `deploy_modes: [api]` and `ingress: true`
+- `main-server-worker` with `deploy_modes: [worker]` and `ingress: false`
 
-```
-Should the backend be a single service or multiple? (e.g., api + worker)
-```
+This allows independent scaling of API and worker processes.
 
-- If multiple, for each: "Name for server component N:"
-- Creates: `components/server-api/`, `components/server-worker/`, etc.
+### Step 5: Settings Validation
 
-**For Contract (if multiple APIs or bounded contexts):**
+Before returning, validate:
 
-If discovery suggests separate API boundaries:
-
-```
-Should there be a single API contract or multiple? (e.g., separate contracts for public API vs internal API)
-```
-
-- If multiple: Ask "What should I call them? (e.g., 'public-api', 'internal-api')"
-- Creates: `components/contract-public-api/`, `components/contract-internal-api/`, etc.
-
-**For Database (if separate data stores are needed):**
-
-If discovery suggests distinct data domains:
-
-```
-Should there be a single database or multiple? (e.g., separate databases for orders vs analytics)
-```
-
-- If multiple: Ask "What should I call them? (e.g., 'orders-db', 'analytics-db')"
-- Creates: `components/database-orders-db/`, `components/database-analytics-db/`, etc.
-
-**For Helm (if multiple deployment targets):**
-
-If discovery suggests separate deployment configurations:
-
-```
-Should there be a single Helm chart or multiple? (e.g., separate charts per service)
-```
-
-- If multiple: Ask "What should I call them? (e.g., 'api-chart', 'worker-chart')"
-- Creates: `components/helm-api-chart/`, `components/helm-worker-chart/`, etc.
-
-**For Testing (if separate test suites):**
-
-If discovery suggests distinct testing concerns:
-
-```
-Should there be a single test suite or multiple? (e.g., separate suites for integration vs e2e)
-```
-
-- If multiple: Ask "What should I call them? (e.g., 'integration-tests', 'e2e-tests')"
-- Creates: `components/testing-integration-tests/`, `components/testing-e2e-tests/`, etc.
-
-**For CI/CD (if separate pipelines):**
-
-If discovery suggests distinct deployment pipelines:
-
-```
-Should there be a single CI/CD pipeline or multiple? (e.g., separate pipelines per service)
-```
-
-- If multiple: Ask "What should I call them? (e.g., 'api-pipeline', 'deploy-pipeline')"
-- Creates: `components/cicd-api-pipeline/`, `components/cicd-deploy-pipeline/`, etc.
-
-**Naming Rules:**
-- Names must be lowercase
-- Use hyphens, not underscores
-- No spaces allowed
-- Prefer domain-specific names (e.g., `order-service`, `analytics-db`) over generic ones (e.g., `api`, `primary`)
-- `name` matching `type` is valid but discouraged -- be descriptive
-- Examples: `order-service`, `notification-worker`, `admin-portal`, `analytics-db`
-
-### Step 5: Determine Project Type
-
-Based on final component selection:
-
-| Components Selected | Project Type |
-|---------------------|--------------|
-| Contract + Server + Webapp | `fullstack` |
-| Contract + Server (no Webapp) | `backend` |
-| Webapp only | `frontend` |
-| Other combinations | `custom` |
+1. **Database references**: Each server's `databases` must reference existing database components
+2. **Contract references**: `provides_contracts`, `consumes_contracts`, and `contracts` must reference existing contract components
+3. **Helm references**: `deploys` must reference a component with `helm: true`
+4. **Hybrid modes**: If `server_type: hybrid`, `modes` must have 2+ entries
+5. **Deploy modes**: Helm `deploy_modes` must be subset of server's available modes
 
 ### Step 6: Return Configuration
 
-Return the final configuration as specified in the Output section.
+Return the final configuration with all settings.
 
 ## Examples
 
 ### Example 1: Standard Full-Stack
 
-```
-Discovery Results:
-  user_personas:
-    - type: "Project Manager"
-    - type: "Team Member"
-  core_workflows: ["Create projects", "Assign tasks", "Update progress"]
-  domain_entities: ["Team", "Project", "Task", "User"]
-  integrations: ["Slack"]
-
-Recommendation:
-  - Backend API (to handle project/task management, Slack notifications)
-  - Web Frontend (for project managers and team members)
-  - Database (to persist teams, projects, tasks, users)
-
-[User confirms]
-
-Output:
-  project_type: "fullstack"
-  components:
-    - type: config
-      name: config
-    - type: contract
-      name: contract
-    - type: server
-      name: server
-      depends_on: [contract]
-    - type: webapp
-      name: webapp
-      depends_on: [contract]
-    - type: database
-      name: database
-    - type: testing
-      name: testing
-    - type: cicd
-      name: cicd
-```
-
-### Example 2: Multi-Frontend Architecture
-
-```
-Discovery Results:
-  user_personas:
-    - type: "Shopper" (browse, purchase)
-    - type: "Merchant" (manage inventory)
-    - type: "Admin" (internal operations)
-
-Agent: I noticed you have shoppers, merchants, and admins with very different needs.
-Should these be separate web apps, or one app with different views?
-
-User: Separate apps for shopper/merchant, admin can use merchant app
-
-Agent: What should I call them?
-
-User: "storefront" and "merchant"
-
-Output:
-  project_type: "fullstack"
-  components:
-    - type: config
-      name: config
-    - type: contract
-      name: contract
-    - type: server
-      name: server
-      depends_on: [contract]
-    - type: webapp
-      name: storefront
-      depends_on: [contract]
-    - type: webapp
-      name: merchant
-      depends_on: [contract]
-    - type: database
-      name: database
-    - type: testing
-      name: testing
-    - type: cicd
-      name: cicd
+```yaml
+project_type: "fullstack"
+components:
+  - name: config
+    type: config
+    settings: {}
+  - name: public-api
+    type: contract
+    settings:
+      visibility: internal
+  - name: app-db
+    type: database
+    settings:
+      provider: postgresql
+      dedicated: false
+  - name: main-server
+    type: server
+    settings:
+      server_type: api
+      databases: [app-db]
+      provides_contracts: [public-api]
+      consumes_contracts: []
+      helm: true
+  - name: web-app
+    type: webapp
+    settings:
+      contracts: [public-api]
+      helm: true
+  - name: main-server-api
+    type: helm
+    settings:
+      deploys: main-server
+      deploy_type: server
+      deploy_modes: [api]
+      ingress: true
+  - name: web-app-chart
+    type: helm
+    settings:
+      deploys: web-app
+      deploy_type: webapp
+      ingress: true
+      assets: bundled
 ```
 
-### Example 3: Backend Only
+### Example 2: Microservices with Hybrid Server
 
-```
-Discovery Results:
-  product_description: "REST API backend"
-  user_personas: []
-  core_workflows: []
-
-Agent: Based on what you've described, I recommend:
-- Backend API - to handle your REST endpoints
-
-No frontend needed since this is a backend-only project. Does this match?
-
-User: Yes, but add database too
-
-Output:
-  project_type: "backend"
-  components:
-    - type: config
-      name: config
-    - type: contract
-      name: contract
-    - type: server
-      name: server
-      depends_on: [contract]
-    - type: database
-      name: database
-    - type: testing
-      name: testing
-    - type: cicd
-      name: cicd
-```
-
-### Example 4: Microservices Architecture
-
-```
-Discovery Results:
-  core_workflows:
-    - "Process orders"
-    - "Send notifications"
-    - "Generate reports"
-
-Agent: Should the backend be a single service or multiple?
-
-User: Multiple - api for requests, worker for background jobs, scheduler for reports
-
-Output:
-  project_type: "custom"
-  components:
-    - type: config
-      name: config
-    - type: contract
-      name: contract
-    - type: server
-      name: api
-      depends_on: [contract]
-    - type: server
-      name: worker
-      depends_on: [contract]
-    - type: server
-      name: scheduler
-      depends_on: [contract]
-    - type: webapp
-      name: webapp
-      depends_on: [contract]
-    - type: database
-      name: database
-    - type: helm
-      name: helm
-    - type: testing
-      name: testing
-    - type: cicd
-      name: cicd
+```yaml
+project_type: "custom"
+components:
+  - name: config
+    type: config
+    settings: {}
+  - name: orders-api
+    type: contract
+    settings:
+      visibility: internal
+  - name: notifications-api
+    type: contract
+    settings:
+      visibility: internal
+  - name: orders-db
+    type: database
+    settings:
+      provider: postgresql
+      dedicated: false
+  - name: order-service
+    type: server
+    settings:
+      server_type: hybrid
+      modes: [api, worker]
+      databases: [orders-db]
+      provides_contracts: [orders-api]
+      consumes_contracts: [notifications-api]
+      helm: true
+  - name: notification-service
+    type: server
+    settings:
+      server_type: worker
+      databases: []
+      provides_contracts: [notifications-api]
+      consumes_contracts: []
+      helm: true
+  # Separate helm charts for independent scaling
+  - name: order-service-api
+    type: helm
+    settings:
+      deploys: order-service
+      deploy_type: server
+      deploy_modes: [api]
+      ingress: true
+  - name: order-service-worker
+    type: helm
+    settings:
+      deploys: order-service
+      deploy_type: server
+      deploy_modes: [worker]
+      ingress: false
+  - name: notification-service-chart
+    type: helm
+    settings:
+      deploys: notification-service
+      deploy_type: server
+      ingress: false
 ```
 
 ## Notes
@@ -437,5 +366,6 @@ Output:
 - This skill is conversational and handles user interaction for adjustments
 - It does not create any files
 - The output is used by `project-settings` and `scaffolding` skills
-- Always validate dependencies before accepting the final configuration
-- **Config is MANDATORY**: Always include `{type: config, name: config}` as the first component - it is auto-included and users cannot remove it
+- Always validate settings dependencies before accepting the final configuration
+- **Config is MANDATORY**: Always include `{type: config, name: config, settings: {}}` first
+- Settings drive what gets scaffolded - they are not just metadata

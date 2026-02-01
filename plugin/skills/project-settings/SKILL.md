@@ -1,13 +1,13 @@
 ---
 name: project-settings
-description: Manage project settings in .sdd/sdd-settings.yaml for persisting configuration choices and project state.
+description: Manage project settings in .sdd/sdd-settings.yaml including component settings that drive scaffolding.
 ---
 
 # Project Settings Skill
 
 ## Purpose
 
-Manage the `.sdd/sdd-settings.yaml` file that stores project configuration and state. This file persists project choices and can be read/updated to maintain consistency across workflows.
+Manage the `.sdd/sdd-settings.yaml` file that stores project configuration and component settings. Component settings are structural decisions that drive scaffolding, config initialization, and deployment.
 
 ## File Location
 
@@ -32,7 +32,7 @@ mkdir -p .sdd && mv sdd-settings.yaml .sdd/ && git add -A && git commit -m "Migr
 
 ```yaml
 sdd:
-  plugin_version: "4.4.0"      # SDD plugin version that created this project
+  plugin_version: "5.8.0"      # SDD plugin version that created this project
   initialized_at: "2026-01-27" # Date project was initialized
   last_updated: "2026-01-27"   # Date settings were last modified
 
@@ -43,51 +43,145 @@ project:
   type: "fullstack"            # fullstack | backend | frontend | custom
 
 components:
-  - type: config
-    name: config
-  - type: contract
-    name: task-api
-  - type: server
-    name: task-service
-  - type: webapp
-    name: task-dashboard
-  - type: database
-    name: task-db
-  - type: testing
-    name: task-tests
-  - type: cicd
-    name: task-ci
+  # === CONFIG (mandatory singleton) ===
+  - name: config
+    type: config
+    settings: {}
+
+  # === SERVER ===
+  - name: main-server
+    type: server
+    settings:
+      server_type: hybrid        # api | worker | cron | hybrid
+      modes: [api, worker]       # For hybrid: 2+ modes required
+      databases: [primary-db]    # Database components this server uses
+      provides_contracts: [public-api]  # Contracts this server implements
+      consumes_contracts: []     # Contracts this server calls
+      helm: true                 # Whether this server needs a helm chart
+
+  # === WEBAPP ===
+  - name: admin-dashboard
+    type: webapp
+    settings:
+      contracts: [public-api]    # Contracts this webapp uses
+      helm: true
+
+  # === HELM ===
+  - name: main-server-api
+    type: helm
+    settings:
+      deploys: main-server       # Server/webapp component to deploy
+      deploy_type: server        # server | webapp
+      deploy_modes: [api]        # For servers: which modes to deploy
+      ingress: true              # External HTTP access
+
+  # === DATABASE ===
+  - name: primary-db
+    type: database
+    settings:
+      provider: postgresql       # Only postgresql for now
+      dedicated: false           # Needs own DB server
+
+  # === CONTRACT ===
+  - name: public-api
+    type: contract
+    settings:
+      visibility: internal       # public | internal
 ```
 
-The **config** component is mandatory and always the first in the list. It lives at `components/config/`.
+## Settings vs Config
 
-## Component Format
+| Aspect | Settings | Config |
+|--------|----------|--------|
+| **What** | Structural capabilities | Runtime values |
+| **When set** | At component creation, changeable | Per-environment |
+| **Examples** | `databases`, `provides_contracts`, `server_type` | `port: 3000`, `replicas: 3` |
+| **Affects** | What gets scaffolded | Values in scaffolded files |
+| **Stored in** | `.sdd/sdd-settings.yaml` | `components/config/envs/` |
 
-Components are a list of objects. Each object has two required properties:
+## Component Settings by Type
 
-| Property | Required | Description |
-|----------|----------|-------------|
-| `type` | Yes | One of: `config`, `contract`, `server`, `webapp`, `database`, `helm`, `testing`, `cicd` |
-| `name` | Yes | Instance name (lowercase, hyphens only) |
+### Server Settings
 
-**Directory derivation:** `components/{type}-{name}/` when type ≠ name, `components/{type}/` when type = name.
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `server_type` | `api\|worker\|cron\|hybrid` | `api` | Communication pattern(s) |
+| `modes` | `(api\|worker\|cron)[]` | — | For hybrid: which modes (2+ required) |
+| `databases` | string[] | `[]` | Database components this server uses |
+| `provides_contracts` | string[] | `[]` | Contracts this server implements |
+| `consumes_contracts` | string[] | `[]` | Contracts this server calls |
+| `helm` | boolean | `true` | Whether to generate helm chart |
 
-**Single instance (type = name):**
-- `{type: server, name: server}` → `components/server/`
+**Impact:**
+- `server_type` → Operator lifecycle(s)
+- `databases` → DAL layer per database, config sections
+- `provides_contracts` → HTTP routes, Service in helm chart
+- `consumes_contracts` → API clients, config sections
+- `helm: false` → Skip helm chart scaffolding
 
-**Multiple instances:**
-- `{type: server, name: order-service}` → `components/server-order-service/`
-- `{type: server, name: notification-worker}` → `components/server-notification-worker/`
+### Webapp Settings
 
-### Naming Rules
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `contracts` | string[] | `[]` | Contracts this webapp uses |
+| `helm` | boolean | `true` | Whether to generate helm chart |
 
-- Names must be lowercase
-- Use hyphens, not underscores
-- No spaces allowed
-- Names should be domain-specific and descriptive, not generic
-  - Good: `order-service`, `analytics-db`, `customer-portal`, `task-api`
-  - Avoid: `api`, `public`, `primary`, `main`
-- When only one instance of a type exists, name = type is technically valid but discouraged — it's not future-proof if a second instance is added later. Prefer a domain-specific name even for single instances.
+**Impact:**
+- `contracts` → API clients, config sections
+
+### Helm Settings
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `deploys` | string | — | Component to deploy (required) |
+| `deploy_type` | `server\|webapp` | — | Type being deployed (required) |
+| `deploy_modes` | `(api\|worker\|cron)[]` | — | For servers: which modes |
+| `ingress` | boolean | `true` | External HTTP access |
+| `assets` | `bundled\|entrypoint` | `bundled` | For webapps: asset strategy |
+
+**Impact:**
+- `deploy_modes` → Separate deployments for multi-mode
+- `ingress` → ingress.yaml included/excluded
+- `assets` → Webapp build strategy
+
+### Database Settings
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `provider` | `postgresql` | `postgresql` | Database provider |
+| `dedicated` | boolean | `false` | Needs own DB server |
+
+### Contract Settings
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `visibility` | `public\|internal` | `internal` | External consumers allowed |
+
+### Config Settings
+
+Config component has no settings (it's a singleton).
+
+## Directory Structure
+
+Components are organized by type:
+
+| Type | Directory |
+|------|-----------|
+| server | `components/servers/<name>/` |
+| webapp | `components/webapps/<name>/` |
+| helm | `components/helm_charts/<name>/` |
+| database | `components/databases/<name>/` |
+| contract | `components/contracts/<name>/` |
+| config | `components/config/` (singleton) |
+
+## Validation Rules
+
+- **Config required**: Every project must have exactly one config component
+- **Database references**: `databases` must reference existing database components
+- **Contract references**: `provides_contracts`, `consumes_contracts`, `contracts` must reference existing contract components
+- **Helm references**: `deploys` must reference component with `helm: true`
+- **Hybrid modes**: If `server_type: hybrid`, `modes` must have 2+ entries
+- **Deploy modes**: `deploy_modes` must be subset of server's available modes
 
 ## Operations
 
@@ -104,300 +198,60 @@ Initialize a new settings file.
 | `project_description` | Yes | Project description |
 | `project_domain` | Yes | Primary domain |
 | `project_type` | Yes | One of: `fullstack`, `backend`, `frontend`, `custom` |
-| `components` | Yes | List of `{type, name}` objects |
-
-**Workflow:**
-
-1. Create `.sdd/` directory if it doesn't exist: `mkdir -p .sdd`
-
-2. Check if `.sdd/sdd-settings.yaml` already exists
-   - If exists: Warn and ask for confirmation to overwrite
-   - If confirmed or doesn't exist: Continue
-
-3. Get current date in `YYYY-MM-DD` format
-
-4. Create settings object:
-   ```yaml
-   sdd:
-     plugin_version: <plugin_version>
-     initialized_at: <current_date>
-     last_updated: <current_date>
-
-   project:
-     name: <project_name>
-     description: <project_description>
-     domain: <project_domain>
-     type: <project_type>
-
-   components:
-     - type: <type>
-       name: <name>
-     # ... for each component
-   ```
-
-5. Write to `.sdd/sdd-settings.yaml` with proper YAML formatting
-
-6. Return:
-   ```yaml
-   success: true
-   path: .sdd/sdd-settings.yaml
-   ```
-
-**Example - Standard Full-Stack:**
-
-```
-Input:
-  plugin_version: "4.4.0"
-  project_name: "my-app"
-  project_description: "A task management SaaS application"
-  project_domain: "Task Management"
-  project_type: "fullstack"
-  components:
-    - type: config
-      name: config
-    - type: contract
-      name: task-api
-    - type: server
-      name: task-service
-    - type: webapp
-      name: task-dashboard
-    - type: testing
-      name: task-tests
-    - type: cicd
-      name: task-ci
-
-Output:
-  success: true
-  path: .sdd/sdd-settings.yaml
-```
-
-**Example - Multi-Component:**
-
-```
-Input:
-  plugin_version: "4.4.0"
-  project_name: "my-platform"
-  project_description: "A multi-tenant SaaS platform"
-  project_domain: "Platform"
-  project_type: "custom"
-  components:
-    - type: config
-      name: config
-    - type: contract
-      name: customer-api
-    - type: contract
-      name: back-office-api
-    - type: server
-      name: order-service
-    - type: server
-      name: notification-worker
-    - type: server
-      name: task-scheduler
-    - type: webapp
-      name: back-office
-    - type: webapp
-      name: customer-portal
-    - type: database
-      name: app-db
-    - type: database
-      name: analytics-db
-    - type: helm
-      name: platform-deploy
-    - type: testing
-      name: platform-tests
-    - type: cicd
-      name: platform-ci
-
-Output:
-  success: true
-  path: .sdd/sdd-settings.yaml
-```
-
----
+| `components` | Yes | List of components with settings |
 
 ### Operation: `read`
 
 Load and return current settings.
 
-**Input:**
-
-None (reads from standard location)
-
-**Workflow:**
-
-1. Check if `.sdd/sdd-settings.yaml` exists
-   - If not: Check legacy location `sdd-settings.yaml` at project root
-   - If legacy exists: Warn about deprecation, suggest migration, then read from legacy
-   - If neither exists: Return error with `exists: false`
-
-2. Read and parse YAML file
-
-3. Validate required fields exist:
-   - `sdd.plugin_version`
-   - `sdd.initialized_at`
-   - `project.name`
-   - `project.type`
-   - `components` (list)
-
-4. Return parsed settings
-
-**Output:**
-
-```yaml
-exists: true
-settings:
-  sdd:
-    plugin_version: "4.4.0"
-    initialized_at: "2026-01-27"
-    last_updated: "2026-01-27"
-  project:
-    name: "my-app"
-    description: "A task management SaaS application"
-    domain: "Task Management"
-    type: "fullstack"
-  components:
-    - type: config
-      name: config
-    - type: contract
-      name: task-api
-    - type: server
-      name: task-service
-    - type: webapp
-      name: task-dashboard
-    - type: testing
-      name: task-tests
-    - type: cicd
-      name: task-ci
-```
-
-**Error Output (file not found):**
-
-```yaml
-exists: false
-error: ".sdd/sdd-settings.yaml not found."
-```
-
----
-
 ### Operation: `update`
 
-Merge partial updates into existing settings.
-
-**Input:**
-
-| Parameter | Required | Description |
-|-----------|----------|-------------|
-| `updates` | Yes | Partial settings object to merge |
-
-**Workflow:**
-
-1. Call `read` operation to get current settings
-   - If file doesn't exist: Return error
-
-2. Deep merge `updates` into current settings:
-   - Top-level keys in `updates` replace corresponding keys
-   - Nested objects are merged recursively
-   - `components` list: replaces the entire list (no list merging)
-   - `null` values remove keys
-
-3. Update `sdd.last_updated` to current date
-
-4. Write merged settings to `.sdd/sdd-settings.yaml`
-
-5. Return updated settings
-
-**Example - Replace components list:**
-
-```
-Input:
-  updates:
-    components:
-      - type: contract
-        name: task-api
-      - type: server
-        name: order-service
-      - type: server
-        name: notification-worker
-      - type: webapp
-        name: task-dashboard
-
-Output:
-  success: true
-  settings:
-    # ... (components is now the new list, last_updated changed)
-```
-
----
+Merge partial updates into existing settings. Triggers automatic sync of affected artifacts.
 
 ### Operation: `get_component_dirs`
 
 Get the actual directory names for all components.
 
-**Input:**
+## Settings Lifecycle
 
-None (reads from settings)
-
-**Output:**
-
-```yaml
-directories:
-  - type: config
-    name: config
-    dir: "components/config"
-  - type: contract
-    name: task-api
-    dir: "components/contract-task-api"
-  - type: server
-    name: order-service
-    dir: "components/server-order-service"
-  - type: server
-    name: notification-worker
-    dir: "components/server-notification-worker"
-  - type: webapp
-    name: task-dashboard
-    dir: "components/webapp-task-dashboard"
-  - type: database
-    name: app-db
-    dir: "components/database-app-db"
+```
+┌─────────────────┐
+│   sdd-init      │  Settings defined during project creation
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Scaffolding    │  Settings drive what files/templates are created
+│  (initial)      │  Settings drive initial config values
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Development    │  Settings changes come from:
+│                 │  - Specs (new components, capability changes)
+│                 │  - Plans (implementation decisions)
+│                 │  - /sdd-settings command (manual adjustments)
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Settings Sync  │  Changes propagate to config, Helm, etc.
+│  (incremental)  │  Only adds/updates, never deletes user content
+└─────────────────┘
 ```
 
-This operation is useful for agents that need to know which directories exist.
+## Naming Rules
 
----
+- Names must be lowercase
+- Use hyphens, not underscores
+- No spaces allowed
+- Names should be multi-word and domain-specific
+  - Good: `order-service`, `analytics-db`, `customer-portal`, `task-api`
+  - Avoid: `api`, `public`, `primary`, `main`, `server`
+- Exception: `config` (singleton)
 
-## Error Handling
+## Related Commands
 
-| Error | Handling |
-|-------|----------|
-| File not found (read/update) | Return `exists: false` with helpful message |
-| Invalid YAML | Return parse error with line number if possible |
-| Missing required fields | Return validation error listing missing fields |
-| Permission denied | Return error with suggestion to check file permissions |
-| File exists (create) | Warn and ask for confirmation before overwriting |
-
-## Validation
-
-### Project Type Values
-
-Valid values for `project.type`:
-- `fullstack` - Full-stack application (contract + server + webapp)
-- `backend` - Backend API only (contract + server)
-- `frontend` - Frontend only (webapp)
-- `custom` - Custom component selection
-
-### Component Values
-
-Each component is an object with:
-- `type` (required) — one of: `config`, `contract`, `server`, `webapp`, `database`, `helm`, `testing`, `cicd`
-- `name` (required) — lowercase, hyphens only, no spaces. Should be domain-specific and descriptive (e.g., `order-service`, `user-dashboard`), not generic (e.g., avoid `api`, `public`, `primary`). When there's only one instance of a type, name = type is technically valid but discouraged — it's not future-proof if a second instance is added later. Prefer a domain-specific name even for single instances.
-
-Directory: `components/{type}/` when name = type, `components/{type}-{name}/` otherwise.
-
-### Config Component (Mandatory Singleton)
-
-The `config` component is **mandatory** and must appear exactly once in every project:
-- Type: `config`
-- Name: `config` (always, no variations allowed)
-- Directory: `components/config/`
-
-This component holds centralized configuration for all other components. It is scaffolded first during project initialization and cannot be removed.
+- `/sdd-settings` - View and modify settings interactively
+- `/sdd-init` - Initialize project with settings
+- `/sdd-config` - Manage runtime configuration

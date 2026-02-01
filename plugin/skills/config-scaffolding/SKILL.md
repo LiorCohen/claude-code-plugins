@@ -1,11 +1,11 @@
 ---
 name: config-scaffolding
-description: Scaffolds the config component for centralized configuration management.
+description: Scaffolds the config component for centralized configuration management, driven by component settings.
 ---
 
 # Config Scaffolding Skill
 
-Scaffolds the mandatory config component for centralized configuration management.
+Scaffolds the mandatory config component for centralized configuration management. Config sections are generated based on **component settings** defined in `.sdd/sdd-settings.yaml`.
 
 ## When to Use
 
@@ -19,7 +19,7 @@ components/config/
 ├── tsconfig.json               # TypeScript config for type exports
 ├── envs/
 │   ├── default/
-│   │   └── config.yaml         # Base config (empty sections)
+│   │   └── config.yaml         # Base config (sections per component)
 │   └── local/
 │       └── config.yaml         # Local overrides (empty)
 ├── schemas/
@@ -27,6 +27,115 @@ components/config/
 └── types/
     └── index.ts                # Re-exports config types
 ```
+
+## Settings-Driven Config Generation
+
+Config sections are generated based on component settings in `.sdd/sdd-settings.yaml`:
+
+### Server Config Sections
+
+**API Server with database:**
+```yaml
+# Settings:
+- name: main-server
+  type: server
+  settings:
+    server_type: api
+    databases: [primary-db]
+    provides_contracts: [public-api]
+
+# Generated config:
+main-server:
+  port: 3000                    # Business API port (has provides_contracts)
+  probesPort: 9090              # Health/metrics port (always)
+  logLevel: info                # Logging level (always)
+  databases:
+    primary-db:                 # Section per database
+      host: localhost
+      port: 5432
+      name: myapp
+      ssl: false
+```
+
+**Worker without database:**
+```yaml
+# Settings:
+- name: background-worker
+  type: server
+  settings:
+    server_type: worker
+    databases: []
+    consumes_contracts: [public-api]
+
+# Generated config:
+background-worker:
+  probesPort: 9090              # Health/metrics port (always)
+  logLevel: info                # Logging level (always)
+  queue:                        # Queue config for worker
+    url: amqp://localhost:5672
+  apis:
+    public-api:                 # Section per consumed contract
+      base_url: http://main-server:3000
+```
+
+**Hybrid server (api + worker):**
+```yaml
+# Settings:
+- name: main-server
+  type: server
+  settings:
+    server_type: hybrid
+    modes: [api, worker]
+    databases: [primary-db]
+    provides_contracts: [public-api]
+
+# Generated config:
+main-server:
+  port: 3000                    # Business API port (has provides_contracts)
+  probesPort: 9090              # Health/metrics port (always)
+  logLevel: info                # Logging level (always)
+  databases:
+    primary-db:
+      host: localhost
+      port: 5432
+      name: myapp
+      ssl: false
+  queue:                        # Queue config (has worker mode)
+    url: amqp://localhost:5672
+```
+
+### Webapp Config Sections
+
+```yaml
+# Settings:
+- name: admin-dashboard
+  type: webapp
+  settings:
+    contracts: [public-api]
+
+# Generated config:
+admin-dashboard:
+  apis:
+    public-api:                 # Section per consumed contract
+      base_url: http://localhost:3000
+```
+
+### Config Section Rules
+
+| Setting | Config Impact |
+|---------|---------------|
+| `server_type: api` | Adds `port: 3000` (business API) |
+| `server_type: worker` | Adds `queue: { url: ... }` |
+| `server_type: cron` | Adds `schedule: {}` placeholder |
+| `provides_contracts: [...]` | Adds `port: 3000` (business API) |
+| `consumes_contracts: [...]` | Adds `apis: { <name>: { base_url: ... } }` per contract |
+| `databases: [...]` | Adds `databases: { <name>: { host, port, name, ssl } }` per database |
+| `contracts: [...]` (webapp) | Adds `apis: { <name>: { base_url: ... } }` per contract |
+
+### All Servers Get
+
+- `probesPort: 9090` - Health check and metrics endpoint
+- `logLevel: info` - Logging level
 
 ## Config Component Purpose
 
@@ -48,37 +157,11 @@ Each environment has its own directory under `envs/`:
 
 **Merge order:** `envs/default/` → `envs/{env}/`
 
-## Config Structure
-
-```yaml
-# envs/default/config.yaml
-
-global: {}  # Reserved for future cross-cutting concerns
-
-# Each component gets a section matching its directory name
-# Users add properties as needed
-server-task-service: {}
-webapp-task-dashboard: {}
-```
-
 ## Template Variables
 
 | Variable | Description |
 |----------|-------------|
 | `{{PROJECT_NAME}}` | Project name (lowercase, hyphens) |
-
-## Usage
-
-Called programmatically by the scaffolding skill during project initialization:
-
-```python
-from config_scaffolding import scaffold_config
-
-scaffold_config(
-    target_dir="/path/to/project",
-    project_name="my-app",
-)
-```
 
 ## Templates Location
 
@@ -98,6 +181,15 @@ skills/config-scaffolding/templates/
 └── types/
     └── index.ts
 ```
+
+## Sync Behavior
+
+When settings change (via `/sdd-settings`), the config component is automatically synced:
+
+1. **New component added** → Config section added with defaults
+2. **Database added to server** → Database subsection added
+3. **Contract added to consumes_contracts** → API subsection added
+4. **Existing sections** → Never modified or deleted (preserves user changes)
 
 ## Related Skills
 

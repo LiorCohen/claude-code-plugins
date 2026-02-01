@@ -1,0 +1,87 @@
+# Default values for {{CHART_NAME}}
+# This is a YAML-formatted file.
+
+# Infrastructure: NODE_ENV for library behavior (NOT application config)
+nodeEnv: development
+
+# Container image
+image:
+  repository: {{CHART_NAME}}
+  tag: latest
+  pullPolicy: IfNotPresent
+
+{{#if IS_HYBRID}}
+# Hybrid server with multiple modes - each mode gets independent scaling
+{{#each DEPLOY_MODES}}
+{{this}}:
+  enabled: true
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+{{/each}}
+{{else}}
+# Single mode server
+replicaCount: 1
+
+# Resource limits
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+{{/if}}
+
+{{#if HAS_SERVICE}}
+# Service configuration (server provides contracts)
+service:
+  type: ClusterIP
+  port: 3000
+{{/if}}
+
+{{#if HAS_INGRESS}}
+# Ingress configuration
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: {{CHART_NAME}}.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+{{/if}}
+
+# Observability - all servers get metrics endpoint on port 9090
+observability:
+  metrics:
+    enabled: true
+    port: 9090
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+
+# Probes
+livenessProbe:
+  httpGet:
+    path: /health/live
+    port: 9090
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: 9090
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+# Application config (populated at deploy time via --set-file config=<file>)
+# This gets mounted as /app/config/config.yaml
+config: {}

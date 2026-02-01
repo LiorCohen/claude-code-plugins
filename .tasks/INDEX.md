@@ -10,7 +10,7 @@
 
 ## Ready
 
-- [#44](3-ready/44/): Component settings system + Helm charts
+(none)
 
 ---
 
@@ -22,7 +22,7 @@
 
 ## Reviewing
 
-(none)
+- [#44](5-reviewing/44/): Component settings system + Helm charts
 
 ---
 

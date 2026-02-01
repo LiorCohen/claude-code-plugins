@@ -1,131 +1,249 @@
 ---
 name: helm-scaffolding
-description: Scaffolds Helm chart structure for SDD components.
+description: Scaffolds Helm charts for SDD components, driven by component settings.
 ---
 
 # Helm Scaffolding Skill
 
-Scaffolds Helm chart structure for deploying SDD components to Kubernetes.
+Scaffolds Helm charts for deploying SDD components to Kubernetes. Charts are generated based on **component settings** defined in `.sdd/sdd-settings.yaml`.
 
 ## When to Use
 
-This skill is called by the main `scaffolding` skill when creating helm components. It creates a Helm chart that integrates with the SDD config system.
+This skill is called by the main `scaffolding` skill when creating helm components. It creates Helm charts that integrate with the SDD config system.
+
+## Settings-Driven Scaffolding
+
+Helm charts are scaffolded based on their settings in `.sdd/sdd-settings.yaml`:
+
+```yaml
+components:
+  # Helm chart for a server
+  - name: main-server-api
+    type: helm
+    settings:
+      deploys: main-server      # Server component to deploy
+      deploy_type: server
+      deploy_modes: [api]       # Which modes (for hybrid servers)
+      ingress: true             # External HTTP access
+
+  # Helm chart for a webapp
+  - name: admin-dashboard
+    type: helm
+    settings:
+      deploys: admin-dashboard  # Webapp component to deploy
+      deploy_type: webapp
+      ingress: true
+      assets: bundled           # bundled | entrypoint
+```
+
+### Settings Impact on Scaffolding
+
+**Server helm charts:**
+
+| Setting | Impact |
+|---------|--------|
+| `deploy_modes: [api]` | Single deployment with HTTP port |
+| `deploy_modes: [worker]` | Single deployment without HTTP port |
+| `deploy_modes: [api, worker]` | Separate deployments per mode (independent scaling) |
+| `deploy_modes: [cron]` | CronJob instead of Deployment |
+| `ingress: true` | Adds `ingress.yaml` for external access |
+| `ingress: false` | No ingress (internal service only) |
+
+**Webapp helm charts:**
+
+| Setting | Impact |
+|---------|--------|
+| `ingress: true` | Adds `ingress.yaml` |
+| `assets: bundled` | Full app files in nginx container |
+| `assets: entrypoint` | Only index.html, assets from CDN |
+
+### Template Selection Logic
+
+```typescript
+// Pseudocode for settings-driven template selection
+const scaffoldHelmChart = async (helmComponent: HelmComponent): Promise<void> => {
+  const { settings } = helmComponent;
+
+  // Always include base templates
+  await copyTemplate('_helpers.tpl');
+  await copyTemplate('configmap.yaml');
+
+  if (settings.deploy_type === 'server') {
+    // Server-specific templates
+    await copyTemplate('servicemonitor.yaml'); // All servers get metrics
+
+    const deployModes = settings.deploy_modes ?? [serverSettings.server_type];
+
+    if (deployModes.length > 1) {
+      // Multiple modes = separate deployments per mode
+      if (deployModes.includes('api')) await copyTemplate('deployment-api.yaml');
+      if (deployModes.includes('worker')) await copyTemplate('deployment-worker.yaml');
+      if (deployModes.includes('cron')) await copyTemplate('cronjob.yaml');
+    } else if (deployModes[0] === 'cron') {
+      await copyTemplate('cronjob.yaml');
+    } else {
+      await copyTemplate('deployment.yaml');
+    }
+
+    // Service only if deploying api mode and server provides contracts
+    if (deployModes.includes('api') && serverSettings.provides_contracts.length > 0) {
+      await copyTemplate('service.yaml');
+    }
+  } else {
+    // Webapp templates
+    await copyTemplate('deployment.yaml');
+    await copyTemplate('service.yaml');
+  }
+
+  // Ingress from helm settings
+  if (settings.ingress) {
+    await copyTemplate('ingress.yaml');
+  }
+};
+```
+
+## Directory Structure
+
+Helm charts live at `components/helm_charts/<name>/`:
+
+| Component Name | Directory |
+|----------------|-----------|
+| `main-server-api` | `components/helm_charts/main-server-api/` |
+| `admin-dashboard` | `components/helm_charts/admin-dashboard/` |
+| `umbrella` | `components/helm_charts/umbrella/` |
 
 ## What It Creates
 
+### Server Chart Structure
+
 ```
-components/helm-{name}/
+components/helm_charts/<name>/
 ├── Chart.yaml                # Chart metadata
-├── values.yaml               # Default values (development-safe)
-├── values-local.yaml         # Local development overrides
+├── values.yaml               # Default values
 └── templates/
-    ├── deployment.yaml       # Pod spec with config mount and env vars
-    ├── service.yaml          # Service definition
-    └── configmap.yaml        # ConfigMap for config file
+    ├── _helpers.tpl          # Template helpers (always)
+    ├── configmap.yaml        # Config mount (always)
+    ├── servicemonitor.yaml   # Metrics integration (always)
+    ├── deployment.yaml       # Single-mode deployment
+    ├── deployment-api.yaml   # Hybrid: API mode deployment
+    ├── deployment-worker.yaml # Hybrid: Worker mode deployment
+    ├── cronjob.yaml          # Cron mode
+    ├── service.yaml          # When provides_contracts (conditional)
+    └── ingress.yaml          # When ingress: true (conditional)
+```
+
+### Webapp Chart Structure
+
+```
+components/helm_charts/<name>/
+├── Chart.yaml
+├── values.yaml
+└── templates/
+    ├── _helpers.tpl
+    ├── deployment.yaml       # nginx with config injection
+    ├── service.yaml
+    ├── configmap.yaml        # App config + nginx config
+    └── ingress.yaml          # When ingress: true (conditional)
+```
+
+### Umbrella Chart Structure
+
+```
+components/helm_charts/umbrella/
+├── Chart.yaml                # Lists all charts as dependencies
+└── values.yaml               # Enable/disable individual charts
 ```
 
 ## Template Variables
 
 | Variable | Description |
 |----------|-------------|
-| `{{CHART_NAME}}` | Helm chart name (from component name) |
-| `{{CHART_DESCRIPTION}}` | Chart description |
+| `{{CHART_NAME}}` | Helm chart name |
+| `{{DEPLOYS_COMPONENT}}` | Name of component this chart deploys |
 | `{{APP_VERSION}}` | Application version |
 | `{{PROJECT_NAME}}` | Project name |
+| `{{IS_HYBRID}}` | True if deploying multiple modes |
+| `{{DEPLOY_MODES}}` | List of modes being deployed |
+| `{{HAS_SERVICE}}` | True if server provides contracts |
+| `{{HAS_INGRESS}}` | True if ingress enabled |
 
-## Usage
+## Templates Location
 
-Called programmatically by the scaffolding skill:
+Templates are organized by deployment target:
 
-```python
-from helm_scaffolding import scaffold_helm
-
-scaffold_helm(
-    target_dir="/path/to/project",
-    component_name="task-service",    # Creates helm-task-service/
-    project_name="my-app",
-)
+```
+skills/helm-scaffolding/
+├── templates/                 # Legacy (single deployment)
+├── templates-server/          # Server charts
+│   ├── Chart.yaml
+│   ├── values.yaml
+│   └── templates/
+│       ├── _helpers.tpl
+│       ├── deployment.yaml
+│       ├── deployment-api.yaml
+│       ├── deployment-worker.yaml
+│       ├── cronjob.yaml
+│       ├── service.yaml
+│       ├── ingress.yaml
+│       ├── servicemonitor.yaml
+│       └── configmap.yaml
+├── templates-webapp/          # Webapp charts
+│   ├── Chart.yaml
+│   ├── values.yaml
+│   └── templates/
+│       ├── _helpers.tpl
+│       ├── deployment.yaml
+│       ├── service.yaml
+│       ├── ingress.yaml
+│       └── configmap.yaml
+└── templates-umbrella/        # Umbrella chart
+    ├── Chart.yaml
+    └── values.yaml
 ```
 
 ## Config Integration
 
-The Helm chart integrates with the config component:
+### Server Config Injection
 
-1. **Config values** are passed via `--set-file config=<generated-config.yaml>` at deploy time
-2. **ConfigMap** mounts the config at `/app/config/config.yaml`
-3. **Deployment** sets `SDD_CONFIG_PATH=/app/config/config.yaml`
+Config is mounted as a file at `/app/config/config.yaml`:
 
-### Deployment Workflow
+```yaml
+# templates/configmap.yaml
+data:
+  config.yaml: |
+    {{- toYaml .Values.config | nindent 4 }}
+```
 
+Deployment workflow:
 ```bash
-# 1. Generate merged config for the target environment
-sdd-system config generate --env production --component server-task-service \
+# Generate merged config
+sdd-system config generate --env production --component main-server \
   --output production-config.yaml
 
-# 2. Deploy with Helm
-helm install my-release ./components/helm-task-service \
+# Deploy with config
+helm install my-release ./components/helm_charts/main-server-api \
   -f values-production.yaml \
   --set-file config=production-config.yaml
 ```
 
-## Templates Location
+### Webapp Config Injection
 
-All templates are colocated in this skill's `templates/` directory:
+Config is injected into HTML at deploy time via init container:
 
-```
-skills/helm-scaffolding/templates/
-├── Chart.yaml
-├── values.yaml
-├── values-local.yaml
-└── templates/
-    ├── deployment.yaml
-    ├── service.yaml
-    └── configmap.yaml
-```
+1. Webapp exports: `export const startApp = (config: AppConfig) => { ... }`
+2. Helm chart's index.html has: `startApp(__SDD_CONFIG__)`
+3. Init container replaces `__SDD_CONFIG__` with JSON from ConfigMap
+4. App receives config as parameter
 
-## Config Schema
+## Observability Integration
 
-Helm components don't use `components/config/` directly. Instead, they define values files that receive config at deploy time.
+All server charts include:
 
-### Minimal Values (values.yaml)
+- **ServiceMonitor** - Registers app with Prometheus/Victoria Metrics
+- **Metrics endpoint** - Port 9090 for health/metrics
+- **Structured logging** - JSON logs to stdout (collector picks up)
 
-```yaml
-replicaCount: 1
-nodeEnv: development
-
-image:
-  repository: ghcr.io/org/app
-  tag: latest
-  pullPolicy: IfNotPresent
-
-service:
-  type: ClusterIP
-  port: 3000
-
-probes:
-  port: 9090
-
-config: {}  # Injected at deploy time from components/config/
-```
-
-### Environment Values (values-{env}.yaml)
-
-```yaml
-# values-production.yaml
-replicaCount: 3
-nodeEnv: production
-
-image:
-  tag: "1.0.0"
-
-resources:
-  limits:
-    cpu: 1000m
-    memory: 512Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
-```
+Cluster-level observability (Victoria Metrics, Victoria Logs) is set up separately (see task #47).
 
 ---
 
