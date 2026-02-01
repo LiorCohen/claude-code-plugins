@@ -22,7 +22,7 @@
 
 ## Reviewing
 
-- [#44](5-reviewing/44/): Component settings system + Helm charts
+(none)
 
 ---
 
@@ -76,6 +76,7 @@
 
 ## Complete
 
+- [#44](6-complete/44/): Component settings system + Helm charts ✓ (2026-02-01)
 - [#50](6-complete/50/): Move sdd-settings.yaml to .sdd/ directory ✓ (2026-02-01)
 - [#64](6-complete/64/): Refactor planning system architecture ✓ (2026-01-31)
 - [#65](6-complete/65/): Move external spec handling from sdd-init to sdd-new-change ✓ (2026-01-31)
