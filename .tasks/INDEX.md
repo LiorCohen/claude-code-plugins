@@ -48,6 +48,7 @@
 
 ## Low Priority
 
+- [#73](1-inbox/73/): User instructions memory for plugin overrides
 - [#3](1-inbox/3/): Docs missing: CMDO Guide
 - [#24](1-inbox/24/): Add plugin Slack support
 - [#31](1-inbox/31/): Welcome prompt after plugin installation
