@@ -4,13 +4,13 @@
 
 ## Planning
 
-- [#44](2-planning/44/): Component settings system + Helm charts
+(none)
 
 ---
 
 ## Ready
 
-(none)
+- [#44](3-ready/44/): Component settings system + Helm charts
 
 ---
 
