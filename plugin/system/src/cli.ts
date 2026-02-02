@@ -43,7 +43,7 @@ Namespaces:
 
   spec          Spec validation, indexing, snapshots
     validate    Validate spec frontmatter/structure
-    index       Generate specs/INDEX.md
+    index       Generate changes/INDEX.md
     snapshot    Create project snapshot
 
   version       Version bumping
@@ -91,8 +91,8 @@ Global Options:
   --help        Show help
 
 Examples:
-  sdd-system spec validate specs/feature.md
-  sdd-system spec validate --all --specs-dir specs/
+  sdd-system spec validate changes/2026/01/01/feature/SPEC.md
+  sdd-system spec validate --all --changes-dir changes/
   sdd-system scaffolding project --config config.json
   sdd-system version bump patch
   sdd-system database setup my-db

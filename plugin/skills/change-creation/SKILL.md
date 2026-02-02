@@ -1180,13 +1180,14 @@ One PR per child change. Branch naming: `epic/<epic-name>/<change-name>`
 
 ### Step 7: Update INDEX.md
 
-Add entry to `specs/INDEX.md`:
+Add entry to `changes/INDEX.md`:
 
 1. Find the `## Active Changes` section (create if missing)
 2. Add entry with type indicator:
    ```markdown
-   - [<title>](changes/YYYY/MM/DD/<name>/SPEC.md) - <type> - <description>
+   - [<title>](YYYY/MM/DD/<name>/SPEC.md) - <type> - <description>
    ```
+   Note: Links are relative within the `changes/` directory.
 
 ### Step 8: Return Result
 

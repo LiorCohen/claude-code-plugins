@@ -2,7 +2,7 @@
 id: 67
 title: Store user instructions in plans, specs, and .sdd/
 priority: high
-status: open
+status: planning
 created: 2026-02-01
 depends_on: []
 blocks: []

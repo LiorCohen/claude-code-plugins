@@ -45,8 +45,9 @@ Config → [All layers] → Dependencies
 
 | Path | Purpose |
 |------|---------|
-| `specs/INDEX.md` | Registry of all specs |
+| `changes/INDEX.md` | Registry of all change specs |
 | `changes/` | Change specifications (features, bugfixes, refactors) |
+| `specs/` | Static domain knowledge (glossary, definitions, architecture) |
 | `components/{contract-component}/openapi.yaml` | API contract (path depends on component name) |
 | `.sdd/sdd-settings.yaml` | Project settings (components, domains) |
 

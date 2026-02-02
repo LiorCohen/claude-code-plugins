@@ -27,7 +27,10 @@ Extract structured product information through adaptive questioning:
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|
-| `project_name` | Yes | Name of the project |
+| `project_name` | Yes (interactive) | Name of the project |
+| `spec_outline` | No | Pre-extracted outline from external spec |
+| `spec_path` | No | Path to external spec file |
+| `mode` | No | `"interactive"` (default) or `"external-spec"` |
 
 ## Output
 
@@ -53,7 +56,54 @@ constraints: ["MVP scope"]  # Empty list if none
 scope: "mvp"  # "mvp" or "full"
 ```
 
-## Workflow
+## Mode: external-spec
+
+When `mode: "external-spec"` is provided with `spec_outline` and `spec_path`:
+
+1. **Skip interactive questions** - extract everything from the spec
+2. **Read intro section** using outline's line ranges (first H1 or content before first H2)
+3. **Extract domain entities:**
+   - Capitalized nouns that appear 3+ times
+   - Terms in bold or defined inline
+   - Glossary entries if present
+4. **Extract user personas:**
+   - "As a [role]" patterns from user stories
+   - Actors mentioned in requirements
+5. **Extract core workflows:**
+   - Numbered steps or procedures
+   - Acceptance criteria patterns
+6. **Update domain specs:**
+   - Add new terms to `specs/domain/glossary.md`
+   - Create definition files in `specs/domain/definitions/`
+   - Create use-case files in `specs/domain/use-cases/`
+7. **Return results** (no user confirmation needed)
+
+**Output for external-spec mode:**
+
+```yaml
+product_description: "Extracted from spec intro"
+primary_domain: "Detected or inferred domain"
+user_personas:
+  - type: "User"
+    actions: "extracted actions"
+core_workflows:
+  - "Extracted workflow 1"
+  - "Extracted workflow 2"
+domain_entities:
+  - "Entity1"
+  - "Entity2"
+integrations: []  # May extract if mentioned
+constraints: []   # May extract if mentioned
+scope: "full"     # Default for external specs
+domain_updates:
+  glossary_terms_added: ["Term1", "Term2"]
+  definitions_created: ["definition1.md"]
+  use_cases_created: ["use-case1.md"]
+```
+
+---
+
+## Workflow (Interactive Mode)
 
 ### Step 1: Opening Question
 

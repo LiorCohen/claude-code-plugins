@@ -26,7 +26,7 @@ Spec validation and management.
 ```bash
 sdd-system spec validate specs/feature.md   # Validate single spec
 sdd-system spec validate --all              # Validate all specs
-sdd-system spec index --specs-dir specs/    # Generate INDEX.md
+sdd-system spec index --changes-dir changes/ # Generate changes/INDEX.md
 sdd-system spec snapshot --specs-dir specs/ # Generate SNAPSHOT.md
 ```
 

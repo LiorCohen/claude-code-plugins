@@ -1,8 +1,8 @@
 /**
- * Generate specs/INDEX.md from all spec files.
+ * Generate changes/INDEX.md from all change spec files.
  *
  * Usage:
- *   sdd-system spec index --specs-dir specs/
+ *   sdd-system spec index --changes-dir changes/
  */
 
 import * as path from 'node:path';
@@ -93,7 +93,7 @@ const generateIndexContent = async (specsDir: string): Promise<string> => {
 
   // Combine all sections
   const lines: readonly string[] = [
-    '# Spec Index',
+    '# Change Index',
     '',
     `Last updated: ${today}`,
     '',
@@ -119,17 +119,18 @@ const generateIndexContent = async (specsDir: string): Promise<string> => {
 
 export const generateIndex = async (args: readonly string[]): Promise<CommandResult> => {
   const { named } = parseNamedArgs(args);
-  const specsDir = named['specs-dir'] ?? 'specs/';
+  // Support both --changes-dir (new) and --specs-dir (legacy) for backwards compatibility
+  const changesDir = named['changes-dir'] ?? named['specs-dir'] ?? 'changes/';
 
-  if (!(await directoryExists(specsDir))) {
+  if (!(await directoryExists(changesDir))) {
     return {
       success: false,
-      error: `Specs directory not found: ${specsDir}`,
+      error: `Changes directory not found: ${changesDir}`,
     };
   }
 
-  const indexContent = await generateIndexContent(specsDir);
-  const indexPath = path.join(specsDir, 'INDEX.md');
+  const indexContent = await generateIndexContent(changesDir);
+  const indexPath = path.join(changesDir, 'INDEX.md');
   await writeText(indexPath, indexContent);
 
   return {

@@ -139,18 +139,18 @@ project:
       execSync(`mkdir -p "${joinPath(testProject.path, dir)}"`, { encoding: 'utf-8' });
     }
 
-    // Create INDEX.md
+    // Create INDEX.md in changes/ directory
     await writeFileAsync(
-      joinPath(testProject.path, 'INDEX.md'),
-      `# Changes Index
+      joinPath(testProject.path, 'changes', 'INDEX.md'),
+      `# Change Index
 
-## In Progress
-
-(none)
-
-## Complete
+## Active Changes
 
 (none)
+
+## External Specifications
+
+*None imported yet*
 `
     );
 
@@ -249,6 +249,45 @@ project:
         (firstSpec.includes('archive/') && !firstSpec.includes('Audit reference'));
       expect(hasExternalReadInstructions).toBe(false);
       console.log('✓ Specs do not reference archive for reading');
+    }
+
+    // Helper to find directories matching a pattern
+    const findDirs = async (dir: string, pattern: RegExp): Promise<string[]> => {
+      const { execSync } = await import('child_process');
+      try {
+        const result = execSync(`find "${dir}" -type d`, { encoding: 'utf-8' });
+        return result
+          .trim()
+          .split('\n')
+          .filter(Boolean)
+          .filter((d) => pattern.test(d.split('/').pop() || ''));
+      } catch {
+        return [];
+      }
+    };
+
+    // Check for numbered epic directories (hierarchical structure)
+    const epicDirs = await findDirs(changesDir, /^\d{2}-epic-/);
+    if (epicDirs.length > 0) {
+      console.log(`Found ${epicDirs.length} numbered epic directories`);
+
+      // Verify epic directories are numbered sequentially
+      const epicNames = epicDirs.map((d) => d.split('/').pop() || '');
+      const hasSequentialNumbers = epicNames.some((n) => n.startsWith('01-'));
+      if (hasSequentialNumbers) {
+        console.log('✓ Epic directories have numbered prefixes');
+      }
+
+      // Check for numbered features within epics
+      for (const epicDir of epicDirs) {
+        const featureDirs = await findDirs(joinPath(epicDir, 'changes'), /^\d{2}-/);
+        if (featureDirs.length > 0) {
+          console.log(`  Found ${featureDirs.length} numbered features in ${epicDir.split('/').pop()}`);
+        }
+      }
+    } else {
+      // If no numbered epics, check for regular epic structure or individual changes
+      console.log('Note: Numbered epic structure not detected (may have created flat changes)');
     }
 
     // Record token usage benchmark

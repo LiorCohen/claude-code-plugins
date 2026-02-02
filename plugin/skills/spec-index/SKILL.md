@@ -12,10 +12,10 @@ The spec commands are available via the sdd-system CLI:
 
 ### Generate Index
 
-Generates `specs/INDEX.md` from all spec files.
+Generates `changes/INDEX.md` from all change spec files.
 
 ```bash
-sdd-system spec index --specs-dir specs/
+sdd-system spec index --changes-dir changes/
 ```
 
 ### Generate Snapshot
@@ -42,10 +42,10 @@ sdd-system spec validate --all --specs-dir specs/
 
 ## INDEX.md Format
 
-The index is a registry of all specs:
+The index is a registry of all change specs, located at `changes/INDEX.md`:
 
 ```markdown
-# Spec Index
+# Change Index
 
 Last updated: YYYY-MM-DD
 
@@ -55,18 +55,20 @@ Total: X specs (Active: Y, Deprecated: Z, Archived: W)
 
 | Change | Type | Spec | Domain | Issue | Since |
 |--------|------|------|--------|-------|-------|
-| User Authentication | feature | [SPEC](changes/2025/01/01/user-auth/SPEC.md) | Identity | [PROJ-123](url) | 2025-01-01 |
+| User Authentication | feature | [SPEC](2025/01/01/user-auth/SPEC.md) | Identity | [PROJ-123](url) | 2025-01-01 |
 
 ## Deprecated
 
 | Change | Type | Spec | Domain | Issue | Deprecated |
 |--------|------|------|--------|-------|------------|
-| Old Auth | feature | [SPEC](changes/2025/01/15/old-auth/SPEC.md) | Identity | [PROJ-100](url) | 2025-02-01 |
+| Old Auth | feature | [SPEC](2025/01/15/old-auth/SPEC.md) | Identity | [PROJ-100](url) | 2025-02-01 |
 
 ## Archived
 
 *None*
 ```
+
+Note: Links are relative within the `changes/` directory (e.g., `YYYY/MM/DD/...`).
 
 ---
 
@@ -128,7 +130,7 @@ name: Validate Specs
 on:
   pull_request:
     paths:
-      - 'specs/**'
+      - 'changes/**'
 
 jobs:
   validate:
@@ -140,10 +142,10 @@ jobs:
           python-version: '3.11'
 
       - name: Validate all specs
-        run: npx sdd-system spec validate --all --specs-dir specs/
+        run: npx sdd-system spec validate --all --changes-dir changes/
 
       - name: Check index is up-to-date
         run: |
-          npx sdd-system spec index --specs-dir specs/
-          git diff --exit-code specs/INDEX.md
+          npx sdd-system spec index --changes-dir changes/
+          git diff --exit-code changes/INDEX.md
 ```

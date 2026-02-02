@@ -16,7 +16,7 @@ Analyze a specification document to identify natural change boundaries and retur
 | `spec_content` | Yes | The markdown content of the specification to analyze |
 | `spec_path` | No | Original path to the spec file (for reference tracking) |
 | `default_domain` | No | Default domain to use if not detected |
-| `mode` | No | `"outline"` to extract structure only, `"section"` to analyze one section, or omit for full analysis |
+| `mode` | No | `"outline"` to extract structure only, `"section"` to analyze one section, `"hierarchical"` for two-level epic/feature decomposition, or omit for full analysis |
 | `section_header` | If mode=section | Header text of the section being analyzed (e.g., `"## User Auth"`) |
 | `spec_is_directory` | No | If true, spec is a directory with multiple files |
 | `spec_files` | If spec_is_directory | List of markdown files in the spec directory |
@@ -140,6 +140,106 @@ default_domain: "Identity"
 **Output:**
 
 Returns a single `DecomposedChange` for that section, using the standard algorithm (Phase 1-5 below) applied to the section content only.
+
+### Mode: "hierarchical"
+
+Two-level decomposition for large external specs. Creates numbered epics from H1 sections and numbered features from H2/H3 sections within each epic.
+
+**Input:**
+
+```yaml
+mode: "hierarchical"
+spec_outline: <pre-extracted outline with line ranges>
+spec_content: <full spec content>
+default_domain: <primary domain>
+```
+
+**Algorithm:**
+
+1. Group sections by H1 headers (each H1 becomes an epic)
+2. Within each H1, H2/H3 sections become features
+3. Build dependency graph:
+   - Features depend on other features (based on concept/API references)
+   - Epics depend on other epics (if any feature depends on another epic's feature)
+4. Topological sort to determine implementation order
+5. Assign numbers: 01, 02, 03, etc.
+
+**Output (HierarchicalDecompositionResult):**
+
+```yaml
+mode: "hierarchical"
+epics:
+  - id: e1
+    name: user-management
+    title: User Management
+    order: 1
+    source_h1: "# User Management"
+    features:
+      - id: f1
+        name: registration
+        title: User Registration
+        order: 1
+        dependencies: []
+        source_sections: ["## User Registration"]
+        acceptance_criteria: [...]
+        api_endpoints: [...]
+      - id: f2
+        name: authentication
+        title: User Authentication
+        order: 2
+        dependencies: [f1]
+        source_sections: ["## User Authentication"]
+        acceptance_criteria: [...]
+        api_endpoints: [...]
+      - id: f3
+        name: password-reset
+        title: Password Reset
+        order: 3
+        dependencies: [f2]
+        source_sections: ["## Password Reset"]
+        acceptance_criteria: [...]
+        api_endpoints: [...]
+  - id: e2
+    name: dashboard
+    title: Dashboard
+    order: 2
+    epic_dependencies: [e1]
+    features:
+      - id: f4
+        name: analytics
+        title: Analytics Dashboard
+        order: 1
+        dependencies: []
+        source_sections: ["## Analytics"]
+      - id: f5
+        name: settings
+        title: User Settings
+        order: 2
+        dependencies: [f4]
+        source_sections: ["## Settings"]
+  - id: e3
+    name: billing
+    title: Billing
+    order: 3
+    epic_dependencies: [e1]
+    features: [...]
+shared_concepts: ["User", "Session", "Token"]
+suggested_epic_order: [e1, e2, e3]
+warnings: []
+```
+
+**Numbering Rules:**
+- Epics: `01-epic-name`, `02-epic-name`, etc.
+- Features within epics: `01-feature-name`, `02-feature-name`, etc.
+- Numbers based on topological sort of dependency graph
+- Independent items can share the same "phase" but get sequential numbers
+
+**When to use hierarchical mode:**
+- Spec has 2+ H1 sections
+- At least one H1 has 2+ H2 subsections
+- Large external specs being imported
+
+---
 
 ### Default Mode (Full Analysis)
 

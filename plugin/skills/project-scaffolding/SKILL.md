@@ -22,19 +22,21 @@ This skill is called by the main `scaffolding` skill during project initializati
 | `package.json` | Root workspace configuration |
 | `.gitignore` | Git ignore patterns |
 
-### Specs Directory
+### Project Structure
 
 ```
-specs/
-├── INDEX.md              # Specifications index
-├── SNAPSHOT.md           # Current state snapshot
-├── domain/
-│   ├── glossary.md       # Domain terms
-│   ├── definitions/      # Domain definitions
-│   └── use-cases/        # Business use cases
-├── architecture/
-│   └── overview.md       # Architecture overview (generated)
-└── changes/              # Change specifications
+project/
+├── specs/                    # Static domain knowledge
+│   ├── SNAPSHOT.md           # Current state snapshot
+│   ├── domain/
+│   │   ├── glossary.md       # Domain terms
+│   │   ├── definitions/      # Domain definitions
+│   │   └── use-cases/        # Business use cases
+│   └── architecture/
+│       └── overview.md       # Architecture overview (generated)
+├── changes/                  # Change specifications
+│   └── INDEX.md              # Change registry
+└── archive/                  # Archived external specs
 ```
 
 ## Note on Config
@@ -74,8 +76,9 @@ skills/project-scaffolding/templates/
 │   ├── README.md
 │   ├── CLAUDE.md
 │   └── package.json
-└── specs/
-    ├── INDEX.md
-    ├── SNAPSHOT.md
-    └── glossary.md
+├── specs/
+│   ├── SNAPSHOT.md
+│   └── glossary.md
+└── changes/
+    └── INDEX.md
 ```

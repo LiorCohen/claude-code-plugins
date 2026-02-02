@@ -33,26 +33,40 @@ Generated SPEC.md files must be completely self-sufficient. Implementation agent
 | `spec_outline` | Yes | Pre-extracted outline from sdd-new-change Step 1b (sections with line ranges) |
 | `target_dir` | Yes | Absolute path to the project directory |
 | `primary_domain` | Yes | Primary domain for the project |
+| `discovery_results` | No | Results from product-discovery skill (entities, personas, workflows) |
 
 ## Output
 
 ```yaml
 success: true
 external_spec_archived: "archive/original-spec.md"
-is_epic: false  # true if created as epic structure
-changes_created:
-  - name: "user-authentication"
-    path: "changes/2026/01/25/user-authentication/"
-    spec_path: "changes/2026/01/25/user-authentication/SPEC.md"
-    plan_path: "changes/2026/01/25/user-authentication/PLAN.md"
-    type: "feature"
-  - name: "password-reset"
-    path: "changes/2026/01/25/password-reset/"
-    spec_path: "changes/2026/01/25/password-reset/SPEC.md"
-    plan_path: "changes/2026/01/25/password-reset/PLAN.md"
-    type: "feature"
-suggested_order: ["user-authentication", "password-reset"]
+is_hierarchical: true  # true if created with numbered epic/feature structure
+epics_created:
+  - name: "01-epic-user-management"
+    path: "changes/2026/01/25/01-epic-user-management/"
+    spec_path: "changes/2026/01/25/01-epic-user-management/SPEC.md"
+    plan_path: "changes/2026/01/25/01-epic-user-management/PLAN.md"
+    type: "epic"
+    features:
+      - name: "01-registration"
+        path: "changes/2026/01/25/01-epic-user-management/changes/01-registration/"
+        spec_path: "changes/2026/01/25/01-epic-user-management/changes/01-registration/SPEC.md"
+        plan_path: "changes/2026/01/25/01-epic-user-management/changes/01-registration/PLAN.md"
+        type: "feature"
+      - name: "02-authentication"
+        path: "changes/2026/01/25/01-epic-user-management/changes/02-authentication/"
+        type: "feature"
+  - name: "02-epic-dashboard"
+    path: "changes/2026/01/25/02-epic-dashboard/"
+    type: "epic"
+    features: [...]
+suggested_order: ["01-epic-user-management", "02-epic-dashboard"]
+implementation_order: "01 → 02 (02 can start after 01 completes)"
 shared_concepts_added: ["User", "Session", "Token"]
+domain_updates:
+  glossary_terms: 5
+  definitions_created: 2
+  use_cases_created: 3
 ```
 
 ## Workflow
@@ -78,15 +92,46 @@ shared_concepts_added: ["User", "Session", "Token"]
 - After import completes, the archived spec is NEVER read again
 - Generated SPEC.md files will embed the relevant content, making them self-sufficient
 
-### Step 2: Present Outline to User
+### Step 2: Present Outline to User (Hierarchical Detection)
 
-The `spec_outline` is already extracted (passed from sdd-new-change Step 1b). Present it to the user for confirmation.
+The `spec_outline` is already extracted (passed from sdd-new-change Step 1b). Detect if hierarchical decomposition applies:
 
-**If `spec_outline.has_headers` is true:**
+**Hierarchical decomposition applies when:**
+- Spec has 2+ H1 sections
+- At least one H1 has 2+ H2 subsections
+
+**For specs meeting hierarchical criteria:**
+
+```
+I found the following structure in this spec:
+
+EPICS (from H1 sections):
+  01 📦 User Management (lines 10-150)
+     ├── 01 Registration
+     ├── 02 Authentication
+     └── 03 Password Reset
+
+  02 📦 Dashboard (lines 151-300) [depends on: User Management]
+     ├── 01 Analytics
+     └── 02 Settings
+
+  03 📦 Billing (lines 301-450) [depends on: User Management]
+     ├── 01 Payments
+     └── 02 Invoices
+
+Total: 3 epics, 8 features
+Implementation order: 01 → 02 → 03 (02 and 03 can be parallel after 01)
+
+Options:
+  [A] Accept this breakdown
+  [S] Single change (don't split)
+  [C] Cancel
+```
+
+**For simple specs (doesn't meet hierarchical criteria):**
 
 Display the structure with indentation based on header level.
 
-**For single file:**
 ```
 I found the following structure in this spec:
 
@@ -163,7 +208,21 @@ Re-display the outline with the new boundary level highlighted.
 - Use the file's first H1 header as the change name, or filename if no headers
 - Re-display showing file-based grouping
 
-### Step 4: Analyze Each Section
+### Step 4: Analyze Spec Structure
+
+**For hierarchical specs (2+ H1 with H2+ content):**
+
+```
+INVOKE spec-decomposition skill with:
+  mode: "hierarchical"
+  spec_outline: <from Step 2>
+  spec_content: <full spec content from archived location>
+  default_domain: <primary_domain>
+```
+
+This returns a `HierarchicalDecompositionResult` with numbered epics and features.
+
+**For simple specs:**
 
 For each section at the chosen boundary level:
 
@@ -229,11 +288,20 @@ Options:
   [C] Cancel
 ```
 
-### Step 5.5: Check for Epic Threshold
+### Step 5.5: Hierarchical Structure (Mandatory for Qualifying Specs)
 
-After user accepts the decomposition (before creating changes), check if an epic structure is needed:
+**For specs that qualified for hierarchical decomposition (2+ H1 with H2+ content):**
 
-**If total accepted changes >= 3:**
+Hierarchical structure with numbered epics/features is **mandatory** - this is not optional.
+
+The structure is already determined in Step 4:
+- Each H1 becomes a numbered epic: `01-epic-name`, `02-epic-name`
+- Each H2/H3 within becomes a numbered feature: `01-feature`, `02-feature`
+- Numbers indicate implementation order (from topological sort)
+
+Proceed directly to Step 7 with hierarchical creation.
+
+**For simple specs with 3+ changes:**
 
 1. **Display epic recommendation:**
    ```
@@ -290,7 +358,73 @@ Continue until user accepts or cancels.
 
 ### Step 7: Create Change Specifications
 
-**If `create_as_epic` is true (3+ changes):**
+**For hierarchical decomposition (numbered epics/features):**
+
+For each epic (in order from topological sort):
+
+1. **Create epic directory:** `changes/YYYY/MM/DD/{NN}-epic-{name}/`
+   ```
+   INVOKE change-creation skill with:
+     name: {NN}-epic-{name}  # e.g., 01-epic-user-management
+     type: epic
+     title: <Epic Title>
+     description: <from H1 section intro>
+     domain: <primary_domain>
+     issue: TBD
+     child_changes: [01-feature-1, 02-feature-2, ...]
+     acceptance_criteria: <combined ACs from features>
+   ```
+
+2. **Create changes/ subdirectory** in the epic
+
+3. **For each feature within the epic (in order):**
+   ```
+   INVOKE change-creation skill with:
+     name: {NN}-{feature-name}  # e.g., 01-registration
+     type: feature
+     title: <Feature Title>
+     description: <extracted description>
+     domain: <primary_domain or detected>
+     issue: TBD
+     user_stories: <extracted user stories>
+     acceptance_criteria: <extracted ACs>
+     api_endpoints: <extracted endpoints>
+     source_content: <full section content from Step 4>
+     external_source: ../../../../archive/<filename>  # Audit reference only
+     decomposition_id: <uuid>
+     prerequisites: <prerequisite feature names>
+     parent_epic: ../SPEC.md
+     parent_path: changes/YYYY/MM/DD/{NN}-epic-{name}/changes/
+   ```
+
+**Resulting structure:**
+```
+changes/YYYY/MM/DD/
+├── 01-epic-user-management/
+│   ├── SPEC.md
+│   ├── PLAN.md
+│   └── changes/
+│       ├── 01-registration/
+│       │   ├── SPEC.md
+│       │   └── PLAN.md
+│       ├── 02-authentication/
+│       │   ├── SPEC.md
+│       │   └── PLAN.md
+│       └── 03-password-reset/
+│           ├── SPEC.md
+│           └── PLAN.md
+├── 02-epic-dashboard/
+│   ├── SPEC.md
+│   ├── PLAN.md
+│   └── changes/
+│       └── ...
+└── 03-epic-billing/
+    └── ...
+```
+
+---
+
+**For simple specs with `create_as_epic` true (3+ changes):**
 
 1. Create the epic first:
    ```
@@ -324,7 +458,7 @@ Continue until user accepts or cancels.
      parent_epic: ../SPEC.md
    ```
 
-**If `create_as_epic` is false (individual changes):**
+**For simple specs with `create_as_epic` false (individual changes):**
 
 For each accepted change, invoke the `change-creation` skill:
 
@@ -373,7 +507,47 @@ Add extracted shared concepts from decomposition to `specs/domain/glossary.md`.
 
 Display completion summary:
 
-**For epic structure:**
+**For hierarchical structure (numbered epics/features):**
+```
+═══════════════════════════════════════════════════════════════
+✅ EXTERNAL SPEC PROCESSED SUCCESSFULLY
+═══════════════════════════════════════════════════════════════
+
+Archived to: archive/<filename> (audit only - will not be read after import)
+
+Created hierarchical structure:
+
+  changes/YYYY/MM/DD/
+  ├── 01-epic-user-management/
+  │   ├── SPEC.md, PLAN.md
+  │   └── changes/
+  │       ├── 01-registration/
+  │       ├── 02-authentication/
+  │       └── 03-password-reset/
+  ├── 02-epic-dashboard/
+  │   ├── SPEC.md, PLAN.md
+  │   └── changes/
+  │       ├── 01-analytics/
+  │       └── 02-settings/
+  └── 03-epic-billing/
+      └── ...
+
+Total: 3 epics, 8 features
+Implementation order: 01 → 02 → 03 (02 and 03 can be parallel after 01)
+
+Domain updates:
+  - Glossary terms added: 5
+  - Definition specs created: 2
+  - Use cases created: 3
+
+⚠️  IMPORTANT: Implementation must use the generated SPEC.md files only.
+    Do NOT reference archive/ - it exists for audit purposes only.
+
+Next step: Start with the first epic's first feature:
+  /sdd-implement-change changes/YYYY/MM/DD/01-epic-user-management/changes/01-registration
+```
+
+**For simple epic structure:**
 ```
 ═══════════════════════════════════════════════════════════════
 ✅ EXTERNAL SPEC PROCESSED SUCCESSFULLY
@@ -546,5 +720,7 @@ This skill orchestrates:
 - Implementation agents must NEVER read from `archive/`
 - Decomposition is optional - user can always keep as single spec
 - Dependencies between changes are tracked and affect suggested order
-- When 3+ changes are identified, epic structure is recommended for better organization
-- Epic child changes use order-preserving prefixes (01-, 02-, etc.) to maintain implementation sequence
+- **Hierarchical decomposition is MANDATORY** for specs with 2+ H1 sections containing H2+ content
+- Numbers indicate implementation order: `01-epic-*`, `02-epic-*` and `01-feature`, `02-feature`
+- Order is determined by topological sort of dependency graph
+- Product discovery results (if provided) are used to populate domain specs

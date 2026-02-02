@@ -99,31 +99,52 @@ Start a new change with a typed specification and implementation plan, or create
    ```
    Store: `spec_outline` (sections with line ranges and source file)
 
-3. **Check git branch** (same as Step 2 for interactive flow):
+3. **Run product discovery on the spec** (NEW):
+   ```
+   INVOKE product-discovery skill with:
+     spec_outline: <from step 2>
+     spec_path: <absolute path to external spec>
+     mode: "external-spec"  # Skip interactive questions, extract from spec
+   ```
+
+   The skill reads the spec content and extracts:
+   - product_description (from intro/overview section)
+   - domain_entities (capitalized nouns, defined terms)
+   - user_personas (from user stories, "As a..." patterns)
+   - core_workflows (from requirements, acceptance criteria)
+
+   Store results for use in decomposition and domain spec updates.
+
+4. **Check git branch** (same as Step 2 for interactive flow):
    - If on `main`/`master`: Suggest creating a branch
    - Branch naming: `feature/import-<spec-filename>` or similar
 
-4. **Get primary domain:**
+5. **Get primary domain:**
    - Read from `.sdd/sdd-settings.yaml` if available
+   - Use from discovery results if extracted
    - Otherwise, ask the user: "Which domain should these changes belong to?"
 
-5. **Invoke external-spec-integration skill:**
+6. **Invoke external-spec-integration skill:**
    ```yaml
    spec_path: <absolute path to external spec>
    spec_outline: <from step 2>
    target_dir: <current project root>
-   primary_domain: <from .sdd/sdd-settings.yaml or user>
+   primary_domain: <from .sdd/sdd-settings.yaml or discovery or user>
+   discovery_results:  # NEW - from step 3
+     domain_entities: <from step 3>
+     user_personas: <from step 3>
+     core_workflows: <from step 3>
    ```
 
    The skill:
    - Archives external spec to `archive/`
    - Presents outline to user for boundary level selection
-   - Analyzes sections and decomposes into changes
-   - Presents combined decomposition for user adjustment
+   - Uses hierarchical decomposition for specs with 2+ H1 sections
+   - Creates numbered epics and features based on dependency order
    - Creates change specifications in `changes/`
-   - Updates INDEX.md and glossary
+   - Updates INDEX.md and glossary with discovery results
 
-6. **Display results:**
+7. **Display results:**
    ```
    ═══════════════════════════════════════════════════════════════
     EXTERNAL SPEC IMPORTED
@@ -133,9 +154,18 @@ Start a new change with a typed specification and implementation plan, or create
 
    CHANGES CREATED:
 
-     - changes/YYYY/MM/DD/<change-1>/SPEC.md
-     - changes/YYYY/MM/DD/<change-2>/SPEC.md
-     ...
+     01-epic-<name>/
+     ├── SPEC.md, PLAN.md
+     └── changes/
+         ├── 01-<feature>/SPEC.md, PLAN.md
+         ├── 02-<feature>/SPEC.md, PLAN.md
+         └── 03-<feature>/SPEC.md, PLAN.md
+
+   Implementation order: 01 → 02 → 03 (based on dependencies)
+
+   DOMAIN UPDATES:
+     - Glossary terms added: <count>
+     - Definition specs created: <count>
 
    NEXT STEPS:
 
@@ -143,7 +173,7 @@ Start a new change with a typed specification and implementation plan, or create
      2. Run /sdd-implement-change to begin implementation
    ```
 
-7. **Commit changes** using commit-standards format:
+8. **Commit changes** using commit-standards format:
    ```
    Add <N> changes from external spec
 
@@ -154,7 +184,7 @@ Start a new change with a typed specification and implementation plan, or create
    Co-Authored-By: SDD Plugin vX.Y.Z
    ```
 
-**After External Spec Flow completes, the command is done. Do not proceed to Steps 2-6.**
+**After External Spec Flow completes, the command is done. Do not proceed to the Interactive Flow steps.**
 
 ---
 

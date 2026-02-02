@@ -86,7 +86,7 @@ describe('sdd-init command', () => {
     // Verify directory structure
     expect(projectIsDir(project, 'specs')).toBe(true);
     expect(projectIsDir(project, 'specs', 'domain')).toBe(true);
-    expect(projectIsDir(project, 'specs', 'changes')).toBe(true);
+    expect(projectIsDir(project, 'changes')).toBe(true);
     expect(projectIsDir(project, 'components')).toBe(true);
     expect(projectIsDir(project, 'config')).toBe(true);
     expect(projectIsDir(project, 'config', 'schemas')).toBe(true);
@@ -98,7 +98,7 @@ describe('sdd-init command', () => {
     expect(projectIsFile(project, 'README.md')).toBe(true);
     expect(projectIsFile(project, 'CLAUDE.md')).toBe(true);
     expect(projectIsFile(project, 'package.json')).toBe(true);
-    expect(projectIsFile(project, 'specs', 'INDEX.md')).toBe(true);
+    expect(projectIsFile(project, 'changes', 'INDEX.md')).toBe(true);
     expect(projectIsFile(project, 'specs', 'domain', 'glossary.md')).toBe(true);
 
     // Verify config directory (at project root, not a component)

@@ -526,10 +526,9 @@ dist/
       )
     : [];
 
-  // Spec files
+  // Spec files (SNAPSHOT.md, glossary.md go in specs/)
   const specsFilesDir = path.join(projectTemplates, 'specs');
   const specFilesList: ReadonlyArray<readonly [string, string]> = [
-    ['INDEX.md', 'specs/INDEX.md'],
     ['SNAPSHOT.md', 'specs/SNAPSHOT.md'],
     ['glossary.md', 'specs/domain/glossary.md'],
   ];
@@ -540,6 +539,26 @@ dist/
           .map(async ([srcName, destPath]) => {
             await copyTemplateFile(
               path.join(specsFilesDir, srcName),
+              path.join(target, destPath),
+              config
+            );
+            return destPath;
+          })
+      )
+    : [];
+
+  // INDEX.md goes in changes/ (not specs/)
+  const changesFilesDir = path.join(projectTemplates, 'changes');
+  const changesFilesList: ReadonlyArray<readonly [string, string]> = [
+    ['INDEX.md', 'changes/INDEX.md'],
+  ];
+  const changesFilesCreated = directoryExists(changesFilesDir)
+    ? await Promise.all(
+        changesFilesList
+          .filter(([srcName]) => fs.existsSync(path.join(changesFilesDir, srcName)))
+          .map(async ([srcName, destPath]) => {
+            await copyTemplateFile(
+              path.join(changesFilesDir, srcName),
               path.join(target, destPath),
               config
             );
@@ -779,6 +798,7 @@ jobs:
     ...claudeignoreCreated.files,
     ...projectFilesCreated,
     ...specFilesCreated,
+    ...changesFilesCreated,
     'specs/architecture/overview.md',
     ...configFilesCreated,
     ...contractFilesCreated,

@@ -3,7 +3,7 @@
  *
  * Commands:
  *   validate   Validate spec frontmatter/structure
- *   index      Generate specs/INDEX.md
+ *   index      Generate changes/INDEX.md
  *   snapshot   Create project snapshot
  */
 

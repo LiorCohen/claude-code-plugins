@@ -44,7 +44,7 @@ IMPORTANT:
 - Do not ask any questions. Use the values provided above.
 - Complete both the SPEC.md and PLAN.md before finishing.
 - Create ALL files in the CURRENT WORKING DIRECTORY (.) - do NOT use absolute paths or navigate elsewhere.
-- The specs/ directory already exists in the current directory.`;
+- The changes/ directory already exists in the current directory.`;
 
 /**
  * WHY: sdd-new-change is the primary workflow for creating new feature specs.
@@ -58,7 +58,7 @@ describe('sdd-new-change command', () => {
     testProject = await createTestProject('sdd-new-change');
 
     // Create minimal project structure that /sdd-new-change expects
-    await mkdir(joinPath(testProject.path, 'specs', 'changes'));
+    await mkdir(joinPath(testProject.path, 'changes'));
     await mkdir(joinPath(testProject.path, 'specs', 'domain'));
     await mkdir(joinPath(testProject.path, 'components', 'contract'));
 
@@ -78,10 +78,10 @@ The primary business domain.
 `
     );
 
-    // Create minimal INDEX.md
+    // Create minimal INDEX.md in changes/ (not specs/)
     await writeFileAsync(
-      joinPath(testProject.path, 'specs', 'INDEX.md'),
-      `# Specifications Index
+      joinPath(testProject.path, 'changes', 'INDEX.md'),
+      `# Change Index
 
 ## Active Changes
 
