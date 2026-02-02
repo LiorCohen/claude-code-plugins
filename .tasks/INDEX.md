@@ -4,6 +4,7 @@
 
 ## Planning
 
+- [#78](2-planning/78/): Minimal sdd-init redesign
 - [#67](1-inbox/67/): Store user instructions in plans, specs, and .sdd/
 
 ---
@@ -28,7 +29,6 @@
 
 ## High Priority
 
-- [#78](1-inbox/78/): Fix sdd-init issues - node_modules, permissions, component names
 - [#17](1-inbox/17/): Plans should follow TDD with test review first
 - [#59](1-inbox/59/): Audit and update all agents for compatibility
 
@@ -36,6 +36,7 @@
 
 ## Medium Priority
 
+- [#79](1-inbox/79/): Use project-name-derived component names in on-demand scaffolding
 - [#70](1-inbox/70/): Git checkpoint workflow for AI-assisted development
 - [#71](1-inbox/71/): Anti-stop hook to prevent accidental session termination
 - [#16](1-inbox/16/): Plan changes should cascade to dependent items
