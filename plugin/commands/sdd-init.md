@@ -1,47 +1,45 @@
 ---
 name: sdd-init
-description: Initialize a new project from the spec-driven template.
+description: Initialize a new SDD project with minimal structure.
 ---
 
 # /sdd-init
 
-Initialize a new spec-driven project.
+Initialize a new spec-driven project with minimal structure. Components are scaffolded on-demand when you create changes that need them.
 
 ## Usage
 
 ```
-/sdd-init --name <project-name>
+/sdd-init
 ```
 
-**Arguments:**
-- `--name <project-name>` (required): Name of the project directory to create
+**No arguments required.** Project name is derived from the current directory.
 
 **Examples:**
 ```bash
-/sdd-init --name my-app
+cd my-app
+/sdd-init
 ```
 
 ## Workflow
 
-**CRITICAL**: This command follows an approval-based workflow. Do NOT create any files or directories until the user has approved the project configuration.
+This command follows an approval-based workflow that verifies environment, creates minimal structure, and prepares for change-driven development.
 
-**Permission Note**: This command creates ~50+ files. If the user hasn't configured SDD permissions, they will see many approval prompts. If you notice excessive prompts during execution, mention that they can reduce prompts by configuring permissions per `plugin/hooks/PERMISSIONS.md`.
+| Phase | Purpose |
+|-------|---------|
+| 0     | Detect project name from current directory |
+| 1     | Environment verification (tools, plugin, permissions) |
+| 2     | Quick component selection (informational only) |
+| 3     | Create minimal structure (config component only) |
+| 4     | Git init + commit |
+| 5     | Completion message |
 
-This command orchestrates multiple skills to complete initialization:
-
-| Phase | Skill Used                  | Purpose |
-|-------|-----------------------------|----------------|
-| 0     | (inline)                    | Parse arguments |
-| 1     | `product-discovery`         | Understand what user is building |
-| 2     | `component-recommendation`  | Recommend technical components |
-| 3     | (inline)                    | Display configuration summary |
-| 4     | (inline)                    | Get user approval |
-| 5     | (inline)                    | Initialize git   |
-| 6.1   | `project-settings`          | Create .sdd/sdd-settings.yaml |
-| 6.2   | `scaffolding`               | Create project structure |
-| 6.3   | `domain-population`         | Populate specs from discovery |
-| 7     | (inline)                    | Commit initial project files |
-| 8     | (inline)                    | Display completion report |
+**What's NOT done during init (deferred to first change):**
+- Product discovery
+- Domain population
+- Full component scaffolding
+- Creating `changes/` directory
+- Creating `specs/domain/` or `specs/architecture/`
 
 ---
 
@@ -50,316 +48,340 @@ This command orchestrates multiple skills to complete initialization:
 **You MUST complete ALL phases before declaring initialization complete.** Use this checklist to track progress:
 
 ```
-[ ] Phase 0: Arguments parsed
-[ ] Phase 1: Product discovery completed, results stored
-[ ] Phase 2: Component recommendation completed
-[ ] Phase 3: Configuration summary displayed
-[ ] Phase 4: User approval received
-[ ] Phase 5: Git repository initialized
-[ ] Phase 6.1: .sdd/sdd-settings.yaml created
-[ ] Phase 6.2: Project structure scaffolded
-[ ] Phase 6.3: Domain knowledge populated
-[ ] Phase 7: Initial commit created
-[ ] Phase 8: Completion report displayed
+[ ] Phase 0: Project name detected and confirmed
+[ ] Phase 1: Environment verified (tools, plugin, permissions)
+[ ] Phase 2: Component selection displayed (or skipped)
+[ ] Phase 3: Minimal structure created
+[ ] Phase 4: Git repository initialized and committed
+[ ] Phase 5: Completion report displayed
 ```
 
 **DO NOT:**
-- Stop after Phase 4 (approval) without completing Phases 5-8
-- Declare "initialization complete" until Phase 8 is finished
+- Stop after environment verification without completing structure creation
+- Declare "initialization complete" until Phase 5 is finished
 - Ask the user "should I continue?" between phases - just proceed
 
-**If interrupted**, resume from the last incomplete phase. The user should never need to ask "is init done?" - you must complete all phases in a single flow.
+---
+
+### Phase 0: Detect Project Name
+
+**No arguments needed.** Derive project name from the current directory:
+
+```
+Initializing SDD project...
+
+Detected project name: my-app (from current directory)
+Is this correct? (yes/no)
+```
+
+**Project Name Rules:**
+- Derived from `basename(pwd)` (current directory name)
+- Validated: lowercase letters, numbers, hyphens only
+- Spaces/special chars: prompt user to provide a valid name
+- Empty directory name: prompt user to provide a name
+
+If user says no: Ask for project name interactively.
+
+**Existing Project Check:**
+If `.sdd/sdd-settings.yaml` exists, this is an existing SDD project. Switch to **upgrade/repair mode**:
+
+```
+Existing SDD project detected.
+
+Running environment check...
+  ✓ Plugin v5.11.0 (up to date)
+  ✓ All required tools available
+  ✓ Permissions configured
+
+Checking project structure...
+  ✓ .sdd/sdd-settings.yaml exists
+  ✓ specs/INDEX.md exists
+  ⚠ components/config/ missing
+
+Would you like to add missing components? (yes/no)
+```
+
+If yes: Add only missing pieces, **never overwrite existing files**.
+If no: Exit gracefully.
+
+**Running sdd-init multiple times is always safe.**
 
 ---
 
-### Phase 0: Parse Arguments
+### Phase 1: Environment Verification
 
-1. **If no arguments provided**, display usage and exit:
-   ```
-   Usage: /sdd-init --name <project-name>
+**INVOKE the `check-tools` skill** with:
+```yaml
+required: [node, npm, git, docker]
+optional: [jq, kubectl, helm]
+```
 
-   Arguments:
-     --name <project-name>  Name of the project directory to create (required)
+#### 1.1 Plugin Update Check
 
-   Examples:
-     /sdd-init --name my-app
-   ```
-   **Do not proceed without `--name`.**
+```
+Checking for plugin updates...
 
-2. **Parse command arguments:**
-   - Extract project name (required)
+Current version: 5.11.0
+Latest version:  5.12.0
 
-3. **Directory check:**
-   - Validate project name (lowercase, hyphens allowed)
-   - Check if current directory basename matches project name
-   - If match and empty: Ask "Initialize here? (yes/no)"
-   - If match and not empty: "Will create subdirectory '<project-name>/' instead."
-   - Determine target directory for later phases
+A newer version is available. It's recommended to upgrade before initializing.
+Would you like to stop and upgrade? (yes/no)
+```
+
+If yes: Exit with instructions to run `claude plugins update sdd`
+If no: Continue with current version
+
+#### 1.2 Required Tools Check
+
+```
+Checking required tools...
+
+  ✓ node (v20.10.0)
+  ✓ npm (v10.2.3)
+  ✓ git (v2.42.0)
+  ✓ docker (v24.0.6)
+```
+
+If any missing: Show installation instructions and **exit** (do not continue).
+
+#### 1.3 Optional Tools Check
+
+```
+Checking optional tools...
+
+  ⚠ jq not found (needed for hooks)
+  ⚠ kubectl not found (needed for Kubernetes deployments)
+  ⚠ helm not found (needed for Kubernetes charts)
+
+These are optional - some features may be limited without them.
+```
+
+Continue even if optional tools are missing.
+
+#### 1.4 Plugin Build Check
+
+```
+Checking plugin installation...
+
+  ✓ Plugin installed at ~/.claude/plugins/sdd
+  ⚠ Plugin system not built
+
+Building plugin system...
+  Running npm install in ~/.claude/plugins/sdd/system/
+  ✓ Plugin system ready
+```
+
+If `~/.claude/plugins/sdd/system/node_modules` doesn't exist, run:
+```bash
+cd ~/.claude/plugins/sdd/system && npm install
+```
+
+#### 1.5 Permissions Check
+
+```
+Checking permissions...
+
+  ⚠ SDD permissions not configured
+
+Would you like me to configure recommended permissions automatically? (yes/no)
+```
+
+**If yes:**
+Run `/sdd-run permissions configure` to merge SDD permissions into `.claude/settings.local.json`.
+
+**If no:**
+```
+You can configure permissions later by running:
+
+  /sdd-run permissions configure
+
+This will merge SDD recommended permissions into your .claude/settings.local.json
+```
 
 ---
 
-### Phase 1: Product Discovery
+### Phase 2: Quick Component Selection
 
-**INVOKE the `product-discovery` skill** with:
+```
+What components will your project need? (you can add more later via /sdd-new-change)
+
+[ ] API Server (Node.js backend)
+[ ] Web App (React frontend)
+[ ] Database (PostgreSQL)
+[ ] Contract (OpenAPI spec)
+[ ] I don't know yet (skip - add components later)
+```
+
+If "I don't know yet" selected: Skip component selection, proceed with just config component.
+
+**Note:** These selections are informational only. They appear in the completion message to remind users what they planned to build. Components are **not scaffolded** until the first change that needs them.
+
+---
+
+### Phase 3: Create Minimal Structure
+
+**INVOKE the `project-scaffolding` skill** with:
 
 ```yaml
+mode: minimal
 project_name: <from Phase 0>
+target_dir: <current directory>
 ```
 
-The skill conducts interactive discovery and returns:
+Create only:
 
-```yaml
-product_description: "1-2 sentence problem statement"
-primary_domain: "Task Management"
-user_personas:
-  - type: "Project Manager"
-    actions: "create projects, assign tasks"
-core_workflows: ["Create projects", "Assign tasks"]
-domain_entities: ["Team", "Project", "Task"]
-integrations: ["Slack"]
-constraints: []
-scope: "mvp"
+```
+<project>/
+├── .sdd/
+│   └── sdd-settings.yaml    # Contains only config component
+├── specs/
+│   └── INDEX.md             # Empty spec registry
+├── components/
+│   └── config/              # Only config is scaffolded
+│       ├── package.json
+│       ├── tsconfig.json
+│       ├── envs/
+│       │   ├── default/config.yaml
+│       │   └── local/config.yaml
+│       ├── schemas/config.schema.json
+│       └── types/index.ts
+├── .gitignore
+├── README.md
+└── CLAUDE.md
 ```
 
-Store these results for subsequent phases.
+**NOT created during init (created on first change):**
+- `changes/` directory
+- `specs/domain/` subdirectories
+- `specs/architecture/` subdirectories
+- Any component besides config
 
----
-
-### Phase 2: Technical Recommendation
-
-**INVOKE the `component-recommendation` skill** with:
-
-```yaml
-discovery_results:
-  product_description: <from Phase 1>
-  primary_domain: <from Phase 1>
-  user_personas: <from Phase 1>
-  core_workflows: <from Phase 1>
-  domain_entities: <from Phase 1>
-  integrations: <from Phase 1>
-  constraints: <from Phase 1>
-  scope: <from Phase 1>
-```
-
-The skill recommends components and returns:
+**sdd-settings.yaml format:**
 
 ```yaml
-project_type: "fullstack"
+# ============================================================================
+# SDD PROJECT SETTINGS - DO NOT EDIT MANUALLY
+# ============================================================================
+# This file is generated and maintained by SDD commands.
+# To modify settings, use: /sdd-settings
+# ============================================================================
+
+sdd:
+  plugin_version: "5.11.0"
+  initialized_at: "2026-02-02"
+  last_updated: "2026-02-02"
+
+project:
+  name: "my-app"
+  # description and domain are populated as you build features
+  # description: "A task management application"
+  # domain: "Task Management"
+
+# Components are added here as they are scaffolded via /sdd-new-change
+# The first change targeting a component type triggers scaffolding.
+#
+# Example after scaffolding a server:
+#   - name: my-app-server
+#     type: server
+#     settings:
+#       server_type: api
+#       databases: []
+#       provides_contracts: []
+#
+# Example after scaffolding a webapp:
+#   - name: my-app-webapp
+#     type: webapp
+#     settings:
+#       contracts: []
+
 components:
-  - type: contract
-    name: contract
-  - type: server
-    name: server
-  - type: webapp
-    name: webapp
-  - type: database
-    name: database
-  - type: helm
-    name: helm
-  - type: testing
-    name: testing
-  - type: cicd
-    name: cicd
-```
-
-Store configuration for subsequent phases.
-
----
-
-### Phase 3: Configuration Summary
-
-Display a summary combining product context and technical configuration:
-
-```markdown
-## Project Configuration Summary
-
-### Product Understanding
-
-**Name:** <project-name>
-**Problem:** <product_description>
-**Domain:** <primary_domain>
-
-**Users:**
-- <User type 1>: <what they do>
-- <User type 2>: <what they do>
-
-**Core Capabilities:**
-- <Capability 1>
-- <Capability 2>
-
-**Key Domain Entities:** <Entity1>, <Entity2>, <Entity3>
-[**Integrations:** <list if any>]
-[**Constraints:** <list if any>]
-
-### Technical Configuration
-
-**Location:** <target_directory>
-
-**Components to create:**
-- Contract (OpenAPI spec) - for <entities/workflows>
-- Server (Node.js backend) - to handle <workflows>
-- Webapp (React frontend) - for <user types>
-- Database (PostgreSQL) - to persist <entities>
-- Config (YAML configuration)
-- Helm (Kubernetes deployment)
-- Testing setup
-- CI/CD workflows
-
-### What Will Be Pre-populated
-
-- **Glossary:** <Entity1>, <Entity2>, <Entity3>
-- **User Personas:** <User type 1>, <User type 2>
-- **Initial Use Cases:** Stubs for <Capability 1>, <Capability 2>
-
-**Files to create:** ~XX files
+  - name: config
+    type: config
+    settings: {}
 ```
 
 ---
 
-### Phase 4: User Approval
+### Phase 4: Git Init + Commit
 
-**CRITICAL:** Ask the user explicitly:
-
-```
-Do you want to proceed with creating this project structure? (yes/no)
-```
-
-**DO NOT create any files until the user confirms with "yes".**
-
-If the user says no, ask what they'd like to change and return to Phase 1 or Phase 2.
-
----
-
-### Phase 5: Initialize Git Repository
-
-Create the project directory (if it doesn't already exist) and initialize git before writing any project files:
-
-If not already in a git repository:
+Initialize git repository (if not already in one):
 ```bash
-mkdir -p ${TARGET_DIR} && cd ${TARGET_DIR} && git init
+git init
 ```
 
-If already in a git repository (current directory case):
-- Skip this phase (git is already initialized)
-
----
-
-### Phase 6: Project Creation (Only After Approval)
-
-#### Step 6.1: Create Project Settings
-
-**INVOKE the `project-settings` skill** with operation `create`:
-
-```yaml
-plugin_version: <read from plugin's .claude-plugin/plugin.json>
-project_name: <from Phase 0>
-project_description: <from Phase 1>
-project_domain: <from Phase 1>
-project_type: <from Phase 2>
-components: <from Phase 2>
-```
-
-Creates `.sdd/sdd-settings.yaml` (creating the `.sdd/` directory if needed).
-
-#### Step 6.2: Scaffold Project Structure
-
-**INVOKE the `scaffolding` skill** with:
-
-```yaml
-project_name: <from Phase 0>
-project_description: <from Phase 1>
-primary_domain: <from Phase 1>
-target_dir: <absolute path to target>
-components: <from Phase 2>
-```
-
-#### Step 6.3: Populate Domain Knowledge
-
-**INVOKE the `domain-population` skill** with:
-
-```yaml
-target_dir: <absolute path to target>
-primary_domain: <from Phase 1>
-product_description: <from Phase 1>
-user_personas: <from Phase 1>
-core_workflows: <from Phase 1>
-domain_entities: <from Phase 1>
-```
-
----
-
-### Phase 7: Commit Initial Project Files
-
-Stage and commit all created files using the commit-standards format:
+Stage and commit all created files:
 
 ```bash
-cd ${TARGET_DIR} && git add .
-```
+git add .
+git commit -m "$(cat <<'EOF'
+Initialize SDD project: <project-name>
 
-Commit with proper message format:
-```
-Add <project-name>: Initialize spec-driven project
+- Created minimal SDD structure
+- Config component ready
+- Spec registry initialized
 
-- Created project structure with <N> components
-- Set up CMDO architecture (components/, specs/)
-- Configured for <primary-domain> domain
+Components will be scaffolded on-demand as changes are created.
 
 Co-Authored-By: SDD Plugin vX.Y.Z
+EOF
+)"
 ```
-
-**If commit fails:** Display the error and ask the user how to proceed:
-- "Commit failed: <error message>"
-- Options: retry, skip commit, or abort initialization
-
-Note: Since this is project initialization (not a feature), no version bump or changelog entry is needed.
 
 ---
 
-### Phase 8: Completion Report
-
-1. List the created structure:
-   ```bash
-   tree ${TARGET_DIR} -L 3 -I node_modules
-   ```
-
-2. Display completion message:
+### Phase 5: Completion Message
 
 ```
 ═══════════════════════════════════════════════════════════════
- PROJECT INITIALIZED: <project-name>
+ PROJECT INITIALIZED: my-app
 ═══════════════════════════════════════════════════════════════
 
-Location: <absolute-path-to-target-dir>
-Domain: <primary-domain>
+Location: /path/to/my-app
+
+ENVIRONMENT:
+  ✓ Plugin v5.11.0 (up to date)
+  ✓ All required tools available
+  ⚠ kubectl, helm not installed (optional)
 
 WHAT'S INCLUDED:
+  ✓ SDD configuration (.sdd/sdd-settings.yaml)
+  ✓ Config component (components/config/)
+  ✓ Spec registry (specs/INDEX.md)
 
-  ✓ Full project structure (backend, frontend, contract)
-  ✓ CMDO architecture ready for your features
-  ✓ Empty specs directory (ready for your first feature)
+PLANNED COMPONENTS (will be scaffolded on first change):
+  • server
+  • webapp
+  • database
 
-NEXT STEP:
+NEXT STEPS:
 
-  /sdd-new-change --type feature --name <your-first-feature>
+  Start with a feature idea:
+    /sdd-new-change --type feature --name <your-first-feature>
 
-  This will guide you through:
-  1. Creating a specification for your feature
-  2. Planning the implementation
-  3. Building it step by step
+  Or import an existing spec:
+    /sdd-new-change --spec path/to/requirements.md
+
+  The first change to each component type will scaffold it automatically.
 ```
 
-**VERIFICATION:** Before displaying the completion report, confirm:
-- [ ] All phases 0-8 completed (check the Phase Tracking checklist)
-- [ ] Git commit was successful (Phase 7)
-- [ ] Tree structure displays correctly
+---
+
+## Non-Destructive Behavior (CRITICAL)
+
+sdd-init NEVER overwrites existing files:
+
+- If `.sdd/sdd-settings.yaml` exists: switch to upgrade/repair mode
+- If `specs/INDEX.md` exists: skip (don't overwrite)
+- If `components/config/` exists: skip (don't overwrite)
+- Only add missing pieces, never modify existing content
 
 ---
 
 ## Important Notes
 
-- This command ALWAYS asks for user approval before creating files
-- Users can customize which components to include
-- Product discovery enables pre-populated glossary, use-cases, and component recommendations
-- All skills are invoked in sequence with proper data passing between phases
-- **Completion means Phase 8**: Never declare "done" before the completion report is displayed
+- **No arguments needed** - project name from current directory
+- **Minimal structure** - only config component scaffolded during init
+- **Environment verified** - tools, plugin, permissions checked upfront
+- **Safe to re-run** - never overwrites existing files
+- **Change-driven scaffolding** - components created when first needed via `/sdd-new-change`
 - **To import an external spec:** Use `/sdd-new-change --spec <path>` after initialization

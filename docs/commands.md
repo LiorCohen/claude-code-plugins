@@ -9,24 +9,30 @@ To update, invoke the docs-writer agent with your changes.
 
 ## /sdd-init
 
-Initialize a new SDD project.
+Initialize a new SDD project with minimal structure.
 
 ```
-/sdd-init --name <project-name>
+/sdd-init
 ```
 
-**Arguments:**
-- `--name` (required) - Your project name
+**No arguments required.** Project name is derived from the current directory.
 
 **What it does:**
-1. Runs interactive product discovery
-2. Recommends components based on your needs
-3. Creates project structure after your approval
-4. Populates domain glossary and definitions
+1. Detects project name from current directory
+2. Verifies environment (required tools, plugin, permissions)
+3. Asks about planned components (informational only)
+4. Creates minimal structure (config component only)
+5. Initializes git and commits
+
+**What it does NOT do (deferred to first change):**
+- Product discovery
+- Domain population
+- Full component scaffolding
 
 **Example:**
-```
-/sdd-init --name inventory-tracker
+```bash
+cd inventory-tracker
+/sdd-init
 ```
 
 ---
@@ -48,10 +54,13 @@ Start a new feature, bugfix, refactor, epic, or import from an external spec.
 **What it does:**
 
 *Interactive mode (`--type` and `--name`):*
-1. Collects information about the change
-2. Creates a spec (`SPEC.md`) with acceptance criteria
-3. Creates an implementation plan (`PLAN.md`)
-4. Places files in `changes/YYYY/MM/DD/<name>/`
+1. Runs discovery skills to understand the change
+2. Recommends affected components
+3. **Scaffolds components on-demand** (if not yet scaffolded)
+4. Updates domain glossary with new entities
+5. Creates a spec (`SPEC.md`) with acceptance criteria
+6. Creates an implementation plan (`PLAN.md`)
+7. Places files in `changes/YYYY/MM/DD/<name>/`
 
 *External spec mode (`--spec`):*
 1. Analyzes the external spec for change decomposition
@@ -193,6 +202,15 @@ Validate your OpenAPI specification:
 ```bash
 # Validate the API contract
 /sdd-run contract validate my-api
+```
+
+### Permission Management
+
+Configure Claude Code permissions for SDD:
+
+```bash
+# Merge SDD recommended permissions into your settings
+/sdd-run permissions configure
 ```
 
 **Global Options:**

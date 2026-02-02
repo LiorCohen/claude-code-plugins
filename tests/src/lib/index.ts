@@ -47,6 +47,7 @@ export {
   projectExists,
   projectIsDir,
   projectIsFile,
+  projectFileDoesNotExist,
   projectFileContains,
   projectReadFile,
   projectFindDir,

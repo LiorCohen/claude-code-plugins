@@ -58,6 +58,13 @@ export const projectIsFile = (project: TestProject, ...parts: readonly string[])
   isFile(joinPath(project.path, ...parts));
 
 /**
+ * Check if a path does NOT exist within the project.
+ * Useful for verifying that files/directories were NOT created.
+ */
+export const projectFileDoesNotExist = (project: TestProject, ...parts: readonly string[]): boolean =>
+  !fileExists(joinPath(project.path, ...parts));
+
+/**
  * Check if a file contains a pattern.
  */
 export const projectFileContains = (

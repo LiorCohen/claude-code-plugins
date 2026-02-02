@@ -27,8 +27,9 @@ import { handleDatabase } from '@/commands/database';
 import { handleContract } from '@/commands/contract';
 import { handleConfig } from '@/commands/config';
 import { handleEnvironment } from '@/commands/env';
+import { handlePermissions } from '@/commands/permissions';
 
-const NAMESPACES = ['scaffolding', 'spec', 'version', 'hook', 'database', 'contract', 'config', 'env'] as const;
+const NAMESPACES = ['scaffolding', 'spec', 'version', 'hook', 'database', 'contract', 'config', 'env', 'permissions'] as const;
 type Namespace = (typeof NAMESPACES)[number];
 
 const HELP_TEXT = `
@@ -85,6 +86,9 @@ Namespaces:
     config      Generate local environment config
     infra       Install/reinstall observability stack
 
+  permissions   Permission management
+    configure   Merge SDD recommended permissions into project settings
+
 Global Options:
   --json        JSON output mode
   --verbose     Verbose logging
@@ -113,6 +117,7 @@ const COMMAND_HANDLERS: Readonly<Record<Namespace, CommandHandler>> = {
   contract: handleContract,
   config: handleConfig,
   env: handleEnvironment,
+  permissions: handlePermissions,
 };
 
 const showHelp = (options: GlobalOptions): CommandResult => {

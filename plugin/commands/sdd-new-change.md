@@ -41,6 +41,8 @@ Start a new change with a typed specification and implementation plan, or create
 
 **Permission Note**: This command creates 2-3 files (SPEC.md, PLAN.md, updates INDEX.md). If the user experiences many approval prompts, mention they can configure permissions per `plugin/hooks/PERMISSIONS.md`.
 
+**MANDATORY SKILLS**: Every change invokes discovery skills to understand context and update domain knowledge. See "Mandatory Discovery Skills" section below.
+
 ### 1. Parse Arguments (CRITICAL - DO FIRST)
 
 **First, parse and validate the arguments:**
@@ -206,7 +208,99 @@ Start a new change with a typed specification and implementation plan, or create
 
 **DO NOT proceed to Step 3 until the branch situation is resolved.**
 
-### 3. Collect Change Information
+### 3. Mandatory Discovery Skills (CRITICAL)
+
+**Every change MUST invoke these skills to understand context and update domain knowledge:**
+
+#### 3a. Product Discovery
+
+```yaml
+INVOKE product-discovery skill with:
+  change_name: <from arguments>
+  change_type: <from arguments>
+  change_description: <brief description from user>
+  mode: "change"  # Not full project discovery, just this change
+```
+
+The skill extracts:
+- What this change is about
+- Domain entities it involves
+- User personas it affects
+
+#### 3b. Component Recommendation
+
+```yaml
+INVOKE component-recommendation skill with:
+  discovery_results: <from 3a>
+  existing_components: <from sdd-settings.yaml>
+```
+
+The skill recommends:
+- Which components are affected by this change
+- Any new components needed (triggers on-demand scaffolding in step 4)
+
+#### 3c. Domain Population
+
+```yaml
+INVOKE domain-population skill with:
+  target_dir: <current directory>
+  discovery_results: <from 3a>
+  change_name: <from arguments>
+```
+
+The skill updates:
+- `specs/domain/glossary.md` with new terms from this change
+- Creates entity definitions as needed
+
+**These skills run in sequence before collecting detailed change information.**
+
+---
+
+### 4. On-Demand Component Scaffolding
+
+**After component recommendation (3b), check if recommended components need scaffolding.**
+
+For each component type recommended in step 3b:
+1. Check if `components/{type}/` directory exists
+2. If directory missing, trigger scaffolding before proceeding:
+
+```
+Component 'server' was recommended but hasn't been scaffolded yet.
+
+Scaffolding now...
+
+  Creating components/server/
+  ✓ Package structure created
+  ✓ CMDO architecture initialized
+  ✓ Config sections added
+
+Server component is ready. Continuing with change creation...
+```
+
+**Scaffolding invocation:**
+
+```yaml
+INVOKE backend-scaffolding skill with:
+  project_name: <from sdd-settings.yaml project.name>
+  target_dir: <current directory>
+  component_type: server
+```
+
+After scaffolding:
+1. Add new component entry to `.sdd/sdd-settings.yaml`
+2. Update config component with new sections
+3. Continue with change creation
+
+**Scaffolding skills by type:**
+- `server` → `backend-scaffolding`
+- `webapp` → `frontend-scaffolding`
+- `database` → `database-scaffolding`
+- `contract` → `contract-scaffolding`
+- `helm` → `helm-scaffolding`
+
+---
+
+### 5. Collect Change Information
 
 Prompt for additional details based on change type:
 
@@ -214,7 +308,7 @@ Prompt for additional details based on change type:
 - Issue reference (required)
 - Domain (e.g., "Identity", "Billing", "Core")
 - Brief description (1-2 sentences)
-- Affected components (from `.sdd/sdd-settings.yaml` - e.g., contract, server, webapp)
+- Affected components (recommended by 3b, scaffolded in step 4 if needed - confirm with user)
 
 **Domain documentation prompts (for feature and epic types):**
 - "What new glossary terms does this change introduce?" (optional - can leave empty)
@@ -244,7 +338,7 @@ Prompt for additional details based on change type:
 - "Are there dependencies between the child changes?"
 - Domain documentation prompts (above)
 
-### 4. Create Change Spec and Plan
+### 6. Create Change Spec and Plan
 
 Use the `change-creation` skill to create the change. Invoke the skill with:
 
@@ -279,13 +373,13 @@ The `change-creation` skill will:
 
 See `skills/change-creation/SKILL.md` for detailed specification.
 
-### 5. Review
+### 7. Review
 
 - Show both spec and plan to user
 - Wait for confirmation before proceeding
 - If user requests changes, edit the files accordingly
 
-### 6. Commit Change Spec
+### 8. Commit Change Spec
 
 After user confirms the spec and plan are ready:
 
@@ -324,6 +418,8 @@ After user confirms the spec and plan are ready:
 ## Important Notes
 
 - **Two modes**: Interactive mode (`--type` + `--name`) or external spec mode (`--spec`)
+- **Discovery skills are mandatory**: Every change runs product-discovery, component-recommendation, and domain-population
+- **On-demand scaffolding**: Components are scaffolded when first needed by a change
 - **Branch check is mandatory**: After validating arguments, the command checks the current git branch
 - **Feature branches recommended**: Working on `main`/`master` is discouraged
 - **Suggested naming**: `<type>/<change-name>` follows common git workflow conventions (epics use `epic/<name>`)
@@ -331,6 +427,7 @@ After user confirms the spec and plan are ready:
 - **Type-specific templates**: Each change type gets appropriate spec sections and plan phases
 - **User control**: Users can override the branch suggestion and proceed on main/master if they explicitly confirm
 - **External spec flow**: When using `--spec`, change names and types are derived from spec analysis
+- **Glossary updates**: Domain entities discovered during each change are added to the glossary automatically
 
 ## Example Interactions
 

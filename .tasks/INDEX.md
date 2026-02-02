@@ -4,7 +4,6 @@
 
 ## Planning
 
-- [#78](2-planning/78/): Minimal sdd-init redesign
 - [#67](1-inbox/67/): Store user instructions in plans, specs, and .sdd/
 
 ---
@@ -17,7 +16,7 @@
 
 ## Implementing
 
-(none)
+- [#78](4-implementing/78/): Minimal sdd-init redesign
 
 ---
 

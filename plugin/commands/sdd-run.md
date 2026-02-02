@@ -162,6 +162,25 @@ Generates `components/config/envs/local/config.yaml` with localhost URLs matchin
 
 Install or reinstall the observability infrastructure stack.
 
+## Permission Management
+
+Configure Claude Code permissions for SDD.
+
+### Configure Permissions
+
+```bash
+/sdd-run permissions configure
+```
+
+Merges SDD recommended permissions into your project's `.claude/settings.local.json`:
+
+1. Creates backup of existing settings (if any)
+2. Reads SDD recommended permissions from `~/.claude/plugins/sdd/hooks/recommended-permissions.json`
+3. Merges permissions (preserving your existing settings, adding SDD permissions)
+4. Writes updated settings file
+
+This is typically invoked during `/sdd-init` but can be run manually to refresh permissions after a plugin update or to add permissions to an existing project.
+
 ## Global Options
 
 | Option | Description |
@@ -191,3 +210,4 @@ The following namespaces are used internally by other commands and should not be
 - `version` - Used by the commit skill for version bumping
 - `hook` - Hook handlers for internal use
 - `contract generate-types` - Invoked automatically during implementation plans
+- `permissions` - Used by `/sdd-init` for auto-configuring permissions

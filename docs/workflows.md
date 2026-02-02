@@ -27,9 +27,15 @@ Use this when adding new functionality.
 ```
 
 You'll be asked about:
+- A brief description of the feature
 - Which domain this feature belongs to
 - What the feature does (acceptance criteria)
-- Any dependencies or constraints
+
+**What happens automatically:**
+- **Discovery** - SDD analyzes what you're building
+- **Component detection** - Determines affected components
+- **On-demand scaffolding** - If a component doesn't exist yet, it's scaffolded now
+- **Domain updates** - Glossary updated with new entities from your feature
 
 ### 2. Review the Spec and Plan
 
@@ -165,6 +171,19 @@ SDD_CONFIG_PATH=./local-config.yaml npm run dev
 
 See the [Configuration Guide](config-guide.md) for complete details.
 
+## On-Demand Scaffolding
+
+Components are scaffolded when you first create a change that needs them:
+
+1. You create a feature that affects a server component
+2. `/sdd-new-change` detects the server component isn't scaffolded yet
+3. The server component is scaffolded automatically
+4. The component is added to `.sdd/sdd-settings.yaml`
+5. Config sections for the component are added
+6. Your feature spec/plan are created
+
+This means your project grows organically - you only have what you've actually needed.
+
 ## Tips
 
 **Small changes are better.** A feature that takes 6 phases is harder to review than three 2-phase features.
@@ -174,6 +193,8 @@ See the [Configuration Guide](config-guide.md) for complete details.
 **Trust the agents.** Each agent has specific expertise. Let `backend-dev` handle server code, `frontend-dev` handle UI.
 
 **Config before code.** When adding features that need configuration, add the config properties first, then implement the feature.
+
+**First change scaffolds components.** Don't worry about component setup - the first change that needs a component will create it automatically.
 
 ## Next Steps
 

@@ -10,7 +10,7 @@ To update, invoke the docs-writer agent with your changes.
 ## What You'll Accomplish
 
 By the end of this guide, you'll have:
-- A fully structured project with specs, components, and configuration
+- A minimal project structure ready for change-driven development
 - An understanding of how SDD organizes work
 - Your first spec ready for implementation
 
@@ -18,43 +18,60 @@ By the end of this guide, you'll have:
 
 - Claude Code CLI installed
 - SDD plugin installed from the marketplace
+- Node.js 18+, npm, git, and Docker installed
 
-## Step 1: Initialize Your Project
+## Step 1: Create Project Directory
 
-Run the initialization command:
+First, create and navigate to your project directory:
+
+```bash
+mkdir my-app
+cd my-app
+```
+
+## Step 2: Initialize Your Project
+
+Run the initialization command (no arguments needed):
 
 ```
-/sdd-init --name my-app
+/sdd-init
 ```
 
-You'll be guided through an interactive product discovery process. Answer the questions about your application - what it does, who it's for, and what components you need.
+The command will:
+1. **Detect project name** from the current directory (`my-app`)
+2. **Verify environment** - check that required tools are installed
+3. **Check permissions** - offer to configure Claude Code permissions
+4. **Ask about components** - what types of components you plan to build
+5. **Create minimal structure** - just the essentials to get started
 
-## Step 2: Review the Generated Structure
+## Step 3: Review the Minimal Structure
 
 After initialization, you'll have:
 
 ```
 my-app/
-├── changes/                 # Change specifications (YYYY/MM/DD/<name>/)
-├── specs/                   # Domain and architecture specs
-│   ├── INDEX.md             # Registry of all specs
-│   ├── SNAPSHOT.md          # Current product state
-│   ├── domain/              # Business terminology and definitions
-│   └── architecture/        # Architecture decisions
-├── components/              # Your application code
-│   ├── config/              # Configuration (YAML + types)
-│   ├── contract/            # API definitions (OpenAPI)
-│   ├── server/              # Backend code
-│   ├── webapp/              # Frontend code
-│   ├── database/            # Database migrations and seeds
-│   ├── helm/                # Kubernetes Helm charts
-│   ├── testing/             # Test setup and definitions
-│   └── cicd/                # CI/CD workflows
-└── .sdd/
-    └── sdd-settings.yaml    # Project configuration
+├── .sdd/
+│   └── sdd-settings.yaml    # Project configuration (config component only)
+├── specs/
+│   └── INDEX.md             # Empty spec registry
+├── components/
+│   └── config/              # Configuration component (only one scaffolded)
+│       ├── package.json
+│       ├── envs/
+│       │   ├── default/config.yaml
+│       │   └── local/config.yaml
+│       └── schemas/
+├── README.md
+├── CLAUDE.md
+└── .gitignore
 ```
 
-## Step 3: Create Your First Change
+**What's NOT created yet** (deferred until first change):
+- `changes/` directory
+- `specs/domain/` subdirectories
+- Server, webapp, database, contract components
+
+## Step 4: Create Your First Change
 
 Ready to add a feature? Create a change spec:
 
@@ -62,13 +79,66 @@ Ready to add a feature? Create a change spec:
 /sdd-new-change --type feature --name user-login
 ```
 
-This creates a spec and implementation plan. Review them before proceeding.
+This is where the magic happens:
 
-## What You Have Now
+1. **Discovery** - SDD asks about your feature to understand what you're building
+2. **Component detection** - Determines which components are affected
+3. **On-demand scaffolding** - If a component doesn't exist yet, it's scaffolded now
+4. **Domain updates** - Glossary updated with new terms from your feature
+5. **Spec creation** - Creates SPEC.md and PLAN.md for your change
 
-- A project structure designed for AI-assisted development
-- Clear separation between specs (what to build) and code (how it's built)
-- A workflow that ensures every change is specified before implemented
+After your first feature change, you might have:
+
+```
+my-app/
+├── .sdd/
+│   └── sdd-settings.yaml    # Now includes server component
+├── specs/
+│   ├── INDEX.md             # Updated with your change
+│   └── domain/
+│       └── glossary.md      # New domain terms
+├── changes/
+│   └── 2026/01/21/user-login/
+│       ├── SPEC.md
+│       └── PLAN.md
+├── components/
+│   ├── config/              # Updated with server config sections
+│   └── server/              # NEW - scaffolded on-demand
+│       ├── package.json
+│       ├── src/
+│       └── ...
+└── ...
+```
+
+## The Change-Driven Approach
+
+SDD uses a **change-driven** approach:
+
+1. **Start minimal** - Only config component during init
+2. **Add as needed** - Components scaffolded when you create changes that need them
+3. **Domain grows organically** - Glossary and definitions populated from your changes
+
+This means:
+- No upfront product discovery or architecture decisions
+- Each change adds exactly what it needs
+- Your project structure reflects what you've actually built
+
+## What's Next
+
+After creating your change spec, implement it:
+
+```
+/sdd-implement-change changes/2026/01/21/user-login
+```
+
+## Key Concepts
+
+| Concept | Description |
+|---------|-------------|
+| **Minimal init** | Only creates config component; everything else on-demand |
+| **On-demand scaffolding** | Components created when first change needs them |
+| **Change-driven** | Every feature, bugfix, or refactor starts as a change spec |
+| **Discovery per change** | Product understanding grows with each change |
 
 ## Next Steps
 

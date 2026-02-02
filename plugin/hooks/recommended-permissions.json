@@ -6,6 +6,8 @@
 
   "permissions": {
     "allow": [
+      "Read(~/.claude/plugins/sdd/**)",
+
       "Write(.sdd/**)",
       "Write(specs/**)",
       "Write(components/**)",

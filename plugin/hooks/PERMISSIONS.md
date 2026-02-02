@@ -4,6 +4,22 @@ SDD commands create and modify many files during project initialization and deve
 
 This guide explains how to configure permissions to reduce prompts while maintaining security.
 
+## Plugin Directory Access
+
+The SDD plugin needs to read its own files (templates, skills, system code) during initialization and command execution. Add this permission to enable plugin file access:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Read(~/.claude/plugins/sdd/**)"
+    ]
+  }
+}
+```
+
+This permission allows Claude Code to read plugin templates, skills, and configuration files without prompting. You can configure this automatically using `/sdd-run permissions configure`.
+
 ## Automatic Hooks (Built-in)
 
 The SDD plugin includes hooks that automatically manage file operations:
