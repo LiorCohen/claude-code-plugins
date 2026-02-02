@@ -10,7 +10,7 @@
 
 ## Ready
 
-- [#77](3-ready/77/): sdd-new-change planning regression - filesystem issues
+(none)
 
 ---
 
@@ -82,6 +82,7 @@
 
 ## Complete
 
+- [#77](6-complete/77/): sdd-new-change planning regression - filesystem issues ✓ (2026-02-02)
 - [#68](6-complete/68/): Plans should focus on WHAT, not HOW ✓ (2026-02-01)
 - [#47](6-complete/47/): Local environment create/start/stop workflow ✓ (2026-02-01)
 - [#44](6-complete/44/): Component settings system + Helm charts ✓ (2026-02-01)

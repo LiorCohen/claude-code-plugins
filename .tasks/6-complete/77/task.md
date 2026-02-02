@@ -2,13 +2,14 @@
 id: 77
 title: sdd-new-change planning regression - filesystem issues
 priority: high
-status: planning
+status: complete
 created: 2026-02-02
+completed: 2026-02-02
 depends_on: []
 blocks: []
 ---
 
-# Task 77: sdd-new-change planning regression - filesystem issues
+# Task 77: sdd-new-change planning regression - filesystem issues ✓
 
 ## Description
 
