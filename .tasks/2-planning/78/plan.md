@@ -304,6 +304,9 @@ Server component is ready. Continuing with change creation...
 
 ### Files to Modify in sdd-new-change.md
 
+- Invoke `product-discovery` skill to understand the change (mandatory)
+- Invoke `component-recommendation` skill to recommend affected components (mandatory)
+- Invoke `domain-population` skill to update glossary with entities (mandatory)
 - Add "on-demand scaffolding" phase after component selection
 - Add logic to detect unscaffolded components (check if directory exists)
 - Add scaffolding invocation with project context
@@ -314,9 +317,9 @@ Server component is ready. Continuing with change creation...
 
 | Skill | Current Use | New Status |
 |-------|-------------|------------|
-| `product-discovery` | sdd-init Phase 1 | **Keep** - still used by sdd-new-change `--spec` mode |
-| `domain-population` | sdd-init Phase 6.3 | **Remove from init** - may invoke manually or via sdd-new-change |
-| `component-recommendation` | sdd-init Phase 2 | **Remove from init** - simple checkboxes instead |
+| `product-discovery` | sdd-init Phase 1 | **Move to sdd-new-change** - mandatory for every change |
+| `domain-population` | sdd-init Phase 6.3 | **Move to sdd-new-change** - mandatory, populates glossary |
+| `component-recommendation` | sdd-init Phase 2 | **Move to sdd-new-change** - mandatory, recommends affected components |
 | `scaffolding` (orchestrator) | sdd-init Phase 6.2 | **Remove from init** - individual skills called on-demand |
 | `project-scaffolding` | Creates root structure | **Simplify** - minimal version for init |
 | `config-scaffolding` | Creates config component | **Keep** - called during init |
@@ -614,8 +617,12 @@ If user says no: Exit gracefully.
 
 ### First change creates changes/ directory
 - sdd-new-change creates `changes/` directory if it doesn't exist
-- Also creates `specs/domain/glossary.md` if missing (minimal glossary)
-- This happens automatically, no user prompt needed
+- Creates `specs/domain/` structure if missing
+
+### Every change uses discovery skills
+- `product-discovery` - understands what the change is about
+- `component-recommendation` - recommends which components are affected
+- `domain-population` - updates glossary with new entities from the change
 
 ---
 
@@ -646,12 +653,13 @@ If user says no: Exit gracefully.
 - [ ] `test_no_product_discovery` - No interactive discovery questions
 - [ ] `test_on_demand_scaffolding` - First change to server triggers server scaffolding
 - [ ] `test_config_update_on_scaffold` - Config sections added when component scaffolded
+- [ ] `test_discovery_skills` - Every sdd-new-change uses product-discovery, component-recommendation, domain-population
 - [ ] `test_existing_project_warning` - Warns if .sdd/ already exists
 
 ### Documentation Review
 
 - [ ] `review_sdd_init_command` - Reflects no args, env verification, minimal workflow
-- [ ] `review_sdd_new_change_command` - Reflects on-demand scaffolding
+- [ ] `review_sdd_new_change_command` - Reflects on-demand scaffolding and domain population
 - [ ] `review_getting_started` - Reflects change-driven approach
 - [ ] `review_permissions` - Read permissions documented
 
@@ -671,5 +679,6 @@ If user says no: Exit gracefully.
 - [ ] No specs are created during init (except INDEX.md)
 - [ ] No changes/ directory created during init
 - [ ] First /sdd-new-change targeting server scaffolds server automatically
+- [ ] Every /sdd-new-change uses product-discovery, component-recommendation, domain-population
 - [ ] Config component updated with server sections after scaffolding
 - [ ] sdd-settings.yaml has new component entry after scaffolding
