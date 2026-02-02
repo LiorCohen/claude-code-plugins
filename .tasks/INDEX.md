@@ -28,6 +28,7 @@
 
 ## High Priority
 
+- [#78](1-inbox/78/): Fix sdd-init issues - node_modules, permissions, component names
 - [#17](1-inbox/17/): Plans should follow TDD with test review first
 - [#59](1-inbox/59/): Audit and update all agents for compatibility
 
