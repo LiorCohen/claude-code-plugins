@@ -16,7 +16,7 @@
 
 ## Implementing
 
-- [#78](4-implementing/78/): Minimal sdd-init redesign
+(none)
 
 ---
 
@@ -82,6 +82,7 @@
 
 ## Complete
 
+- [#78](6-complete/78/): Minimal sdd-init redesign ✓ (2026-02-02)
 - [#77](6-complete/77/): sdd-new-change planning regression - filesystem issues ✓ (2026-02-02)
 - [#68](6-complete/68/): Plans should focus on WHAT, not HOW ✓ (2026-02-01)
 - [#47](6-complete/47/): Local environment create/start/stop workflow ✓ (2026-02-01)

@@ -2,8 +2,9 @@
 id: 78
 title: Minimal sdd-init redesign
 priority: high
-status: implementing
+status: complete
 created: 2026-02-02
+completed: 2026-02-02
 depends_on: []
 blocks: []
 ---
