@@ -4,13 +4,13 @@
 
 ## Planning
 
-(none)
+- [#67](1-inbox/67/): Store user instructions in plans, specs, and .sdd/
 
 ---
 
 ## Ready
 
-(none)
+- [#77](3-ready/77/): sdd-new-change planning regression - filesystem issues
 
 ---
 
@@ -28,7 +28,6 @@
 
 ## High Priority
 
-- [#67](1-inbox/67/): Store user instructions in plans, specs, and .sdd/
 - [#17](1-inbox/17/): Plans should follow TDD with test review first
 - [#59](1-inbox/59/): Audit and update all agents for compatibility
 
@@ -60,6 +59,8 @@
 
 ## Inbox (unprioritized)
 
+- [#76](1-inbox/76/): Git worktrees for parallel spec/plan execution
+- [#74](1-inbox/74/): Task performance scoring system
 - [#72](1-inbox/72/): Fix broken test benchmarks
 - [#69](1-inbox/69/): Fix sdd-init workflow test timeout
 - [#12](1-inbox/12/): User onboarding and process state tracking
