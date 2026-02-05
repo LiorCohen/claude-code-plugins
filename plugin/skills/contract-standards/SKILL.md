@@ -290,15 +290,15 @@ Follow [backend-standards](../backend-standards/SKILL.md) implementation order.
 When a project has multiple contracts (e.g., public API vs internal API):
 
 ```
-components/
-├── contract-public-api/    # External-facing API
+components/contracts/
+├── public-api/           # External-facing API
 │   └── openapi.yaml
-└── contract-internal-api/  # Service-to-service API
+└── internal-api/         # Service-to-service API
     └── openapi.yaml
 ```
 
 Each contract:
-- Has its own package name (`@project/contract-public-api`)
+- Has its own package name (`@project/public-api`)
 - Generates its own types
 - Is consumed independently by servers/webapps
 

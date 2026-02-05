@@ -194,7 +194,7 @@ server-task-service:
 
 ```bash
 # 1. Generate merged config for local environment
-/sdd-config generate --env local --component server-task-service --output components/server-task-service/local-config.yaml
+/sdd-config generate --env local --component task-service --output components/servers/task-service/local-config.yaml
 
 # 2. Start server with config
 SDD_CONFIG_PATH=./local-config.yaml npm start
@@ -204,10 +204,10 @@ SDD_CONFIG_PATH=./local-config.yaml npm start
 
 ```bash
 # 1. Generate config for production
-/sdd-config generate --env production --component server-task-service --output production-config.yaml
+/sdd-config generate --env production --component task-service --output production-config.yaml
 
 # 2. Deploy with Helm
-helm install my-release ./components/helm-task-service \
+helm install my-release ./components/helm-charts/task-service \
   -f values-production.yaml \
   --set-file config=production-config.yaml
 ```

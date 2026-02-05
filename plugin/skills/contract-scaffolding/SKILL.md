@@ -9,14 +9,14 @@ Creates an OpenAPI contract component that defines the API specification and gen
 
 ## When to Use
 
-This skill is called by the main `scaffolding` skill when creating a contract component. Contract components support multiple instances (e.g., `contract-customer-api/`, `contract-back-office-api/`).
+This skill is called by the main `scaffolding` skill when creating a contract component. Contract components support multiple instances (e.g., `contracts/customer-api/`, `contracts/back-office-api/`).
 
 ## What It Creates
 
-The directory path depends on the component name as defined in `.sdd/sdd-settings.yaml`: `components/{type}-{name}/` (when type and name differ). For example, `components/contract/` or `components/contract-customer-api/`.
+The directory path is `components/contracts/{name}/` based on the component name in `.sdd/sdd-settings.yaml`.
 
 ```
-components/contract[-<name>]/
+components/contracts/{name}/
 ├── package.json          # Build scripts (call sdd-system CLI)
 ├── openapi.yaml          # OpenAPI 3.0 specification
 ├── .gitignore            # Ignores generated/ directory

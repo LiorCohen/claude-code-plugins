@@ -72,9 +72,9 @@ Supports multiple named frontend instances:
 
 | Input | Directory Created |
 |-------|-------------------|
-| `webapp` | `components/webapp/` |
-| `webapp:admin` | `components/webapp-admin/` |
-| `webapp:public` | `components/webapp-public/` |
+| `{type: webapp, name: main}` | `components/webapps/main/` |
+| `{type: webapp, name: admin}` | `components/webapps/admin/` |
+| `{type: webapp, name: public}` | `components/webapps/public/` |
 
 ## Template Variables
 

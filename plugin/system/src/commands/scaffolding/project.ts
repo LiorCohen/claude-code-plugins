@@ -26,10 +26,23 @@ const mergeItems = (...items: readonly CreatedItems[]): CreatedItems => ({
 });
 
 /**
- * Derive the directory name for a component.
+ * Pluralize a component type for directory naming.
+ * e.g., "contract" → "contracts", "database" → "databases"
+ */
+const pluralizeType = (type: string): string => {
+  const custom: Readonly<Record<string, string>> = {
+    helm: 'helm-charts',
+    testing: 'testing',
+  };
+  return custom[type] ?? `${type}s`;
+};
+
+/**
+ * Derive the directory path for a component.
+ * Format: <type>s/<name> (e.g., "contracts/public-api", "servers/main")
  */
 const componentDirName = (component: ComponentEntry): string =>
-  component.type === component.name ? component.type : `${component.type}-${component.name}`;
+  `${pluralizeType(component.type)}/${component.name}`;
 
 /**
  * Get all components of a specific type.
@@ -358,6 +371,7 @@ const runScaffolding = async (config: ScaffoldingConfig): Promise<ScaffoldingRes
   const frontendTemplates = path.join(skillsDir, 'frontend-scaffolding', 'templates');
   const contractTemplates = path.join(skillsDir, 'contract-scaffolding', 'templates');
   const databaseTemplates = path.join(skillsDir, 'database-scaffolding', 'templates');
+  const configTemplates = path.join(skillsDir, 'config-scaffolding', 'templates');
 
   // Group components by type
   const contractComponents = getComponentsByType(components, 'contract');
@@ -437,8 +451,15 @@ dist/
   console.log('  Created: .claudeignore');
   const claudeignoreCreated: CreatedItems = { files: ['.claudeignore'], dirs: [] };
 
-  // Config directories
-  const configDirs = ['config', 'config/schemas'];
+  // Config component directories (mandatory singleton - no plural folder)
+  const configDirs = [
+    'components/config',
+    'components/config/envs',
+    'components/config/envs/default',
+    'components/config/envs/local',
+    'components/config/schemas',
+    'components/config/types',
+  ];
   const configDirsCreated = await createDirectories(configDirs, target, config);
 
   // Contract component directories
@@ -591,7 +612,7 @@ This document describes the architecture of ${config.project_name}.
 
 ## Components
 
-- **Config** (\`config/\`): YAML-based configuration management
+- **Config** (\`components/config/\`): YAML-based configuration management
 ${componentLines.join('\n')}
 `;
 
@@ -599,30 +620,9 @@ ${componentLines.join('\n')}
   await writeText(archOverview, archContent);
   console.log('  Created: specs/architecture/overview.md');
 
-  // Config files
-  const configFilesDir = path.join(projectTemplates, 'config');
-  const configFilesList = [
-    'config.yaml',
-    'config-local.yaml',
-    'config-testing.yaml',
-    'config-production.yaml',
-    'schemas/schema.json',
-    'schemas/ops-schema.json',
-    'schemas/app-schema.json',
-  ];
-  const configFilesCreated = directoryExists(configFilesDir)
-    ? await Promise.all(
-        configFilesList
-          .filter((f) => fs.existsSync(path.join(configFilesDir, f)))
-          .map(async (f) => {
-            await copyTemplateFile(
-              path.join(configFilesDir, f),
-              path.join(target, 'config', f),
-              config
-            );
-            return `config/${f}`;
-          })
-      )
+  // Config component files (using config-scaffolding templates)
+  const configFilesCreated = directoryExists(configTemplates)
+    ? await copyTemplateDir(configTemplates, path.join(target, 'components/config'), config)
     : [];
 
   // Contract component files

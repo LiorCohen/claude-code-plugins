@@ -121,7 +121,8 @@ export const getComponentDir = (component: Component): string => {
   const typeDirMap: Record<string, string> = {
     server: 'servers',
     webapp: 'webapps',
-    helm: 'helm_charts',
+    helm: 'helm-charts',
+    testing: 'testing',
     database: 'databases',
     contract: 'contracts',
     config: 'config',

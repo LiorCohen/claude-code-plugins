@@ -76,19 +76,19 @@ components:
   - type: config
     name: config                     # -> components/config/ (MANDATORY)
   - type: contract
-    name: task-api                   # -> components/contract-task-api/
+    name: task-api                   # -> components/contracts/task-api/
   - type: server
-    name: task-service               # -> components/server-task-service/
+    name: task-service               # -> components/servers/task-service/
   - type: webapp
-    name: task-dashboard             # -> components/webapp-task-dashboard/
+    name: task-dashboard             # -> components/webapps/task-dashboard/
   - type: database
-    name: task-db                    # -> components/database-task-db/
+    name: task-db                    # -> components/databases/task-db/
   - type: helm
-    name: task-service               # -> components/helm-task-service/
+    name: task-service               # -> components/helm-charts/task-service/
   - type: testing
-    name: testing                    # -> testing config
+    name: e2e                        # -> components/testing/e2e/
   - type: cicd
-    name: cicd                       # -> CI/CD workflows
+    name: github                     # -> components/cicds/github/
 ```
 
 **Multiple instances of the same type:**
@@ -97,13 +97,13 @@ components:
   - type: config
     name: config                      # Always exactly one config
   - type: server
-    name: order-service               # -> components/server-order-service/
+    name: order-service               # -> components/servers/order-service/
   - type: server
-    name: notification-worker         # -> components/server-notification-worker/
+    name: notification-worker         # -> components/servers/notification-worker/
   - type: webapp
-    name: admin-portal                # -> components/webapp-admin-portal/
+    name: admin-portal                # -> components/webapps/admin-portal/
   - type: webapp
-    name: customer-app                # -> components/webapp-customer-app/
+    name: customer-app                # -> components/webapps/customer-app/
 ```
 
 ### Directory Naming
@@ -111,17 +111,18 @@ components:
 | Component | Directory Created |
 |-----------|-------------------|
 | `{type: config, name: config}` | `components/config/` |
-| `{type: server, name: server}` | `components/server/` |
-| `{type: server, name: order-service}` | `components/server-order-service/` |
-| `{type: webapp, name: admin-portal}` | `components/webapp-admin-portal/` |
+| `{type: server, name: main}` | `components/servers/main/` |
+| `{type: server, name: order-service}` | `components/servers/order-service/` |
+| `{type: webapp, name: admin-portal}` | `components/webapps/admin-portal/` |
+| `{type: contract, name: public-api}` | `components/contracts/public-api/` |
+| `{type: helm, name: main}` | `components/helm-charts/main/` |
 
 ### Rules
 
 - Both `type` and `name` are ALWAYS required
 - Names must be lowercase, hyphens allowed, no spaces
-- When `name` matches `type`, directory is `components/{type}/`
-- When `name` differs from `type`, directory is `components/{type}-{name}/`
-- Config component is **mandatory** - exactly one, always `{type: config, name: config}`
+- Directory structure is `components/{type-plural}/{name}/`
+- Config component is **mandatory** - exactly one at `components/config/`
 
 ## Available Components
 

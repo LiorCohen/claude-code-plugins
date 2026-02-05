@@ -40,19 +40,19 @@ components/config/
 
 ## Naming Conventions
 
-- Config sections match component directory names exactly
+- Config sections match component names
 - Use kebab-case for all names
 - Secret references end with `Secret` suffix (e.g., `passwordSecret`)
 
 ```yaml
-# Section names match component directories
-server-task-service:     # -> components/server-task-service/
+# Section names match component names
+task-service:            # -> components/servers/task-service/
   port: 3000
 
-webapp-task-dashboard:   # -> components/webapp-task-dashboard/
+task-dashboard:          # -> components/webapps/task-dashboard/
   apiBaseUrl: /api
 
-database-taskdb:         # -> components/database-taskdb/
+taskdb:                  # -> components/databases/taskdb/
   host: localhost
 ```
 

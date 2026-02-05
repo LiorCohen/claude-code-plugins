@@ -13,14 +13,15 @@
 
 | Component | Path | Purpose |
 |-----------|------|---------|
-| Config | `config/` | Environment configuration (project root, not a component) |
-| Contract | `components/{name}/` | OpenAPI spec, type generation |
-| Server | `components/{name}/` | Backend (CMDO architecture) |
-| Webapp | `components/{name}/` | React frontend (MVVM) |
-| Helm | `components/{name}/` | Kubernetes deployment |
-| Testing | `components/{name}/` | Testkube test definitions |
+| Config | `components/config/` | Environment configuration (mandatory singleton) |
+| Contract | `components/contracts/{name}/` | OpenAPI spec, type generation |
+| Server | `components/servers/{name}/` | Backend (CMDO architecture) |
+| Webapp | `components/webapps/{name}/` | React frontend (MVVM) |
+| Database | `components/databases/{name}/` | PostgreSQL migrations and seeds |
+| Helm | `components/helm-charts/{name}/` | Kubernetes deployment |
+| Testing | `components/testing/{name}/` | Testkube test definitions |
 
-Note: Component directory names are determined by `{type, name}` in `.sdd/sdd-settings.yaml`. The directory is `components/{type}/` when name equals type, or `components/{type}-{name}/` when they differ (e.g., `components/contract-task-api/`, `components/server-admin/`).
+Component directories follow the pattern `components/{type-plural}/{name}/` (e.g., `components/contracts/public-api/`, `components/servers/main/`).
 
 ## Backend Architecture (CMDO)
 
@@ -48,7 +49,7 @@ Config → [All layers] → Dependencies
 | `changes/INDEX.md` | Registry of all change specs |
 | `changes/` | Change specifications (features, bugfixes, refactors) |
 | `specs/` | Static domain knowledge (glossary, definitions, architecture) |
-| `components/{contract-component}/openapi.yaml` | API contract (path depends on component name) |
+| `components/contracts/{name}/openapi.yaml` | API contract |
 | `.sdd/sdd-settings.yaml` | Project settings (components, domains) |
 
 ## Claude Code Commands

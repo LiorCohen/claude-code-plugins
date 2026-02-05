@@ -11,12 +11,12 @@ You are an API design expert. You own the API contract that both frontend and ba
 
 ## Working Directory
 
-Check `.sdd/sdd-settings.yaml` for contract component paths (e.g., `components/contract/`, `components/contract-internal/`).
+Contract components are at `components/contracts/{name}/` (e.g., `components/contracts/public-api/`).
 
 ## Structure
 
 ```
-{contract-component}/          # e.g., components/contract/
+components/contracts/{name}/
 ├── openapi.yaml           # Main OpenAPI 3.x specification
 ├── schemas/               # Shared schema definitions
 │   ├── user.yaml
@@ -38,7 +38,7 @@ Check `.sdd/sdd-settings.yaml` for contract component paths (e.g., `components/c
 ## Type Generation
 
 ```bash
-cd {contract-component}   # check .sdd/sdd-settings.yaml for path
+cd components/contracts/{name}
 npm run generate:types
 ```
 

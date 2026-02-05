@@ -435,7 +435,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 import type { User, CreateUserRequest, ApiError } from '../../types/generated';
 ```
 
-Never hand-write API types—they are generated from the contract component's `openapi.yaml` (path depends on the component name in `.sdd/sdd-settings.yaml`, e.g., `components/contract/openapi.yaml` or `components/contract-task-api/openapi.yaml`).
+Never hand-write API types—they are generated from the contract component's `openapi.yaml` at `components/contracts/{name}/openapi.yaml`.
 
 ---
 
