@@ -10,7 +10,7 @@
 
 ## Ready
 
-(none)
+- [#81](3-ready/81/): Redesign sdd-change with external spec workflow
 
 ---
 
@@ -27,7 +27,7 @@
 ---
 
 ## High Priority
-
+- [#83](1-inbox/83/): Apply zero session context to sdd-implement workflow
 - [#17](1-inbox/17/): Plans should follow TDD with test review first
 - [#59](1-inbox/59/): Audit and update all agents for compatibility
 
@@ -35,6 +35,8 @@
 
 ## Medium Priority
 
+- [#84](1-inbox/84/): Apply zero session context to sdd-init workflow
+- [#82](1-inbox/82/): Reorganize archive into .sdd directory
 - [#79](1-inbox/79/): Use project-name-derived component names in on-demand scaffolding
 - [#70](1-inbox/70/): Git checkpoint workflow for AI-assisted development
 - [#71](1-inbox/71/): Anti-stop hook to prevent accidental session termination
