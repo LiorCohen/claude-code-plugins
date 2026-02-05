@@ -10,7 +10,7 @@
 
 ## Ready
 
-(none)
+- [#85](3-ready/85/): External spec workflow UX and architecture improvements
 
 ---
 
@@ -35,6 +35,7 @@
 
 ## Medium Priority
 
+- [#86](1-inbox/86/): Consider component-catalog skill for component type definitions
 - [#84](1-inbox/84/): Apply zero session context to sdd-init workflow
 - [#82](1-inbox/82/): Reorganize archive into .sdd directory
 - [#79](1-inbox/79/): Use project-name-derived component names in on-demand scaffolding
