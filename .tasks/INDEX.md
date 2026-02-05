@@ -10,7 +10,7 @@
 
 ## Ready
 
-- [#85](3-ready/85/): External spec workflow UX and architecture improvements
+(none)
 
 ---
 
@@ -86,6 +86,7 @@
 
 ## Complete
 
+- [#85](6-complete/85/): External spec workflow UX and architecture improvements ✓ (2026-02-05)
 - [#81](6-complete/81/): Redesign sdd-change with external spec workflow ✓ (2026-02-05)
 - [#78](6-complete/78/): Minimal sdd-init redesign ✓ (2026-02-02)
 - [#77](6-complete/77/): sdd-new-change planning regression - filesystem issues ✓ (2026-02-02)

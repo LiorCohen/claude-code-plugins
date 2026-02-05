@@ -78,6 +78,18 @@ When `mode: "external-spec"` is provided with `spec_outline` and `spec_path`:
    - Create use-case files in `specs/domain/use-cases/`
 7. **Return results** (no user confirmation needed)
 
+**IMPORTANT: DO NOT ask about technical stack or components in external-spec mode.**
+
+The external spec workflow uses component-discovery AFTER product-discovery to determine what components are needed. Product-discovery focuses on WHAT the product does, not HOW it will be built.
+
+| Ask in external-spec mode | DO NOT ask in external-spec mode |
+|---------------------------|----------------------------------|
+| User personas | Database choice |
+| Core workflows | Backend vs frontend split |
+| Domain entities | API design patterns |
+| Business constraints | Infrastructure requirements |
+| Integrations (external) | Component architecture |
+
 **Output for external-spec mode:**
 
 ```yaml
@@ -92,14 +104,24 @@ core_workflows:
 domain_entities:
   - "Entity1"
   - "Entity2"
-integrations: []  # May extract if mentioned
-constraints: []   # May extract if mentioned
+integrations: []  # May extract if mentioned (external services, not internal components)
+constraints: []   # Business constraints, not technical
 scope: "full"     # Default for external specs
 domain_updates:
   glossary_terms_added: ["Term1", "Term2"]
   definitions_created: ["definition1.md"]
   use_cases_created: ["use-case1.md"]
 ```
+
+**What happens AFTER product-discovery in external-spec mode:**
+
+```
+Product Discovery → Component Discovery → Decomposition
+      ↓                     ↓                    ↓
+  WHAT/WHO              WHICH tech          HOW to split
+```
+
+Component-discovery takes the product-discovery output and identifies what components are needed based on the requirements (not by asking the user about tech stack).
 
 ---
 
@@ -269,5 +291,7 @@ Discovery Results:
 
 - This skill is purely conversational - it reads user input and asks questions
 - It does not create any files
-- The structured output is used by subsequent skills (component-recommendation, domain-population)
+- The structured output is used by subsequent skills:
+  - **Interactive mode**: component-discovery, then domain-population (creates domain spec files)
+  - **External spec mode**: component-discovery only (domain updates are documented in SPEC.md and executed during implementation)
 - Keep the conversation natural and adaptive, not like a rigid form

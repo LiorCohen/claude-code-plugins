@@ -1,27 +1,58 @@
 ---
-name: component-recommendation
-description: Recommend and configure technical components with settings based on product requirements.
+name: component-discovery
+description: Discover required technical components through targeted questions based on classified requirements.
 ---
 
-# Component Recommendation Skill
+# Component Discovery Skill
 
-Maps product requirements to technical architecture, recommending appropriate components with their settings and handling user adjustments.
+Identifies required technical components through analysis of classified requirements and targeted discovery questions. **This skill is purely analytical - it never modifies sdd-settings.yaml or scaffolds components.**
 
 ## Purpose
 
-Based on product discovery results:
-- Recommend appropriate technical components with settings
-- Validate component dependencies and settings
-- Handle multiple component instances (e.g., multiple servers or webapps)
-- Return final component configuration including settings
+Based on transformation output (classified requirements):
+- Ask targeted discovery questions to determine WHICH components are needed
+- Analyze requirements + answers to identify component types
+- Ask component-specific questions to understand scope
+- Document discovered components in SPEC.md (not in system files)
+- Return component list for spec writing
+
+**IMPORTANT**: This skill does NOT:
+- Modify `sdd-settings.yaml`
+- Scaffold components
+- Make any system changes
+
+It only analyzes and documents. Implementation decides when to actually create components.
 
 ## When to Use
 
-- During `/sdd-init` after product discovery
-- When adding new components to an existing project
-- For architecture discussions
+- After transformation step in external spec workflow
+- Runs ONCE after transformation, before decomposition
+- During `/sdd-init` after product discovery (interactive mode)
 
 ## Input
+
+### External Spec Mode (Primary)
+
+Receives classified transformation output:
+
+```yaml
+classified_requirements:
+  functional:
+    - "Users can register with email"
+    - "Users can login"
+    - "Dashboard shows analytics"
+  non_functional:
+    - "API latency < 200ms"
+    - "Support 10k concurrent users"
+  design_details:
+    ui_specs: [...]
+    user_flows: [...]
+  domain_knowledge:
+    entities: ["User", "Session", "Dashboard"]
+    relationships: [...]
+```
+
+### Interactive Mode (Legacy)
 
 Receives discovery results from the `product-discovery` skill:
 
@@ -43,11 +74,100 @@ discovery_results:
   scope: "mvp"
 ```
 
+## Discovery Questions
+
+### Core Discovery Questions (determine if component needed)
+
+| Question | If Yes → Component |
+|----------|-------------------|
+| Does data need to be persisted? | **database** |
+| Are there user actions that modify data? | **server** |
+| Do external clients need to call this system? | **contract** |
+| Is there a user interface? | **webapp** |
+| Does this need to be deployed to Kubernetes? | **helm** |
+
+### Component-Specific Discovery Questions
+
+Once a component type is identified, ask deeper questions:
+
+#### Backend (server + database) - HIGH PRIORITY
+
+External specs typically lack backend details. These must be DERIVED from UI descriptions + explicit questions.
+
+**YAGNI Principle**: Only derive operations explicitly shown in UI. Do NOT assume full CRUD.
+
+| Category | Discovery Question | Derivation Hint |
+|----------|-------------------|-----------------|
+| **Entities** | What pieces of data need to be stored? | Look at what's DISPLAYED in UI |
+| **Relationships** | What are the relationships between data? | Look at lists, dropdowns, links |
+| **User Actions** | What user actions modify data? | Look at buttons, forms, CTAs |
+| **Action Effects** | How does each action affect data? | Only operations visible in UI |
+| **Business Rules** | What validation/constraints apply? | Often missing - verify or ask |
+| **Authorization** | Who can perform each action? | Often missing - verify or ask |
+
+#### API Contract - TYPICALLY DERIVED
+
+Derive from UI + ask clarifying questions:
+
+| Category | Discovery Question |
+|----------|-------------------|
+| **Endpoints** | What operations are needed? (Only UI-visible actions) |
+| **Consumers** | Who calls this API? (webapp, mobile, external) |
+| **Error Cases** | What can go wrong? |
+
+#### Frontend (webapp) - TYPICALLY WELL-SPECIFIED
+
+External specs usually have good detail here. Extract rather than ask:
+
+| Category | Discovery Question | Where to Find |
+|----------|-------------------|---------------|
+| **Pages/Views** | What screens does the user see? | Mockups |
+| **Forms** | What data does the user input? | Form mockups |
+| **States** | Loading, empty, error states? | May be missing |
+
+### Visual Assets Prompt
+
+When UI/UX is involved and spec doesn't include visual assets:
+
+```
+Do you have any visual assets I can reference?
+  - Mockups or wireframes (Figma, Sketch, etc.)
+  - Screenshots of existing UI
+  - Rough sketches or drawings
+  - Reference images from other products
+
+If you can share images, I can extract much more accurate
+requirements than from text descriptions alone.
+```
+
+**Skip this if** spec already includes images or links to design tools.
+
 ## Output
 
-Components now include `settings` based on their type:
+Returns discovered components for documentation in SPEC.md. Components are NOT created yet - that happens during implementation.
 
 ```yaml
+# For SPEC.md ## Components section
+discovered_components:
+  - type: server
+    reason: "Backend for auth + analytics endpoints"
+    derived_from:
+      - requirement: "Users can login"
+      - requirement: "Dashboard shows analytics"
+  - type: webapp
+    reason: "Dashboard UI"
+    derived_from:
+      - design_detail: "Dashboard mockups"
+  - type: database
+    reason: "User data persistence"
+    derived_from:
+      - requirement: "Users can register with email"
+  - type: contract
+    reason: "API definition between webapp and server"
+    derived_from:
+      - requirement: "Users can login"
+
+# Full component configuration (for when implementation starts)
 project_type: "fullstack"
 components:
   # === CONFIG (mandatory singleton) ===
@@ -363,9 +483,34 @@ components:
 
 ## Notes
 
+### Critical: No System Modifications
+
+- **NEVER modifies `sdd-settings.yaml`** - only documents in SPEC.md
+- **NEVER scaffolds components** - that's implementation phase
+- **NEVER creates any files** - purely analytical
+
+### Workflow Position
+
+```
+External Spec → Transformation → **Component Discovery** → Decomposition → SPEC.md
+                                        ↓
+                                  Documents in SPEC.md
+                                  (no system changes)
+```
+
+### When Components Are Created
+
+Components are actually created during **implementation phase**:
+1. SPEC.md documents needed components
+2. PLAN.md confirms components to scaffold
+3. Implementation phase updates `sdd-settings.yaml`
+4. Implementation phase scaffolds new components
+
+### General Notes
+
 - This skill is conversational and handles user interaction for adjustments
-- It does not create any files
-- The output is used by `project-settings` and `scaffolding` skills
+- The output is used by `spec-writing` skill to populate Components section
 - Always validate settings dependencies before accepting the final configuration
 - **Config is MANDATORY**: Always include `{type: config, name: config, settings: {}}` first
 - Settings drive what gets scaffolded - they are not just metadata
+- For external specs, run ONCE before decomposition (not per-item)

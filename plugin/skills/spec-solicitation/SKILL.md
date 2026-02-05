@@ -1,6 +1,6 @@
 ---
 name: spec-solicitation
-description: Guided requirements gathering skill for interactive spec creation. Used for ALL spec creation - both interactive and external spec paths.
+description: Guided requirements gathering skill for interactive spec creation. Used for ALL spec creation - both interactive and external spec paths. Uses non-blocking conversational interaction.
 ---
 
 # Spec Solicitation Skill
@@ -19,14 +19,33 @@ A new session must be able to resume solicitation with ZERO knowledge of prior c
 - Current step and question
 - Partial answers for spec generation
 - Review feedback captured during iteration
+- Open questions that block approval
+
+### Non-Blocking Conversational Interaction
+
+**CRITICAL: Never lock the user out of reading your output before they can respond.**
+
+**NEVER:**
+- Use modal dialogs that block interaction
+- Force multiple choice when freeform is more appropriate
+- Assume answers are single-line or single-message
+- Require immediate response before user has read the output
+
+**ALWAYS:**
+- Present information FIRST, then ask questions
+- Allow freeform text responses (not just A/B/C)
+- Support multi-turn conversations for complex answers
+- Let the user read, think, and respond at their pace
 
 ### Context-Aware Solicitation
 
 When processing a task from external spec decomposition:
-1. Load `context.md` (extracted section from external spec)
-2. Pre-populate answers where possible from context
-3. Ask clarifying questions for gaps
-4. User confirms/refines pre-populated content
+1. Load `context.md` (extracted section from external spec with transformation data)
+2. Load discovered components from workflow
+3. Pre-populate answers where possible from context
+4. Ask clarifying questions for gaps
+5. User confirms/refines pre-populated content
+6. **DO NOT ask about tech stack** - use discovered components
 
 When processing a purely interactive change:
 1. No context available
@@ -34,7 +53,19 @@ When processing a purely interactive change:
 
 ### External Specs Are Product-Oriented
 
-Even if the external spec says nothing about backend, API, databases, etc., the solicitation MUST cover all technical aspects. The solicitation adds the technical dimension that product specs lack.
+Even if the external spec says nothing about backend, API, databases, etc., the solicitation MUST cover all technical aspects. The solicitation adds the technical dimension that product specs lack. **However, component discovery already identifies WHICH components are needed - solicitation asks about HOW they should work, not WHICH ones to use.**
+
+### All Q&A Must Be Preserved
+
+**CRITICAL: Every question asked and every answer received MUST be recorded in the SPEC.md Requirements Discovery section.**
+
+This includes:
+- Transformation clarification questions and answers
+- Component discovery questions and answers
+- Solicitation deep-dive questions and answers
+- Any follow-up or multi-turn conversation content
+- User corrections or overrides
+- Assumptions made when user didn't know
 
 ## Input
 
@@ -66,23 +97,71 @@ last_updated: YYYY-MM-DD HH:MM:SS
 current_step: 3                        # Which solicitation step we're on
 current_question: "What should the system do?"  # Exact question being asked
 
-# Full Q&A history - questions AND answers
+# Full Q&A history - questions AND answers, organized by phase
 history:
-  - step: 1
-    category: context_goal
-    question: "What problem does this solve?"
-    answer: "User authentication is manual and error-prone"
-    timestamp: YYYY-MM-DD HH:MM:SS
-  - step: 2
-    category: context_goal
-    question: "Who is the primary user?"
-    answer: "End users logging into the application"
-    timestamp: YYYY-MM-DD HH:MM:SS
-  - step: 3
-    category: functional_requirements
-    question: "What should the system do?"
-    answer: null  # Awaiting response
-    timestamp: YYYY-MM-DD HH:MM:SS
+  transformation:  # Q&A from transformation step (if from external spec)
+    - id: T1
+      question: "What should happen on duplicate email registration?"
+      answer: "Return error, don't reveal if email exists"
+      source: User
+      timestamp: YYYY-MM-DD HH:MM:SS
+    - id: T2
+      question: "Password requirements?"
+      answer: "8+ characters, industry standard"
+      source: Assumption  # User said "I don't know"
+      timestamp: YYYY-MM-DD HH:MM:SS
+
+  discovery:  # Q&A from component discovery (if from external spec)
+    - id: D1
+      question: "Does data need persistence?"
+      answer: "Yes, user accounts and sessions"
+      source: User
+      timestamp: YYYY-MM-DD HH:MM:SS
+
+  solicitation:  # Q&A from this skill
+    - id: S1
+      step: 1
+      category: context_goal
+      question: "What problem does this solve?"
+      answer: "User authentication is manual and error-prone"
+      source: User
+      timestamp: YYYY-MM-DD HH:MM:SS
+    - id: S2
+      step: 2
+      category: context_goal
+      question: "Who is the primary user?"
+      answer: "End users logging into the application"
+      source: User
+      timestamp: YYYY-MM-DD HH:MM:SS
+    - id: S3
+      step: 3
+      category: functional_requirements
+      question: "What should the system do?"
+      answer: null  # Awaiting response
+      source: null
+      timestamp: YYYY-MM-DD HH:MM:SS
+      # For multi-turn conversations
+      follow_ups:
+        - question: "Can admins also modify orders?"
+          answer: "Just view for now"
+          source: User
+          timestamp: YYYY-MM-DD HH:MM:SS
+
+# Open questions that block spec approval
+open_questions:
+  - id: O1
+    question: "What's the rate limit for login attempts?"
+    status: OPEN  # OPEN | ANSWERED | ASSUMED | DEFERRED
+    blocks: Security section
+  - id: O2
+    question: "Should failed logins trigger alerts?"
+    status: OPEN
+    blocks: Monitoring section
+
+# User corrections/feedback
+user_feedback:
+  - timestamp: YYYY-MM-DD HH:MM:SS
+    feedback: "Admin role should be 'Operator' - updated throughout"
 
 # Structured answers for spec generation
 answers:
@@ -105,12 +184,24 @@ answers:
     unit: []
     integration: []
     e2e: []
-  technical_architecture:
-    api: null
-    data: null
-    backend: null
-    frontend: null
-    infrastructure: null
+  # NOTE: technical_architecture questions no longer ask about tech stack
+  # Components are already discovered - questions focus on HOW not WHICH
+  technical_details:
+    # For each discovered component, ask deep-dive questions
+    server:
+      business_rules: []
+      validation: []
+      authorization: []
+    database:
+      entities: []
+      relationships: []
+      indexes: []
+    contract:
+      endpoints: []
+      error_codes: []
+    webapp:
+      pages: []
+      state_management: null
 
 # Review feedback (captured after spec/plan created)
 review_feedback: []
@@ -182,15 +273,56 @@ Questions to ask:
 - Prompt for unit, integration, E2E test ideas
 - Each test should map to an acceptance criterion
 
-### Step 9: Technical Architecture
+### Step 9: Technical Deep-Dive (Component-Specific)
 
-**These questions are always asked** even if external spec is product-only. User can explicitly opt out of each area.
+**DO NOT ask about which components to use** - component-discovery has already identified them. Instead, ask deep-dive questions for EACH discovered component.
 
-- **API:** "What endpoints are needed? What's the contract?" (or "N/A - no API needed")
-- **Data:** "What data models? Database changes?" (or "N/A - no database")
-- **Backend:** "What services/logic are needed?" (or "N/A - frontend only")
-- **Frontend:** "What UI components? State management?"
-- **Infrastructure:** "Deployment considerations? Scaling?"
+**Question depth should be inversely proportional to spec coverage:**
+- Backend/API/Database: ASK MANY questions (spec has little info)
+- Frontend/UI: ASK FEW questions (spec likely has answers)
+
+**For Server (if discovered):**
+
+```
+For each entity derived from UI:
+  - What fields does [Entity] have?
+  - Which fields are required vs optional?
+  - What validation rules apply to each field?
+
+For each user action:
+  - Who is authorized to perform this action?
+  - What validation happens before the action?
+  - What happens if validation fails?
+  - What side effects occur (emails, notifications)?
+```
+
+**For Database (if discovered):**
+
+```
+  - Entity attributes and types?
+  - Required indexes?
+  - Soft or hard deletes?
+  - Audit/history requirements?
+```
+
+**For API Contract (if discovered):**
+
+```
+  - Request/response schemas for each endpoint?
+  - Error codes and messages?
+  - Authentication method?
+  - Rate limiting requirements?
+```
+
+**For Webapp (if discovered):**
+
+External specs usually have good UI detail. Only ask about:
+```
+  - Loading/empty/error states (if not in mockups)?
+  - Any interactions not clear from mockups?
+```
+
+**YAGNI Principle**: Only ask about operations the UI actually requires. Do NOT assume full CRUD for every entity. If the UI only shows a list view, don't ask about Create/Update/Delete.
 
 ## Resume Behavior
 
@@ -252,9 +384,19 @@ After all questions answered, generate SPEC.md with:
     - Gaps & Assumptions
     - Dependencies
 
-17. **Requirements Discovery** (NEW - full Q&A trail)
-    - Questions & Answers table (Step, Question, Answer)
-    - User Feedback section (clarifications during review)
+17. **Requirements Discovery** (CRITICAL - full Q&A trail, never delete)
+    - **Transformation Phase** table (if from external spec)
+      | # | Question | Answer | Source |
+    - **Component Discovery Phase** table (if from external spec)
+      | # | Question | Answer | Source |
+    - **Solicitation Phase** table
+      | # | Question | Answer | Source |
+      - Include follow-up questions as threaded exchanges
+    - **User Feedback & Corrections** (with timestamps)
+    - **Open Questions (BLOCKING)** table
+      | # | Question | Status | Blocker For |
+      - Status: OPEN | ANSWERED | ASSUMED | DEFERRED
+      - Specs CANNOT be approved while OPEN questions remain
 
 18. **Testing Strategy**
     - Unit Tests table
@@ -371,5 +513,12 @@ This skill uses:
 
 - Spec creation is **always collaborative** - external spec content is INPUT, not output
 - User always has opportunity to refine, clarify, and approve
-- Technical architecture questions are mandatory (user can opt out per area)
-- All Q&A is captured for traceability in Requirements Discovery section
+- **DO NOT ask about tech stack** - component-discovery has already determined what's needed
+- Deep-dive questions focus on HOW components work, not WHICH components to use
+- Questions are weighted: more for backend (sparse in spec), fewer for frontend (detailed in spec)
+- **All Q&A is captured for traceability** in Requirements Discovery section - NEVER delete
+- Multi-turn conversations are supported and captured as threaded exchanges
+- Open questions block spec approval - must be ANSWERED, ASSUMED, or DEFERRED
+- Assumptions are documented when user says "I don't know"
+- Non-blocking conversational interaction - no modal dialogs
+- **Specs contain only user-confirmed content** - no speculative additions or "future ideas"

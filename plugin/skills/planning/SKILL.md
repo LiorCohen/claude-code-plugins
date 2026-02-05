@@ -108,12 +108,25 @@ This approach ensures:
 
 ## Dynamic Phase Generation
 
-Plans are generated dynamically based on the project's `.sdd/sdd-settings.yaml` configuration.
+Plans are generated dynamically based on the SPEC.md's Components section.
+
+### Component Source of Truth
+
+**SPEC.md is the source of truth for required components.**
+
+The planning skill:
+1. Reads the `## Components` section from SPEC.md
+2. May reference `.sdd/sdd-settings.yaml` for existing component details
+3. Does NOT ask about tech stack or which components to use
+
+If SPEC.md says a component is needed but it's not in `sdd-settings.yaml` yet, that's expected - the component will be created during implementation.
+
+**DO NOT ask tech stack questions during planning.** Component discovery already determined what's needed.
 
 ### Generation Algorithm
 
-1. **Read project components** from `.sdd/sdd-settings.yaml`
-2. **Identify affected components** for this change (from SPEC.md)
+1. **Read required components** from SPEC.md `## Components` section
+2. **Reference existing components** from `.sdd/sdd-settings.yaml` for details
 3. **Order by dependency graph:**
    ```
    config ──────┐
@@ -217,7 +230,8 @@ sdd_version: [X.Y.Z]
 
 ## Affected Components
 
-<!-- Generated from .sdd/sdd-settings.yaml based on change scope -->
+<!-- Read from SPEC.md ## Components section (source of truth) -->
+<!-- May reference sdd-settings.yaml for existing component details -->
 - contract
 - server
 - webapp
