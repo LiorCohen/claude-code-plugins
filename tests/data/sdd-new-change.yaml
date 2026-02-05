@@ -347,3 +347,17 @@ runs:
       input_tokens: 34
       output_tokens: 564
       total_tokens: 598
+  - timestamp: "2026-02-05T07:12:20.970Z"
+    plugin_version: "5.12.0"
+    test_file: "tests/src/tests/workflows/sdd-new-change.test.ts"
+    test_name: "new-change-feature"
+    turn_count: 21
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 23
+        output_tokens: 278
+        total_tokens: 301
+    total:
+      input_tokens: 23
+      output_tokens: 278
+      total_tokens: 301
