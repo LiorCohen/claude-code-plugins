@@ -1,5 +1,5 @@
 
-# Token usage benchmarks for /sdd-new-change command.
+# Token usage benchmarks for /sdd-change-new command.
 # Appended by workflow tests after each run.
 #
 # Fields:
@@ -361,3 +361,17 @@ runs:
       input_tokens: 23
       output_tokens: 278
       total_tokens: 301
+  - timestamp: "2026-02-05T15:07:17.130Z"
+    plugin_version: "5.13.0"
+    test_file: "tests/src/tests/workflows/sdd-change-new.test.ts"
+    test_name: "change-new-feature"
+    turn_count: 58
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 140
+        output_tokens: 677
+        total_tokens: 817
+    total:
+      input_tokens: 140
+      output_tokens: 677
+      total_tokens: 817

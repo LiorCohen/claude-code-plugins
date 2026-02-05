@@ -152,17 +152,28 @@ mode: "hierarchical"
 spec_outline: <pre-extracted outline with line ranges>
 spec_content: <full spec content>
 default_domain: <primary domain>
+include_thinking: true  # Enable comprehensive domain analysis
 ```
 
 **Algorithm:**
 
 1. Group sections by H1 headers (each H1 becomes an epic)
 2. Within each H1, H2/H3 sections become features
-3. Build dependency graph:
+3. **Thinking Step** (if include_thinking=true):
+   - Domain Analysis (entities, relationships, glossary, bounded contexts)
+   - Specs Impact Analysis (before/after, new vs modified)
+   - Gap Analysis (what's missing or assumed)
+   - Component Mapping (which components affected)
+4. Build dependency graph:
    - Features depend on other features (based on concept/API references)
    - Epics depend on other epics (if any feature depends on another epic's feature)
-4. Topological sort to determine implementation order
-5. Assign numbers: 01, 02, 03, etc.
+5. **API-First Ordering** (topological sort with priority):
+   - API Contracts / Interfaces first
+   - Data Models / Database second
+   - Backend Services / Business Logic third
+   - Frontend Components / UI fourth
+   - Infrastructure / DevOps last
+6. Assign numbers: 01, 02, 03, etc.
 
 **Output (HierarchicalDecompositionResult):**
 
@@ -226,6 +237,68 @@ epics:
 shared_concepts: ["User", "Session", "Token"]
 suggested_epic_order: [e1, e2, e3]
 warnings: []
+
+# Thinking Step Output (if include_thinking=true)
+thinking:
+  domain_model:
+    entities:
+      - name: User
+        definition: "A person who authenticates with the system"
+        spec_path: specs/domain/user.md
+        status: existing  # or "new"
+      - name: Session
+        definition: "An authenticated period of user activity"
+        spec_path: specs/domain/session.md
+        status: new
+    relationships:
+      - "User has-many Sessions"
+      - "Session belongs-to User"
+    glossary_terms:
+      - term: Authentication
+        definition: "Process of verifying user identity"
+      - term: Token
+        definition: "JWT credential for session management"
+    bounded_contexts:
+      - name: Identity
+        entities: [User, Session, Token]
+      - name: Analytics
+        entities: [Dashboard, Metric]
+  specs_impact:
+    before: [specs/domain/user.md, specs/api/users.md]
+    after:
+      - path: specs/domain/user.md
+        status: modified
+      - path: specs/domain/session.md
+        status: new
+      - path: specs/api/auth.md
+        status: new
+    changes_summary:
+      - path: specs/domain/user.md
+        action: modify
+        description: "Add sessions relationship"
+      - path: specs/domain/session.md
+        action: create
+        description: "New entity for sessions"
+  gaps_identified:
+    - "Password policy requirements not specified"
+    - "Session timeout duration not defined"
+  component_mapping:
+    - component: server
+      affected: true
+      reason: "Backend authentication logic"
+    - component: webapp
+      affected: true
+      reason: "Login UI components"
+  api_first_order:
+    - tier: 1
+      category: "API Contracts"
+      items: [f1]
+    - tier: 2
+      category: "Backend Services"
+      items: [f2, f3]
+    - tier: 3
+      category: "Frontend"
+      items: [f4, f5]
 ```
 
 **Numbering Rules:**

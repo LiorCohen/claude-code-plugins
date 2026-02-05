@@ -10,7 +10,7 @@
 
 ## Ready
 
-- [#81](3-ready/81/): Redesign sdd-change with external spec workflow
+(none)
 
 ---
 
@@ -76,7 +76,7 @@
 - [#35](1-inbox/35/): Checksumming and drift detection for specs/components
 - [#38](1-inbox/38/): Integration and E2E testing should be separate components
 - [#39](1-inbox/39/): Capture ad-hoc code changes and sync specs
-- [#40](1-inbox/40/): Fix sdd-new-change test - spec format mismatch
+- [#40](1-inbox/40/): Fix sdd-change-new test - spec format mismatch
 - [#43](1-inbox/43/): CI/CD components and .github folder integration
 - [#52](1-inbox/52/): Clean up .gitkeep and placeholder content
 - [#54](1-inbox/54/): Missing postgresql-standards skill
@@ -85,6 +85,7 @@
 
 ## Complete
 
+- [#81](6-complete/81/): Redesign sdd-change with external spec workflow ✓ (2026-02-05)
 - [#78](6-complete/78/): Minimal sdd-init redesign ✓ (2026-02-02)
 - [#77](6-complete/77/): sdd-new-change planning regression - filesystem issues ✓ (2026-02-02)
 - [#68](6-complete/68/): Plans should focus on WHAT, not HOW ✓ (2026-02-01)

@@ -1,11 +1,11 @@
 /**
- * Workflow Test: /sdd-new-change command
+ * Workflow Test: /sdd-change new command
  *
- * WHY: Verifies that sdd-new-change correctly creates SPEC.md and PLAN.md
+ * WHY: Verifies that sdd-change new correctly creates SPEC.md
  * with proper structure and content. This ensures the SDD workflow produces
- * valid specifications and implementation plans.
+ * valid specifications. Plans are created via separate approval step.
  *
- * Token usage is recorded to tests/data/sdd-new-change.yaml for benchmarking.
+ * Token usage is recorded to tests/data/sdd-change-new.yaml for benchmarking.
  */
 
 import { describe, expect, it, beforeAll } from 'vitest';
@@ -25,7 +25,7 @@ import {
 
 const TEST_FILE = getTestFilePath(import.meta.url.replace('file://', ''));
 
-const NEW_CHANGE_PROMPT = `Run /sdd-new-change --type feature --name user-auth to create a new change specification.
+const NEW_CHANGE_PROMPT = `Run /sdd-change new --type feature --name user-auth to create a new change specification.
 
 Change name: user-auth
 Change type: feature
@@ -42,22 +42,22 @@ When prompted, provide these answers:
 
 IMPORTANT:
 - Do not ask any questions. Use the values provided above.
-- Complete both the SPEC.md and PLAN.md before finishing.
+- Complete the SPEC.md before finishing (PLAN.md is created via /sdd-change approve spec).
 - Create ALL files in the CURRENT WORKING DIRECTORY (.) - do NOT use absolute paths or navigate elsewhere.
 - The changes/ directory already exists in the current directory.`;
 
 /**
- * WHY: sdd-new-change is the primary workflow for creating new feature specs.
+ * WHY: sdd-change new is the primary workflow for creating new feature specs.
  * If the workflow fails, specifications will be malformed or missing critical
  * information, breaking the entire SDD process.
  */
-describe('sdd-new-change command', () => {
+describe('sdd-change new command', () => {
   let testProject: TestProject;
 
   beforeAll(async () => {
-    testProject = await createTestProject('sdd-new-change');
+    testProject = await createTestProject('sdd-change-new');
 
-    // Create minimal project structure that /sdd-new-change expects
+    // Create minimal project structure that /sdd-change new expects
     await mkdir(joinPath(testProject.path, 'changes'));
     await mkdir(joinPath(testProject.path, 'specs', 'domain'));
     await mkdir(joinPath(testProject.path, 'components', 'contract'));
@@ -91,14 +91,13 @@ The primary business domain.
   });
 
   /**
-   * WHY: The change-creation workflow must create SPEC.md and PLAN.md with
-   * proper structure and content. These files define the specification and
-   * implementation plan for the feature.
+   * WHY: The change-creation workflow must create SPEC.md with
+   * proper structure and content. PLAN.md is created via spec approval.
    */
-  it('creates SPEC.md and PLAN.md with proper structure', async () => {
+  it('creates SPEC.md with proper structure', async () => {
     console.log(`\nTest project directory: ${testProject.path}\n`);
     console.log('Created minimal project structure\n');
-    console.log('Running /sdd-new-change...');
+    console.log('Running /sdd-change new...');
 
     const result = await runClaude(NEW_CHANGE_PROMPT, testProject.path, 300);
 
@@ -123,19 +122,14 @@ The primary business domain.
     expect(specContent).toContain('issue:');
     expect(specContent).toContain('type:');
 
-    // Verify PLAN.md exists and has correct content
-    const planFile = joinPath(specDir!, 'PLAN.md');
-    const planStat = await statAsync(planFile);
-    expect(planStat?.isFile()).toBe(true);
-
-    const planContent = await readFileAsync(planFile);
-    expect(planContent).toContain('sdd_version:');
+    // Note: PLAN.md is now created via /sdd-change approve spec
+    // This test only verifies spec creation
 
     // Record token usage benchmark
     const benchmark = await recordBenchmark(
-      'sdd-new-change',
+      'sdd-change-new',
       TEST_FILE,
-      'new-change-feature',
+      'change-new-feature',
       result.output
     );
     console.log(`\nToken usage recorded:`);

@@ -29,10 +29,9 @@ This command follows an approval-based workflow that verifies environment, creat
 |-------|---------|
 | 0     | Detect project name from current directory |
 | 1     | Environment verification (tools, plugin, permissions) |
-| 2     | Quick component selection (informational only) |
-| 3     | Create minimal structure (config component only) |
-| 4     | Git init + commit |
-| 5     | Completion message |
+| 2     | Create minimal structure (config component only) |
+| 3     | Git init + commit |
+| 4     | Completion message |
 
 **What's NOT done during init (deferred to first change):**
 - Product discovery
@@ -50,10 +49,9 @@ This command follows an approval-based workflow that verifies environment, creat
 ```
 [ ] Phase 0: Project name detected and confirmed
 [ ] Phase 1: Environment verified (tools, plugin, permissions)
-[ ] Phase 2: Component selection displayed (or skipped)
-[ ] Phase 3: Minimal structure created
-[ ] Phase 4: Git repository initialized and committed
-[ ] Phase 5: Completion report displayed
+[ ] Phase 2: Minimal structure created
+[ ] Phase 3: Git repository initialized and committed
+[ ] Phase 4: Completion report displayed
 ```
 
 **DO NOT:**
@@ -200,25 +198,7 @@ This will merge SDD recommended permissions into your .claude/settings.local.jso
 
 ---
 
-### Phase 2: Quick Component Selection
-
-```
-What components will your project need? (you can add more later via /sdd-new-change)
-
-[ ] API Server (Node.js backend)
-[ ] Web App (React frontend)
-[ ] Database (PostgreSQL)
-[ ] Contract (OpenAPI spec)
-[ ] I don't know yet (skip - add components later)
-```
-
-If "I don't know yet" selected: Skip component selection, proceed with just config component.
-
-**Note:** These selections are informational only. They appear in the completion message to remind users what they planned to build. Components are **not scaffolded** until the first change that needs them.
-
----
-
-### Phase 3: Create Minimal Structure
+### Phase 2: Create Minimal Structure
 
 **INVOKE the `project-scaffolding` skill** with:
 
@@ -277,7 +257,7 @@ project:
   # description: "A task management application"
   # domain: "Task Management"
 
-# Components are added here as they are scaffolded via /sdd-new-change
+# Components are added here as they are scaffolded via /sdd-change new
 # The first change targeting a component type triggers scaffolding.
 #
 # Example after scaffolding a server:
@@ -302,7 +282,7 @@ components:
 
 ---
 
-### Phase 4: Git Init + Commit
+### Phase 3: Git Init + Commit
 
 Initialize git repository (if not already in one):
 ```bash
@@ -329,7 +309,7 @@ EOF
 
 ---
 
-### Phase 5: Completion Message
+### Phase 4: Completion Message
 
 ```
 ═══════════════════════════════════════════════════════════════
@@ -348,20 +328,15 @@ WHAT'S INCLUDED:
   ✓ Config component (components/config/)
   ✓ Spec registry (specs/INDEX.md)
 
-PLANNED COMPONENTS (will be scaffolded on first change):
-  • server
-  • webapp
-  • database
-
 NEXT STEPS:
 
   Start with a feature idea:
-    /sdd-new-change --type feature --name <your-first-feature>
+    /sdd-change new --type feature --name <your-first-feature>
 
   Or import an existing spec:
-    /sdd-new-change --spec path/to/requirements.md
+    /sdd-change new --spec path/to/requirements.md
 
-  The first change to each component type will scaffold it automatically.
+  Components will be scaffolded on-demand when your changes need them.
 ```
 
 ---
@@ -383,5 +358,5 @@ sdd-init NEVER overwrites existing files:
 - **Minimal structure** - only config component scaffolded during init
 - **Environment verified** - tools, plugin, permissions checked upfront
 - **Safe to re-run** - never overwrites existing files
-- **Change-driven scaffolding** - components created when first needed via `/sdd-new-change`
-- **To import an external spec:** Use `/sdd-new-change --spec <path>` after initialization
+- **Change-driven scaffolding** - components created when first needed via `/sdd-change new`
+- **To import an external spec:** Use `/sdd-change new --spec <path>` after initialization

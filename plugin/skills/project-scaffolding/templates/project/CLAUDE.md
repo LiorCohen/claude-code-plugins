@@ -55,7 +55,11 @@ Config → [All layers] → Dependencies
 ## Claude Code Commands
 
 - `/sdd-init --name [name]` - Initialize new project
-- `/sdd-new-change --type [type] --name [name]` - Start new change
-- `/sdd-new-change --spec [path]` - Import changes from external spec
-- `/sdd-implement-change [change-dir]` - Implement plan
-- `/sdd-verify-change [change-dir]` - Verify implementation
+- `/sdd-change new --type [type] --name [name]` - Start new change
+- `/sdd-change new --spec [path]` - Import changes from external spec
+- `/sdd-change status` - Show workflow status
+- `/sdd-change continue` - Resume current workflow
+- `/sdd-change approve spec [id]` - Approve spec, create plan
+- `/sdd-change approve plan [id]` - Approve plan, enable implementation
+- `/sdd-change implement [id]` - Implement change
+- `/sdd-change verify [id]` - Verify implementation

@@ -11,7 +11,7 @@ Creates the non-component parts of an SDD project: root files and specs director
 
 ### Minimal Mode (Default for /sdd-init)
 
-Creates only the essential structure needed to start. Additional structure is created on-demand by `/sdd-new-change`.
+Creates only the essential structure needed to start. Additional structure is created on-demand by `/sdd-change new`.
 
 ```yaml
 mode: minimal
@@ -119,7 +119,7 @@ project:
   # description: "A task management application"
   # domain: "Task Management"
 
-# Components are added here as they are scaffolded via /sdd-new-change
+# Components are added here as they are scaffolded via /sdd-change new
 # The first change targeting a component type triggers scaffolding.
 #
 # Example after scaffolding a server:
@@ -148,7 +148,7 @@ This file tracks all specifications in the project.
 No changes yet. Create your first change with:
 
 ```
-/sdd-new-change --type feature --name <feature-name>
+/sdd-change new --type feature --name <feature-name>
 ```
 
 ## Domain Knowledge

@@ -149,6 +149,114 @@ sdd_version: [X.Y.Z]
 
 - [Security requirement or constraint]
 
+## Domain Model
+
+> Comprehensive domain knowledge extracted from this change.
+
+### Entities
+
+| Entity | Definition | Spec Path | Status |
+|--------|------------|-----------|--------|
+| [Entity] | [What it represents] | specs/domain/[entity].md | New/Existing |
+
+### Relationships
+
+```
+[Entity A] ──── [relationship] ───→ [Entity B]
+```
+
+### Glossary
+
+| Term | Definition | First Defined In |
+|------|------------|------------------|
+| [Term] | [Definition] | This spec |
+
+### Bounded Contexts
+
+- **[Context Name]**: [Entities in this context]
+
+## Specs Directory Changes
+
+> **REQUIRED**: Every change to `specs/` must be declared here.
+
+### Before
+
+```
+specs/
+└── [current structure]
+```
+
+### After
+
+```
+specs/
+└── [new structure with comments: # NEW, # MODIFIED]
+```
+
+### Changes Summary
+
+| Path | Action | Description |
+|------|--------|-------------|
+| [path] | Create/Modify | [What changes] |
+
+## Components
+
+### New Components
+
+| Component | Type | Purpose |
+|-----------|------|---------|
+| [Name] | [service/component] | [Purpose] |
+
+### Modified Components
+
+| Component | Changes |
+|-----------|---------|
+| [Name] | [What changes] |
+
+## System Analysis
+
+### Inferred Requirements
+
+- [System-inferred requirements beyond explicit spec]
+
+### Gaps & Assumptions
+
+- [Identified gaps or assumptions]
+
+## Requirements Discovery
+
+> Full Q&A trail from spec solicitation.
+
+### Questions & Answers
+
+| Step | Question | Answer |
+|------|----------|--------|
+| Context | [Question] | [Answer] |
+
+### User Feedback
+
+- [Feedback captured during review]
+
+## Testing Strategy
+
+### Unit Tests
+
+| Component | Test Case | Expected Behavior |
+|-----------|-----------|-------------------|
+| [Component] | [Scenario] | [Expected result] |
+
+### Integration Tests
+
+| Scenario | Components | Expected Outcome |
+|----------|------------|------------------|
+| [Scenario] | [A → B] | [Result] |
+
+### E2E Tests
+
+| User Flow | Steps | Expected Result |
+|-----------|-------|-----------------|
+| [Flow] | [Steps] | [Outcome] |
+
 ## Out of Scope
 
 - [What this feature explicitly does NOT cover]

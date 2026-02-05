@@ -6,7 +6,8 @@ This directory contains the full changelog history split by major version.
 
 | File | Version Range | Description |
 |------|---------------|-------------|
-| [v5.md](v5.md) | 5.0.0 - current | Directory restructure, clean slate templates |
+| [v6.md](v6.md) | 6.0.0 - current | Unified sdd-change command, zero session context |
+| [v5.md](v5.md) | 5.0.0 - 5.13.0 | Directory restructure, clean slate templates |
 | [v4.md](v4.md) | 4.0.0 - 4.9.0 | Product discovery, multi-instance components |
 | [v3.md](v3.md) | 3.0.0 - 3.10.0 | CMDO architecture, change abstraction |
 | [v2.md](v2.md) | 2.0.0 - 2.3.0 | App layer rename, scaffolding skill |

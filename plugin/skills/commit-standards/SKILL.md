@@ -17,9 +17,10 @@ Create consistent, well-documented commits that maintain a clear project history
 - **After any filesystem change** - files created, modified, or deleted
 - After completing an SDD workflow that produces artifacts:
   - After `sdd-init` creates specs/plans
-  - After `sdd-new-change` creates a change spec
-  - After implementing a phase from a plan
-  - After completing all phases of a change
+  - After `/sdd-change new` creates a change workflow
+  - After `/sdd-change approve spec` creates a PLAN.md
+  - After `/sdd-change implement` completes phases
+  - After `/sdd-change verify` completes a change
 - Before starting a new task or switching context
 
 ---

@@ -75,9 +75,10 @@ ERROR: Required tools missing. Install them before continuing:
 | Command | Required | Optional |
 |---------|----------|----------|
 | `/sdd-init` | node, npm, git, docker | jq, kubectl, helm |
-| `/sdd-new-change` | node, npm, git | - |
+| `/sdd-change new` | node, npm, git | - |
+| `/sdd-change implement` | node, npm, git | - |
+| `/sdd-change verify` | node, npm, git | - |
 | `/sdd-local-env start` | docker | kubectl, helm |
-| `/sdd-implement-change` | node, npm, git | - |
 
 ## Installation Instructions
 

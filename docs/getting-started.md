@@ -76,16 +76,16 @@ my-app/
 Ready to add a feature? Create a change spec:
 
 ```
-/sdd-new-change --type feature --name user-login
+/sdd-change new --type feature --name user-login
 ```
 
 This is where the magic happens:
 
-1. **Discovery** - SDD asks about your feature to understand what you're building
+1. **Requirements gathering** - SDD guides you through a solicitation workflow
 2. **Component detection** - Determines which components are affected
 3. **On-demand scaffolding** - If a component doesn't exist yet, it's scaffolded now
 4. **Domain updates** - Glossary updated with new terms from your feature
-5. **Spec creation** - Creates SPEC.md and PLAN.md for your change
+5. **Spec creation** - Creates SPEC.md with Domain Model and Specs Directory Changes sections
 
 After your first feature change, you might have:
 
@@ -125,10 +125,12 @@ This means:
 
 ## What's Next
 
-After creating your change spec, implement it:
+After creating your change spec, review and approve it:
 
 ```
-/sdd-implement-change changes/2026/01/21/user-login
+/sdd-change approve spec <change-id>   # Review spec, create plan
+/sdd-change approve plan <change-id>   # Approve plan
+/sdd-change implement <change-id>      # Execute implementation
 ```
 
 ## Key Concepts

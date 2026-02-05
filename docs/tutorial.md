@@ -76,21 +76,22 @@ git checkout -b feature/menu-management
 ### Step 2.2: Create the Feature Spec
 
 ```
-/sdd-new-change --type feature --name menu-management
+/sdd-change new --type feature --name menu-management
 ```
 
-**Answer the questions:**
+SDD guides you through a solicitation workflow with questions about:
 
-| Question | Your Answer |
-|----------|-------------|
-| Describe this feature | Manage restaurant menu items including categories, prices, and availability |
-| What domain? | Menu |
-| Issue reference? | (optional) |
+| Step | Questions |
+|------|-----------|
+| Context | What problem does this solve? |
+| Functional Requirements | What should it do? |
+| Non-Functional Requirements | Performance, security needs? |
+| User Stories | Who uses this and how? |
+| Acceptance Criteria | How do we verify it works? |
 
-SDD creates two files in `changes/2026/02/01/menu-management/`:
+SDD creates a spec file in `changes/2026/02/01/menu-management/`:
 
-- **SPEC.md** - Complete technical specification with user stories, API design, data model, acceptance criteria, and testing strategy
-- **PLAN.md** - Implementation phases with assigned agents
+- **SPEC.md** - Complete technical specification with Domain Model, Specs Directory Changes, user stories, API design, data model, and acceptance criteria
 
 ### Step 2.3: Review the Spec
 
@@ -112,12 +113,28 @@ Edit the spec if you need changes. The spec is the source of truth for implement
 
 ---
 
-## Part 3: Implement the Menu Feature
+## Part 3: Approve and Implement the Menu Feature
 
-### Step 3.1: Run Implementation
+### Step 3.1: Approve the Spec
+
+Review the spec, then approve it to create the plan:
 
 ```
-/sdd-implement-change changes/2026/02/01/menu-management
+/sdd-change approve spec <change-id>
+```
+
+### Step 3.2: Approve the Plan
+
+Review the plan, then approve it to enable implementation:
+
+```
+/sdd-change approve plan <change-id>
+```
+
+### Step 3.3: Run Implementation
+
+```
+/sdd-change implement <change-id>
 ```
 
 SDD reads your spec and executes implementation phases using specialized agents:
@@ -132,7 +149,7 @@ SDD reads your spec and executes implementation phases using specialized agents:
 
 Each agent works autonomously based on the spec. You'll see progress as files are created and tests pass.
 
-### Step 3.2: Commit the Implementation
+### Step 3.4: Commit the Implementation
 
 ```
 /commit
@@ -145,26 +162,17 @@ Each agent works autonomously based on the spec. You'll see progress as files ar
 ### Step 4.1: Create the Order Feature
 
 ```
-/sdd-new-change --type feature --name order-management
+/sdd-change new --type feature --name order-management
 ```
 
 **Describe it**: Process customer orders with status tracking and total calculation
 
-### Step 4.2: Review and Commit the Spec
-
-Review `changes/2026/02/01/order-management/SPEC.md`, then:
+### Step 4.2: Review, Approve, and Implement
 
 ```
-/commit
-```
-
-### Step 4.3: Implement
-
-```
-/sdd-implement-change changes/2026/02/01/order-management
-```
-
-```
+/sdd-change approve spec <change-id>
+/sdd-change approve plan <change-id>
+/sdd-change implement <change-id>
 /commit
 ```
 
@@ -175,11 +183,11 @@ Review `changes/2026/02/01/order-management/SPEC.md`, then:
 ### Step 5.1: Verify Each Feature
 
 ```
-/sdd-verify-change changes/2026/02/01/menu-management
+/sdd-change verify <menu-change-id>
 ```
 
 ```
-/sdd-verify-change changes/2026/02/01/order-management
+/sdd-change verify <order-change-id>
 ```
 
 SDD checks that:
@@ -243,12 +251,13 @@ Each new feature follows the same pattern:
 
 ```
 git checkout -b feature/your-feature
-/sdd-new-change --type feature --name your-feature
-# Review and edit SPEC.md
+/sdd-change new --type feature --name your-feature
+# Review SPEC.md
+/sdd-change approve spec <change-id>
+/sdd-change approve plan <change-id>
+/sdd-change implement <change-id>
 /commit
-/sdd-implement-change changes/.../your-feature
-/commit
-/sdd-verify-change changes/.../your-feature
+/sdd-change verify <change-id>
 git checkout main && git merge feature/your-feature
 ```
 
@@ -259,18 +268,22 @@ git checkout main && git merge feature/your-feature
 | Step | Command |
 |------|---------|
 | Initialize project | `/sdd-init --name <name>` |
-| Create feature spec | `/sdd-new-change --type feature --name <name>` |
-| Implement feature | `/sdd-implement-change <change-dir>` |
-| Verify feature | `/sdd-verify-change <change-dir>` |
+| Create feature spec | `/sdd-change new --type feature --name <name>` |
+| Approve spec | `/sdd-change approve spec <change-id>` |
+| Approve plan | `/sdd-change approve plan <change-id>` |
+| Implement feature | `/sdd-change implement <change-id>` |
+| Verify feature | `/sdd-change verify <change-id>` |
+| Check status | `/sdd-change status` |
 | Manage config | `/sdd-config generate --env <env>` |
 | Database operations | `/sdd-run database <action>` |
 
 **The SDD workflow:**
 
 1. **Spec first** - Define what you're building before writing code
-2. **Specialized agents** - Each agent handles its domain (API, backend, frontend, testing)
-3. **TDD built-in** - Tests are written during implementation
-4. **Verification** - Ensure implementation matches spec
+2. **Two-stage approval** - Review spec, then review plan before implementation
+3. **Specialized agents** - Each agent handles its domain (API, backend, frontend, testing)
+4. **TDD built-in** - Tests are written during implementation
+5. **Verification** - Ensure implementation matches spec
 
 ---
 
@@ -308,9 +321,9 @@ Ensure migrations are current:
 
 Ideas for extending your restaurant app:
 
-- `/sdd-new-change --type feature --name user-authentication`
-- `/sdd-new-change --type feature --name payment-processing`
-- `/sdd-new-change --type feature --name table-reservations`
+- `/sdd-change new --type feature --name user-authentication`
+- `/sdd-change new --type feature --name payment-processing`
+- `/sdd-change new --type feature --name table-reservations`
 
 ---
 

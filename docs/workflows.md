@@ -23,32 +23,46 @@ Use this when adding new functionality.
 ### 1. Create the Feature Spec
 
 ```
-/sdd-new-change --type feature --name checkout-flow
+/sdd-change new --type feature --name checkout-flow
 ```
 
-You'll be asked about:
-- A brief description of the feature
-- Which domain this feature belongs to
-- What the feature does (acceptance criteria)
+You'll go through a guided solicitation workflow:
+- Context and problem description
+- Functional and non-functional requirements
+- User stories and acceptance criteria
+- Edge cases and dependencies
 
 **What happens automatically:**
-- **Discovery** - SDD analyzes what you're building
+- **Requirements gathering** - SDD guides you through comprehensive solicitation
 - **Component detection** - Determines affected components
 - **On-demand scaffolding** - If a component doesn't exist yet, it's scaffolded now
 - **Domain updates** - Glossary updated with new entities from your feature
 
-### 2. Review the Spec and Plan
+### 2. Review and Approve the Spec
 
-The command creates two files:
-- `SPEC.md` - What you're building
-- `PLAN.md` - Execution phases and agent coordination
+The spec is created with new sections:
+- `SPEC.md` - What you're building, including Domain Model and Specs Directory Changes
 
-Review both. This is your last chance to catch misunderstandings before code is written.
-
-### 3. Implement
+Review the spec. Status is now `spec_review`.
 
 ```
-/sdd-implement-change changes/2026/01/15/checkout-flow
+/sdd-change approve spec <change-id>
+```
+
+This creates the implementation plan (`PLAN.md`). Status advances to `plan_review`.
+
+### 3. Approve the Plan and Implement
+
+Review the plan, then approve it:
+
+```
+/sdd-change approve plan <change-id>
+```
+
+Now implement:
+
+```
+/sdd-change implement <change-id>
 ```
 
 Specialized agents execute each phase of the plan:
@@ -57,10 +71,12 @@ Specialized agents execute each phase of the plan:
 - `frontend-dev` builds the UI
 - `tester` writes tests
 
+Checkpoint commits are created after each phase for recovery.
+
 ### 4. Verify
 
 ```
-/sdd-verify-change changes/2026/01/15/checkout-flow
+/sdd-change verify <change-id>
 ```
 
 The `reviewer` agent checks that the implementation matches the spec.
@@ -70,7 +86,7 @@ The `reviewer` agent checks that the implementation matches the spec.
 Use this when fixing existing behavior.
 
 ```
-/sdd-new-change --type bugfix --name login-timeout-error
+/sdd-change new --type bugfix --name login-timeout-error
 ```
 
 Bugfix specs require:
@@ -85,7 +101,7 @@ The implementation plan is typically shorter - focused on the fix and regression
 Use this when restructuring code without changing behavior.
 
 ```
-/sdd-new-change --type refactor --name extract-auth-service
+/sdd-change new --type refactor --name extract-auth-service
 ```
 
 Refactor specs require:
@@ -100,7 +116,7 @@ The plan emphasizes maintaining behavior while changing structure.
 Use this when a goal requires multiple features working together.
 
 ```
-/sdd-new-change --type epic --name checkout-system
+/sdd-change new --type epic --name checkout-system
 ```
 
 Epic specs require:
@@ -108,22 +124,22 @@ Epic specs require:
 - List of child changes (features) with descriptions
 - Dependencies between child changes
 
-The command creates an epic directory with a parent SPEC.md and PLAN.md, plus a `changes/` subdirectory containing child feature changes, each with their own SPEC.md and PLAN.md.
+The command creates workflow items for each child feature, tracking them in `.sdd/workflows/<workflow-id>/workflow.yaml`.
 
 ### Implementation
 
-Each child change is implemented as an independent PR:
+Each child change is implemented in dependency order:
 
 ```
-/sdd-implement-change changes/2026/01/27/checkout-system
+/sdd-change implement <change-id>
 ```
 
-The command reads the epic PLAN.md for dependency order and implements child changes sequentially, creating a branch per child change (`epic/checkout-system/shopping-cart`, etc.).
+The workflow tracks dependency order and implements child changes sequentially, creating checkpoint commits after each phase.
 
 ### Verification
 
 ```
-/sdd-verify-change changes/2026/01/27/checkout-system
+/sdd-change verify <change-id>
 ```
 
 Verifies each child change individually, then checks that the combined implementation satisfies all epic-level acceptance criteria.
@@ -176,11 +192,11 @@ See the [Configuration Guide](config-guide.md) for complete details.
 Components are scaffolded when you first create a change that needs them:
 
 1. You create a feature that affects a server component
-2. `/sdd-new-change` detects the server component isn't scaffolded yet
+2. `/sdd-change new` detects the server component isn't scaffolded yet
 3. The server component is scaffolded automatically
 4. The component is added to `.sdd/sdd-settings.yaml`
 5. Config sections for the component are added
-6. Your feature spec/plan are created
+6. Your feature spec is created
 
 This means your project grows organically - you only have what you've actually needed.
 

@@ -18,10 +18,12 @@ claude plugin install sdd
 ## Quick Start
 
 ```
-/sdd-init --name my-app          # Initialize a new project
-/sdd-new-change --type feature --name user-auth   # Create a spec and plan
-/sdd-implement-change changes/.../user-auth # Execute the plan
-/sdd-verify-change changes/.../user-auth    # Verify it matches the spec
+/sdd-init --name my-app                           # Initialize a new project
+/sdd-change new --type feature --name user-auth   # Create a spec
+/sdd-change approve spec <change-id>              # Review spec, create plan
+/sdd-change approve plan <change-id>              # Approve plan, enable implementation
+/sdd-change implement <change-id>                 # Execute the plan
+/sdd-change verify <change-id>                    # Verify it matches the spec
 ```
 
 **[Get started with the tutorial →](./docs/getting-started.md)**
@@ -71,10 +73,14 @@ Instead of one general-purpose AI, SDD uses 8 specialized agents:
 | Command | Purpose |
 |---------|---------|
 | `/sdd-init --name [name]` | Initialize new project |
-| `/sdd-new-change --type [type] --name [name]` | Create change spec and plan |
-| `/sdd-new-change --spec [path]` | Import changes from external spec |
-| `/sdd-implement-change [change-dir]` | Execute implementation plan |
-| `/sdd-verify-change [change-dir]` | Verify implementation matches spec |
+| `/sdd-change new --type [type] --name [name]` | Create new change spec |
+| `/sdd-change new --spec [path]` | Import changes from external spec |
+| `/sdd-change status` | Show current workflow status |
+| `/sdd-change continue` | Resume current workflow |
+| `/sdd-change approve spec [id]` | Approve spec, create plan |
+| `/sdd-change approve plan [id]` | Approve plan, enable implementation |
+| `/sdd-change implement [id]` | Execute implementation plan |
+| `/sdd-change verify [id]` | Verify implementation matches spec |
 | `/sdd-config <operation>` | Manage configuration (generate, validate, diff) |
 | `/sdd-run <namespace> <action>` | Run sdd-system CLI operations |
 

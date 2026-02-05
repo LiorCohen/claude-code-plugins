@@ -223,4 +223,4 @@ Result:
 
 - `/sdd-init` - Initialize project with initial settings
 - `/sdd-config` - Manage runtime configuration
-- `/sdd-new-change` - Create changes that may affect settings
+- `/sdd-change` - Create changes that may affect settings

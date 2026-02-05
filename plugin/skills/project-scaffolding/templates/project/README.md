@@ -7,7 +7,7 @@
 This project was scaffolded with SDD. To add your first feature:
 
 ```bash
-/sdd-new-change --type feature --name <your-first-feature>
+/sdd-change new --type feature --name <your-first-feature>
 ```
 
 This will guide you through:
@@ -40,7 +40,7 @@ npm run dev
 │   ├── architecture/      # Architecture decisions
 │   └── glossary.md        # Domain terminology
 ├── changes/               # Change specifications (features, fixes)
-├── archive/               # Archived external specs (audit only)
+├── .sdd/                  # SDD state (workflows, archives, settings)
 ├── components/            # Application components
 │   ├── contract/          # OpenAPI specification
 │   ├── server/            # Backend (CMDO architecture)

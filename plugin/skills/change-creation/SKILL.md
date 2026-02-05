@@ -67,6 +67,14 @@ Plans are generated dynamically based on:
 | `refactor_goals` | No | List of refactoring goals (refactor type only) |
 | `child_changes` | No | List of child change names (epic type only) |
 | `epic_goal` | No | Overall epic goal (epic type only) |
+| `mode` | No | `spec-only` (no PLAN.md) or `full` (default - both SPEC.md and PLAN.md) |
+| `domain_model` | No | Domain model from thinking step (entities, relationships, glossary, contexts) |
+| `specs_impact` | No | Specs directory changes (before/after, changes summary) |
+| `requirements_discovery` | No | Q&A trail from spec solicitation |
+| `system_analysis` | No | Inferred requirements, gaps, cross-references |
+| `components_list` | No | New and modified components |
+| `workflow_id` | No | Workflow ID for change-id assignment |
+| `change_id` | No | Pre-assigned change ID from workflow-state |
 
 ## Output
 
@@ -341,6 +349,126 @@ Error Responses:
 - [ ] **AC1:** Given [precondition], when [action], then [result]
 - [ ] **AC2:** Given [precondition], when [action], then [result]
 - ...
+
+## Domain Model
+
+> Comprehensive domain knowledge extracted from this change.
+
+### Entities
+
+| Entity | Definition | Spec Path | Status |
+|--------|------------|-----------|--------|
+| User | A person who authenticates with the system | specs/domain/user.md | Existing (modify) |
+| Session | An authenticated period of user activity | specs/domain/session.md | New |
+
+### Relationships
+
+```
+User ─────────────┐
+  │               │
+  │ has-many      │ owns
+  ▼               ▼
+Session ◄──── AuthToken
+        issued-for
+```
+
+### Glossary
+
+| Term | Definition | First Defined In |
+|------|------------|------------------|
+| Authentication | Process of verifying user identity | This spec |
+| Session | Active authenticated state for a user | This spec |
+
+### Bounded Contexts
+
+- **Identity Context**: User, Session, AuthToken (this change)
+- **[Other Context]**: [Related entities]
+
+## Specs Directory Changes
+
+> **REQUIRED**: Every change to `specs/` must be declared here. Implementation validates against this.
+
+### Before
+
+```
+specs/
+├── domain/
+│   └── user.md
+└── api/
+    └── users.md
+```
+
+### After
+
+```
+specs/
+├── domain/
+│   ├── user.md          # MODIFIED - add session relationship
+│   ├── session.md       # NEW
+│   └── auth-token.md    # NEW
+└── api/
+    ├── users.md
+    └── auth.md          # NEW - authentication endpoints
+```
+
+### Changes Summary
+
+| Path | Action | Description |
+|------|--------|-------------|
+| specs/domain/user.md | Modify | Add `sessions` relationship, `lastLogin` field |
+| specs/domain/session.md | Create | New entity for user sessions |
+
+**Validation**: During `/sdd-change verify`, the system checks that:
+1. All files listed here were actually created/modified
+2. No specs/ files were changed that aren't listed here
+
+## Components
+
+> What components are created or modified.
+
+### New Components
+
+| Component | Type | Purpose |
+|-----------|------|---------|
+| AuthService | service | Handles authentication logic |
+
+### Modified Components
+
+| Component | Changes |
+|-----------|---------|
+| UserService | Add session management methods |
+
+## System Analysis
+
+> What the system inferred beyond the explicit requirements.
+
+### Inferred Requirements
+
+- [What the system determined beyond explicit spec]
+
+### Gaps & Assumptions
+
+- [What's missing or assumed]
+
+### Cross-References
+
+- [Other specs/changes this depends on]
+- [Cross-references to related specs in the domain model]
+
+## Requirements Discovery
+
+> Full Q&A trail from spec solicitation (auto-populated).
+
+### Questions & Answers
+
+| Step | Question | Answer |
+|------|----------|--------|
+| Context | What problem does this solve? | [User response] |
+| Functional | What should the system do? | [User response] |
+
+### User Feedback
+
+- [Clarifications, corrections, or additional context provided during review]
 
 ## Domain Updates
 

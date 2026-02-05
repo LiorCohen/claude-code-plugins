@@ -1,5 +1,5 @@
 
-# Token usage benchmarks for /sdd-new-change-external command.
+# Token usage benchmarks for /sdd-change-new-external command.
 # Appended by workflow tests after each run.
 #
 # Fields:
@@ -53,3 +53,17 @@ runs:
       input_tokens: 2
       output_tokens: 755
       total_tokens: 757
+  - timestamp: "2026-02-05T15:06:11.579Z"
+    plugin_version: "5.13.0"
+    test_file: "tests/src/tests/workflows/sdd-change-new-external.test.ts"
+    test_name: "change-new-external-spec"
+    turn_count: 47
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 49
+        output_tokens: 616
+        total_tokens: 665
+    total:
+      input_tokens: 49
+      output_tokens: 616
+      total_tokens: 665

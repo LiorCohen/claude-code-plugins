@@ -9,9 +9,36 @@ description: Templates and guidance for implementation plans with dynamic phase 
 
 Plans are stored alongside their specs:
 
-`changes/YYYY/MM/DD/<change-name>/PLAN.md`
+`changes/YYYY/MM/DD/<workflow-id>/<NN-change-name>/PLAN.md`
 
 This keeps all change documentation (spec + plan) together in one location.
+
+## Workflow Integration
+
+Plans are created as part of the `/sdd-change` workflow:
+
+1. User creates or imports a change via `/sdd-change new`
+2. Spec solicitation creates SPEC.md
+3. User reviews and approves spec via `/sdd-change approve spec <change-id>`
+4. **This skill creates PLAN.md** immediately after spec approval
+5. User reviews and approves plan via `/sdd-change approve plan <change-id>`
+6. Implementation can begin via `/sdd-change implement <change-id>`
+
+**Plan creation is triggered by spec approval**, not by separate command.
+
+### Input from workflow-state
+
+When invoked, this skill receives:
+- `change_id`: The workflow-scoped change ID (e.g., `a1b2-1`)
+- `spec_path`: Path to the approved SPEC.md
+- `workflow_id`: Workflow ID for context
+
+### Output to workflow-state
+
+After plan creation:
+- PLAN.md saved via `workflow_state.save_plan()`
+- Status updated to `plan_review`
+- Checkpoint commit created
 
 ## SPEC.md vs PLAN.md Separation
 

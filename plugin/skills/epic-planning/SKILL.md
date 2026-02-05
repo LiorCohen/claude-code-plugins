@@ -13,17 +13,39 @@ Epics are a change type that groups multiple feature-type changes under a single
 ## Epic Structure
 
 ```
-changes/YYYY/MM/DD/<epic-name>/
+changes/YYYY/MM/DD/<workflow-id>/<NN-epic-name>/
 ├── SPEC.md                    # Epic specification (overall goals, all ACs)
 ├── PLAN.md                    # Epic plan (change ordering, dependencies)
 └── changes/
-    ├── <change-name>/
+    ├── <NN-change-name>/
     │   ├── SPEC.md            # Feature spec
     │   └── PLAN.md            # Feature plan
-    └── <change-name>/
+    └── <NN-change-name>/
         ├── SPEC.md
         └── PLAN.md
 ```
+
+## Workflow Integration
+
+Epics are tracked in `.sdd/workflows/<workflow-id>/workflow.yaml`:
+
+```yaml
+items:
+  - id: 01-user-management
+    title: User Management
+    type: epic
+    status: pending
+    children:
+      - id: 01-registration
+        change_id: a1b2-1
+        title: Registration
+        type: feature
+        status: pending
+```
+
+- Epic items have `type: epic` and a `children` array
+- Only leaf features get change_ids (epics don't)
+- Epic status is derived from child statuses
 
 ## PR Strategy
 

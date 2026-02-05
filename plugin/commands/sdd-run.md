@@ -15,7 +15,7 @@ Manage your local development environment and validate artifacts.
 
 ## When to Use
 
-While workflow commands (`/sdd-init`, `/sdd-implement-change`, etc.) orchestrate multi-step processes with agents, `/sdd-run` gives you direct control over local dev operations—spinning up databases, running migrations, or validating your API contract.
+While workflow commands (`/sdd-init`, `/sdd-change`, etc.) orchestrate multi-step processes with agents, `/sdd-run` gives you direct control over local dev operations—spinning up databases, running migrations, or validating your API contract.
 
 ## Database Operations
 

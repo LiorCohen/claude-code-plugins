@@ -19,7 +19,9 @@ Move to a single SDD command that understands from context what is to be done. T
 - Recent changes and git status
 - User's natural language input
 
-Instead of requiring users to remember specific commands like `/sdd-init`, `/sdd-new-change`, `/sdd-implement`, etc., a single `/sdd` command would analyze context and determine the appropriate action.
+Instead of requiring users to remember specific commands like `/sdd-init`, `/sdd-change new`, `/sdd-change implement`, etc., a single `/sdd` command would analyze context and determine the appropriate action.
+
+**Note:** The change workflow is now unified under `/sdd-change` with subcommands (new, status, continue, approve, implement, verify). This task could focus on unifying remaining top-level commands (`/sdd-init`, `/sdd-config`, `/sdd-run`) under a single `/sdd` entry point.
 
 ## Design Notes
 

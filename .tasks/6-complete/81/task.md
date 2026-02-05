@@ -2,13 +2,14 @@
 id: 81
 title: Redesign sdd-change with external spec workflow
 priority: high
-status: ready
+status: complete
 created: 2026-02-05
+completed: 2026-02-05
 depends_on: [82]
 blocks: [83, 84]
 ---
 
-# Task 81: Redesign sdd-change with external spec workflow
+# Task 81: Redesign sdd-change with external spec workflow ✓
 
 ## Description
 

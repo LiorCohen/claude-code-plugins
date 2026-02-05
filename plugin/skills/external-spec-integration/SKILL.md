@@ -1,126 +1,116 @@
 ---
 name: external-spec-integration
-description: Process external specifications into change specs with decomposition and user adjustment.
+description: Process external specifications into workflow items with decomposition and thinking step. Creates tasks, not full specs.
 ---
 
 # External Spec Integration Skill
 
-Processes external specification files into the SDD change structure, with optional multi-change decomposition.
+Processes external specification files into the SDD workflow structure. Creates workflow items with context - specs are created interactively one at a time.
 
 ## Purpose
 
-When a user provides an external specification via `--spec`:
-- Copy the external spec to the archive (`archive/`) for audit trail only
-- Analyze the spec for potential decomposition into multiple changes
-- Present decomposition options to user for adjustment
-- Create **self-sufficient** change specifications that embed all relevant content
-- Update shared files (INDEX.md, glossary)
+When a user provides an external specification via `/sdd-change new --spec`:
+- Archive the external spec to `.sdd/archive/external-specs/` (single copy, yyyymmdd-filename format)
+- Analyze the spec with thinking step (domain extraction, gap analysis, API-first ordering)
+- Create workflow items with context in `.sdd/workflows/<workflow-id>/`
+- **DO NOT** create SPEC.md or PLAN.md files - those are created interactively
 
-**CRITICAL: External specs are consumed ONCE during import, then NEVER read again.**
-
-Generated SPEC.md files must be completely self-sufficient. Implementation agents, planning skills, and any downstream processes must NEVER read from `archive/`. The archived external spec exists solely for audit/compliance purposes - it is not part of the working specification.
+**CRITICAL: External specs are consumed ONCE during import, then archived. Specs are created through the solicitation process, not copied from external source.**
 
 ## When to Use
 
-- During `/sdd-new-change --spec <path>` when external spec is provided
-- For standalone spec import: `/sdd-import-spec <path>`
+- During `/sdd-change new --spec <path>` when external spec is provided
 
 ## Input
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|
 | `spec_path` | Yes | Absolute path to the external specification file |
-| `spec_outline` | Yes | Pre-extracted outline from sdd-new-change Step 1b (sections with line ranges) |
+| `spec_outline` | Yes | Pre-extracted outline from sdd-change (sections with line ranges) |
 | `target_dir` | Yes | Absolute path to the project directory |
 | `primary_domain` | Yes | Primary domain for the project |
-| `discovery_results` | No | Results from product-discovery skill (entities, personas, workflows) |
+| `workflow_id` | Yes | Workflow ID from workflow-state skill |
+| `discovery_results` | No | Results from product-discovery skill |
 
 ## Output
 
 ```yaml
 success: true
-external_spec_archived: "archive/original-spec.md"
-is_hierarchical: true  # true if created with numbered epic/feature structure
-epics_created:
-  - name: "01-epic-user-management"
-    path: "changes/2026/01/25/01-epic-user-management/"
-    spec_path: "changes/2026/01/25/01-epic-user-management/SPEC.md"
-    plan_path: "changes/2026/01/25/01-epic-user-management/PLAN.md"
-    type: "epic"
-    features:
-      - name: "01-registration"
-        path: "changes/2026/01/25/01-epic-user-management/changes/01-registration/"
-        spec_path: "changes/2026/01/25/01-epic-user-management/changes/01-registration/SPEC.md"
-        plan_path: "changes/2026/01/25/01-epic-user-management/changes/01-registration/PLAN.md"
-        type: "feature"
-      - name: "02-authentication"
-        path: "changes/2026/01/25/01-epic-user-management/changes/02-authentication/"
-        type: "feature"
-  - name: "02-epic-dashboard"
-    path: "changes/2026/01/25/02-epic-dashboard/"
-    type: "epic"
-    features: [...]
-suggested_order: ["01-epic-user-management", "02-epic-dashboard"]
-implementation_order: "01 → 02 (02 can start after 01 completes)"
-shared_concepts_added: ["User", "Session", "Token"]
-domain_updates:
-  glossary_terms: 5
-  definitions_created: 2
-  use_cases_created: 3
+external_spec_archived: ".sdd/archive/external-specs/20260205-feature-spec.md"
+workflow_id: a1b2c3
+is_hierarchical: true
+items_created:
+  - id: 01-user-management
+    change_id: null  # Epics don't get change_ids
+    type: epic
+    title: User Management
+    children:
+      - id: 01-registration
+        change_id: a1b2-1
+        type: feature
+        title: Registration
+        context_path: .sdd/workflows/a1b2c3/drafts/01-user-management/01-registration/context.md
+      - id: 02-authentication
+        change_id: a1b2-2
+        type: feature
+        title: Authentication
+        context_path: .sdd/workflows/a1b2c3/drafts/01-user-management/02-authentication/context.md
+thinking_output:
+  domain_model:
+    entities: [User, Session, Token]
+    relationships: ["User has-many Sessions"]
+    glossary_terms: 5
+    bounded_contexts: [Identity, Analytics]
+  specs_impact:
+    new: [specs/domain/session.md, specs/api/auth.md]
+    modified: [specs/domain/user.md]
+  gaps_identified: ["Password policy not specified"]
+  recommended_order: [01-registration, 02-authentication, ...]
 ```
 
 ## Workflow
 
-### Step 1: Copy External Spec to Archive
+### Step 1: Archive External Spec
 
-**Purpose:** Archive the original external specification for audit trail and traceability ONLY. This archived copy is for compliance/reference - implementers must use the generated SPEC.md files, not the external source.
+**Single location, single copy:**
 
-**If spec is a single file:**
-1. Determine the original filename from the spec path
-2. Copy to: `archive/<original-filename>`
-3. Store: `archived_spec_path = {target_dir}/archive/<filename>`
-4. Display: "Archived external spec to: archive/<filename> (audit only - will not be read after import)"
+1. Create archive directory: `.sdd/archive/external-specs/`
+2. Generate filename: `yyyymmdd-lowercased-original-name.md`
+3. Copy external spec to archive location
+4. Display: "Archived to: .sdd/archive/external-specs/20260205-feature-spec.md"
 
-**If spec is a directory:**
-1. Determine the directory name from the spec path
-2. Copy entire directory to: `archive/<directory-name>/`
-3. Store: `archived_spec_dir = {target_dir}/archive/<directory-name>/`
-4. Display: "Archived external spec directory to: archive/<directory-name>/ ({N} files) (audit only - will not be read after import)"
+**For directories:**
+1. Create archive subdirectory: `.sdd/archive/external-specs/yyyymmdd-dirname/`
+2. Copy all files preserving structure
+3. Display file count
 
-**Important:**
-- All section reads during THIS import use the archived path, not the original `spec_path`
-- After import completes, the archived spec is NEVER read again
-- Generated SPEC.md files will embed the relevant content, making them self-sufficient
+**IMPORTANT**: This is the ONLY copy. The archived spec is read-only and for audit trail only.
 
-### Step 2: Present Outline to User (Hierarchical Detection)
+### Step 2: Present Outline to User
 
-The `spec_outline` is already extracted (passed from sdd-new-change Step 1b). Detect if hierarchical decomposition applies:
+The `spec_outline` is already extracted. Detect hierarchical decomposition:
 
 **Hierarchical decomposition applies when:**
 - Spec has 2+ H1 sections
 - At least one H1 has 2+ H2 subsections
 
-**For specs meeting hierarchical criteria:**
+**Display for hierarchical specs:**
 
 ```
 I found the following structure in this spec:
 
 EPICS (from H1 sections):
-  01 📦 User Management (lines 10-150)
+  01 User Management (lines 10-150)
      ├── 01 Registration
      ├── 02 Authentication
      └── 03 Password Reset
 
-  02 📦 Dashboard (lines 151-300) [depends on: User Management]
+  02 Dashboard (lines 151-300) [depends on: User Management]
      ├── 01 Analytics
      └── 02 Settings
 
-  03 📦 Billing (lines 301-450) [depends on: User Management]
-     ├── 01 Payments
-     └── 02 Invoices
-
-Total: 3 epics, 8 features
-Implementation order: 01 → 02 → 03 (02 and 03 can be parallel after 01)
+Total: 2 epics, 5 features
+Implementation order: 01 → 02 (02 depends on 01)
 
 Options:
   [A] Accept this breakdown
@@ -128,599 +118,225 @@ Options:
   [C] Cancel
 ```
 
-**For simple specs (doesn't meet hierarchical criteria):**
+### Step 3: Thinking Step (Domain Analysis)
 
-Display the structure with indentation based on header level.
+**CRITICAL NEW STEP**: Before creating items, perform deep analysis:
 
-```
-I found the following structure in this spec:
-
-## User Authentication (lines 10-50)
-   ### Login Flow (lines 15-30)
-   ### Registration (lines 31-50)
-## Dashboard (lines 51-120)
-   ### Analytics (lines 55-80)
-   ### Settings (lines 81-120)
-
-I'll create a change for each H2 section.
-Total: 2 changes (User Authentication, Dashboard)
-
-Options:
-  [A] Accept this breakdown
-  [L] Use different level (H1 or H3 as change boundaries)
-  [S] Single change (don't split)
-  [C] Cancel
-```
-
-**For directory (multiple files):**
-```
-I found the following structure in this spec directory (3 files):
-
-📄 README.md
-   # Product Overview (lines 1-50)
-
-📄 auth/authentication.md
-   # User Authentication (lines 1-60)
-      ## Login Flow (lines 10-40)
-      ## Registration (lines 41-60)
-
-📄 dashboard/overview.md
-   # Dashboard (lines 1-80)
-      ## Analytics (lines 20-50)
-      ## Settings (lines 51-80)
-
-I'll create a change for each H1 section (one per file's main topic).
-Total: 3 changes (Product Overview, User Authentication, Dashboard)
-
-Options:
-  [A] Accept this breakdown
-  [L] Use different level (H2 as change boundaries)
-  [F] Use files as boundaries (one change per file)
-  [S] Single change (don't split)
-  [C] Cancel
-```
-
-**If `spec_outline.has_headers` is false:**
-
-```
-This spec has no markdown headers. I'll treat it as a single change.
-
-Options:
-  [A] Accept
-  [C] Cancel
-```
-
-### Step 3: Handle User Level Choice
-
-**If user chooses `[L]`**, ask which level to use:
-
-```
-Which header level should define change boundaries?
-  [1] H1 headers (# Title)
-  [2] H2 headers (## Title) - default
-  [3] H3 headers (### Title)
-```
-
-Re-display the outline with the new boundary level highlighted.
-
-**If user chooses `[F]` (directory specs only)**, use each file as a change boundary:
-- One change per markdown file
-- Use the file's first H1 header as the change name, or filename if no headers
-- Re-display showing file-based grouping
-
-### Step 4: Analyze Spec Structure
-
-**For hierarchical specs (2+ H1 with H2+ content):**
-
-```
+```yaml
 INVOKE spec-decomposition skill with:
   mode: "hierarchical"
-  spec_outline: <from Step 2>
-  spec_content: <full spec content from archived location>
+  spec_outline: <from input>
+  spec_content: <full spec content from archive>
   default_domain: <primary_domain>
+  include_thinking: true
 ```
 
-This returns a `HierarchicalDecompositionResult` with numbered epics and features.
+The thinking step produces:
 
-**For simple specs:**
+#### 3a. Domain Analysis
 
-For each section at the chosen boundary level:
+- **Entities**: Extract all domain entities (capitalized nouns that represent concepts)
+- **Relationships**: Identify relationships (has-a, is-a, depends-on)
+- **Glossary**: Build glossary of terms with precise definitions
+- **Bounded Contexts**: Identify bounded contexts and aggregates
+- **Spec Mapping**: Map each entity to a spec file path (new or existing)
 
-1. **Read section content** from the archived location:
-   - **Single file:** Read from `archived_spec_path` using `start_line` to `end_line`
-   - **Directory:** Read from `archived_spec_dir/<section.source_file>` using `start_line` to `end_line`
-
-2. **Store the full section content:**
-   ```yaml
-   section_content: <complete markdown content of this section>
-   ```
-   This content will be embedded in the generated spec to make it self-sufficient.
-
-3. **Analyze the section:**
-   ```
-   INVOKE spec-decomposition skill with:
-     mode: "section"
-     spec_content: <content of this section only>
-     section_header: <e.g., "## User Authentication">
-     default_domain: <primary_domain>
-   ```
-
-4. **Attach content to DecomposedChange:**
-   Each `DecomposedChange` should include:
-   ```yaml
-   source_content: <full markdown content from the section>
-   ```
-
-5. **Collect** the `DecomposedChange` result with attached content
-
-6. **Display progress:** "Analyzing: User Authentication (1/2)..."
-
-### Step 5: Present Combined Decomposition
-
-Combine all section analyses into a unified view:
-
-```
-Analysis complete. Here are the identified changes:
-
-[c1] user-authentication (Identity) - feature - MEDIUM
-     Login and session management
-     Sections: "User Authentication"
-     Endpoints: POST /auth/login, DELETE /auth/logout
-     Dependencies: none
-
-[c2] dashboard (Core) - feature - MEDIUM
-     User dashboard with analytics
-     Sections: "Dashboard"
-     Endpoints: GET /dashboard, GET /analytics
-     Dependencies: c1
-
-Shared concepts (will be added to glossary):
-  - User, Session, Analytics
-
-Suggested implementation order: c1 → c2
-
-Options:
-  [A] Accept this breakdown
-  [M] Merge changes (e.g., "merge c1 c2")
-  [R] Rename a change (e.g., "rename c1 new-name")
-  [T] Change type (e.g., "type c2 bugfix")
-  [K] Keep as single spec (skip decomposition)
-  [C] Cancel
+Example output:
+```yaml
+domain_model:
+  entities:
+    - name: User
+      definition: "A person who authenticates with the system"
+      spec_path: specs/domain/user.md
+      status: existing  # or "new"
+    - name: Session
+      definition: "An authenticated period of user activity"
+      spec_path: specs/domain/session.md
+      status: new
+  relationships:
+    - "User has-many Sessions"
+    - "Session belongs-to User"
+  glossary_terms:
+    - term: Authentication
+      definition: "Process of verifying user identity"
+    - term: Token
+      definition: "JWT credential for session management"
+  bounded_contexts:
+    - name: Identity
+      entities: [User, Session, Token]
+    - name: Analytics
+      entities: [Dashboard, Metric]
 ```
 
-### Step 5.5: Hierarchical Structure (Mandatory for Qualifying Specs)
+#### 3b. Specs Directory Impact
 
-**For specs that qualified for hierarchical decomposition (2+ H1 with H2+ content):**
+Show before/after of `specs/` directory:
 
-Hierarchical structure with numbered epics/features is **mandatory** - this is not optional.
-
-The structure is already determined in Step 4:
-- Each H1 becomes a numbered epic: `01-epic-name`, `02-epic-name`
-- Each H2/H3 within becomes a numbered feature: `01-feature`, `02-feature`
-- Numbers indicate implementation order (from topological sort)
-
-Proceed directly to Step 7 with hierarchical creation.
-
-**For simple specs with 3+ changes:**
-
-1. **Display epic recommendation:**
-   ```
-   ═══════════════════════════════════════════════════════════════
-   📦 EPIC STRUCTURE RECOMMENDED
-   ═══════════════════════════════════════════════════════════════
-
-   You have N changes identified. For 3+ changes, SDD recommends
-   organizing them as an Epic for better tracking and organization.
-
-   Epic structure:
-     changes/YYYY/MM/DD/<epic-name>/
-     ├── SPEC.md          (epic overview)
-     ├── PLAN.md          (change ordering)
-     └── changes/
-         ├── 01-<change-1>/
-         ├── 02-<change-2>/
-         └── 03-<change-3>/
-
-   Options:
-     [E] Create as Epic (recommended)
-     [I] Keep as individual changes
-     [C] Cancel
-   ```
-
-2. **If user chooses [E]:**
-   - Set `create_as_epic: true`
-   - Generate epic name from domain or first change (e.g., `<domain>-implementation`)
-   - Assign order-preserving prefixes to child changes: `01-`, `02-`, `03-`, etc.
-   - Order reflects the dependency graph (topological sort from suggested_order)
-   - Proceed to Step 7 with epic structure
-
-3. **If user chooses [I]:**
-   - Proceed with individual changes as before
-   - Add note in summary: "Note: Large change set (N changes) created as individual changes"
-
-**If total accepted changes < 3:**
-- Skip this step, proceed directly to Step 6 and then Step 7
-
-### Step 6: Handle User Adjustments
-
-Process user adjustments in a loop:
-
-| Option | Action |
-|--------|--------|
-| **[A] Accept** | Check epic threshold (Step 5.5), then proceed to Step 7 |
-| **[M] Merge** | Combine selected changes, re-display |
-| **[R] Rename** | Update change name, re-display |
-| **[T] Change type** | Update change type (feature/bugfix/refactor), re-display |
-| **[K] Keep as single** | Create single change containing all content |
-| **[C] Cancel** | Return with cancelled status |
-
-Continue until user accepts or cancels.
-
-### Step 7: Create Change Specifications
-
-**For hierarchical decomposition (numbered epics/features):**
-
-For each epic (in order from topological sort):
-
-1. **Create epic directory:** `changes/YYYY/MM/DD/{NN}-epic-{name}/`
-   ```
-   INVOKE change-creation skill with:
-     name: {NN}-epic-{name}  # e.g., 01-epic-user-management
-     type: epic
-     title: <Epic Title>
-     description: <from H1 section intro>
-     domain: <primary_domain>
-     issue: TBD
-     child_changes: [01-feature-1, 02-feature-2, ...]
-     acceptance_criteria: <combined ACs from features>
-   ```
-
-2. **Create changes/ subdirectory** in the epic
-
-3. **For each feature within the epic (in order):**
-   ```
-   INVOKE change-creation skill with:
-     name: {NN}-{feature-name}  # e.g., 01-registration
-     type: feature
-     title: <Feature Title>
-     description: <extracted description>
-     domain: <primary_domain or detected>
-     issue: TBD
-     user_stories: <extracted user stories>
-     acceptance_criteria: <extracted ACs>
-     api_endpoints: <extracted endpoints>
-     source_content: <full section content from Step 4>
-     external_source: ../../../../archive/<filename>  # Audit reference only
-     decomposition_id: <uuid>
-     prerequisites: <prerequisite feature names>
-     parent_epic: ../SPEC.md
-     parent_path: changes/YYYY/MM/DD/{NN}-epic-{name}/changes/
-   ```
-
-**Resulting structure:**
-```
-changes/YYYY/MM/DD/
-├── 01-epic-user-management/
-│   ├── SPEC.md
-│   ├── PLAN.md
-│   └── changes/
-│       ├── 01-registration/
-│       │   ├── SPEC.md
-│       │   └── PLAN.md
-│       ├── 02-authentication/
-│       │   ├── SPEC.md
-│       │   └── PLAN.md
-│       └── 03-password-reset/
-│           ├── SPEC.md
-│           └── PLAN.md
-├── 02-epic-dashboard/
-│   ├── SPEC.md
-│   ├── PLAN.md
-│   └── changes/
-│       └── ...
-└── 03-epic-billing/
-    └── ...
+```yaml
+specs_impact:
+  before:
+    - specs/domain/user.md
+    - specs/api/users.md
+  after:
+    - specs/domain/user.md          # MODIFIED
+    - specs/domain/session.md       # NEW
+    - specs/domain/auth-token.md    # NEW
+    - specs/api/users.md
+    - specs/api/auth.md             # NEW
+  changes_summary:
+    - path: specs/domain/user.md
+      action: modify
+      description: "Add sessions relationship, lastLogin field"
+    - path: specs/domain/session.md
+      action: create
+      description: "New entity for user sessions"
 ```
 
----
+#### 3c. Gap Analysis
 
-**For simple specs with `create_as_epic` true (3+ changes):**
+Identify what's missing or assumed:
 
-1. Create the epic first:
-   ```
-   INVOKE change-creation skill with:
-     name: <epic-name>
-     type: epic
-     title: <Epic Title>
-     description: <combined description>
-     domain: <primary_domain>
-     issue: TBD
-     child_changes: [01-change-1, 02-change-2, ...]
-     acceptance_criteria: <combined ACs from all changes>
-   ```
-
-2. For each child change (with order-preserving prefix):
-   ```
-   INVOKE change-creation skill with:
-     name: <NN-change-name>  # e.g., 01-user-authentication
-     type: feature
-     title: <Change Title>
-     description: <extracted description>
-     domain: <primary_domain or detected>
-     issue: TBD
-     user_stories: <extracted user stories>
-     acceptance_criteria: <extracted ACs>
-     api_endpoints: <extracted endpoints>
-     source_content: <full section content from Step 4>
-     external_source: ../../../archive/<filename>  # Audit reference only
-     decomposition_id: <uuid>
-     prerequisites: <prerequisite change names>
-     parent_epic: ../SPEC.md
-   ```
-
-**For simple specs with `create_as_epic` false (individual changes):**
-
-For each accepted change, invoke the `change-creation` skill:
-
-```
-INVOKE change-creation skill with:
-  name: <change-name>
-  type: <feature|bugfix|refactor>
-  title: <Change Title>
-  description: <extracted description>
-  domain: <primary_domain or detected>
-  issue: TBD
-  user_stories: <extracted user stories>
-  acceptance_criteria: <extracted ACs>
-  api_endpoints: <extracted endpoints>
-  source_content: <full section content from Step 4>
-  external_source: ../../archive/<filename>  # Audit reference only
-  decomposition_id: <uuid> (if multi-change)
-  prerequisites: <prerequisite change names> (if dependencies)
+```yaml
+gaps_identified:
+  - "Password policy requirements not specified"
+  - "Session timeout duration not defined"
+  - "Email verification flow not detailed"
 ```
 
-**Verification (all cases):**
+#### 3d. API-First Ordering
 
-After each `change-creation` invocation, verify both files were created:
-- [ ] SPEC.md exists at the returned `spec_path`
-- [ ] PLAN.md exists at the returned `plan_path`
+Reorder items for API-first implementation:
 
-If either file is missing, report error and halt.
+```yaml
+recommended_order:
+  1. API Contracts / Interfaces
+  2. Data Models / Database
+  3. Backend Services / Business Logic
+  4. Frontend Components / UI
+  5. Infrastructure / DevOps
+```
 
-### Step 8: Update Shared Files
+### Step 4: Display Thinking Output
 
-**Update INDEX.md with External Specifications table:**
+Show the analysis to user for review:
+
+```
+═══════════════════════════════════════════════════════════════
+ DOMAIN ANALYSIS
+═══════════════════════════════════════════════════════════════
+
+ENTITIES IDENTIFIED:
+  User          → specs/domain/user.md (existing, will modify)
+  Session       → specs/domain/session.md (NEW)
+  AuthToken     → specs/domain/auth-token.md (NEW)
+
+RELATIONSHIPS:
+  User ─────┬──── has-many ───→ Session
+            └──── owns ───────→ AuthToken
+
+SPECS IMPACT:
+  Before: 2 files in specs/
+  After: 4 files in specs/ (+2 new, 1 modified)
+
+GAPS IDENTIFIED:
+  - Password policy requirements not specified
+  - Session timeout duration not defined
+
+IMPLEMENTATION ORDER (API-first):
+  1. 01-registration (API contracts first)
+  2. 02-authentication (depends on 01)
+  3. 03-password-reset (depends on 02)
+
+Continue with this analysis? [Y/n]
+```
+
+### Step 5: Create Workflow Items
+
+For each item in the decomposition:
+
+```yaml
+INVOKE workflow-state.create_item with:
+  workflow_id: <workflow_id>
+  id: <NN-slug>
+  title: <Title>
+  type: feature | epic
+  parent_id: <epic-id if nested>
+  context_sections: <sections from external spec>
+  depends_on: <dependencies>
+```
+
+### Step 6: Create Context Files
+
+For each leaf item, create `context.md` in drafts:
 
 ```markdown
-## External Specifications
+# Context: Registration
 
-| Source | Imported | Changes |
-|--------|----------|---------|
-| [<filename>](archive/<filename>) | YYYY-MM-DD | change-1, change-2, ... |
+> Extracted from: .sdd/archive/external-specs/20260205-feature-spec.md
+
+## Original Content
+
+[Full section content from external spec]
+
+## Domain Analysis
+
+### Entities
+- User (new/existing)
+- ...
+
+### Specs Impact
+- specs/domain/user.md (modify)
+- ...
+
+## Gaps Identified
+- Password policy not specified
+
+---
+Note: This context is read-only. Use it as input during spec solicitation.
 ```
 
-**Update domain glossary with shared concepts:**
+### Step 7: Return Summary
 
-Add extracted shared concepts from decomposition to `specs/domain/glossary.md`.
-
-### Step 9: Return Summary
-
-Display completion summary:
-
-**For hierarchical structure (numbered epics/features):**
-```
-═══════════════════════════════════════════════════════════════
-✅ EXTERNAL SPEC PROCESSED SUCCESSFULLY
-═══════════════════════════════════════════════════════════════
-
-Archived to: archive/<filename> (audit only - will not be read after import)
-
-Created hierarchical structure:
-
-  changes/YYYY/MM/DD/
-  ├── 01-epic-user-management/
-  │   ├── SPEC.md, PLAN.md
-  │   └── changes/
-  │       ├── 01-registration/
-  │       ├── 02-authentication/
-  │       └── 03-password-reset/
-  ├── 02-epic-dashboard/
-  │   ├── SPEC.md, PLAN.md
-  │   └── changes/
-  │       ├── 01-analytics/
-  │       └── 02-settings/
-  └── 03-epic-billing/
-      └── ...
-
-Total: 3 epics, 8 features
-Implementation order: 01 → 02 → 03 (02 and 03 can be parallel after 01)
-
-Domain updates:
-  - Glossary terms added: 5
-  - Definition specs created: 2
-  - Use cases created: 3
-
-⚠️  IMPORTANT: Implementation must use the generated SPEC.md files only.
-    Do NOT reference archive/ - it exists for audit purposes only.
-
-Next step: Start with the first epic's first feature:
-  /sdd-implement-change changes/YYYY/MM/DD/01-epic-user-management/changes/01-registration
+```yaml
+success: true
+external_spec_archived: ".sdd/archive/external-specs/20260205-feature-spec.md"
+workflow_id: a1b2c3
+items_created: [...]
+thinking_output:
+  domain_model: {...}
+  specs_impact: {...}
+  gaps_identified: [...]
+  recommended_order: [...]
+first_item:
+  change_id: a1b2-1
+  title: Registration
+  status: pending
 ```
 
-**For simple epic structure:**
-```
-═══════════════════════════════════════════════════════════════
-✅ EXTERNAL SPEC PROCESSED SUCCESSFULLY
-═══════════════════════════════════════════════════════════════
+## Key Differences from Previous Version
 
-Archived to: archive/<filename> (audit only - will not be read after import)
-
-Created Epic: changes/YYYY/MM/DD/<epic-name>/
-├── SPEC.md
-├── PLAN.md
-└── changes/
-    ├── 01-<change-1>/
-    │   ├── SPEC.md
-    │   └── PLAN.md
-    ├── 02-<change-2>/
-    │   ├── SPEC.md
-    │   └── PLAN.md
-    └── 03-<change-3>/
-        ├── SPEC.md
-        └── PLAN.md
-
-Implementation order: 01-change-1 → 02-change-2 → 03-change-3
-
-⚠️  IMPORTANT: Implementation must use the generated SPEC.md files only.
-    Do NOT reference archive/ - it exists for audit purposes only.
-
-Next step: Start with the first child change:
-  /sdd-implement-change changes/YYYY/MM/DD/<epic-name>/changes/01-<change-1>
-```
-
-**For individual changes:**
-```
-═══════════════════════════════════════════════════════════════
-✅ EXTERNAL SPEC PROCESSED SUCCESSFULLY
-═══════════════════════════════════════════════════════════════
-
-Archived to: archive/<filename> (audit only - will not be read after import)
-
-Created N change specifications:
-  changes/YYYY/MM/DD/change-1/
-  ├── SPEC.md
-  └── PLAN.md
-  changes/YYYY/MM/DD/change-2/
-  ├── SPEC.md
-  └── PLAN.md
-
-Implementation order: change-1 → change-2 → ...
-
-⚠️  IMPORTANT: Implementation must use the generated SPEC.md files only.
-    Do NOT reference archive/ - it exists for audit purposes only.
-
-Next step: Start with the first change:
-  /sdd-implement-change changes/YYYY/MM/DD/change-1
-```
-
-## Examples
-
-### Example 1: Multi-Change Decomposition
-
-```
-Input:
-  spec_path: /tmp/user-management-spec.md
-  target_dir: /home/dev/my-app
-  primary_domain: "User Management"
-
-[Spec contains: user registration, login, password reset, profile management]
-
-Agent: I've identified 4 changes in this specification:
-
-[c1] user-registration (User Management) - feature - MEDIUM
-     User registration with email verification
-     Sections: "Registration", "Email Verification"
-     Endpoints: POST /users, POST /users/verify
-     Dependencies: none
-
-[c2] user-authentication (User Management) - feature - MEDIUM
-     Login and session management
-     Sections: "Login", "Sessions"
-     Endpoints: POST /auth/login, DELETE /auth/logout
-     Dependencies: c1
-
-[c3] password-reset (User Management) - feature - SMALL
-     Password reset flow
-     Sections: "Password Reset"
-     Endpoints: POST /auth/reset, POST /auth/reset/confirm
-     Dependencies: c2
-
-[c4] profile-management (User Management) - feature - SMALL
-     User profile CRUD
-     Sections: "Profile"
-     Endpoints: GET /users/me, PATCH /users/me
-     Dependencies: c1
-
-Shared concepts: User, Session, Token, Email
-Suggested order: c1 → c2 → c3 → c4
-
-Options: [A] Accept [M] Merge [S] Split [R] Rename [T] Type [K] Keep single [C] Cancel
-
-User: A
-
-Output:
-  success: true
-  external_spec_archived: "archive/user-management-spec.md"
-  changes_created:
-    - {name: "user-registration", path: "changes/2026/01/25/user-registration/", type: "feature"}
-    - {name: "user-authentication", path: "changes/2026/01/25/user-authentication/", type: "feature"}
-    - {name: "password-reset", path: "changes/2026/01/25/password-reset/", type: "feature"}
-    - {name: "profile-management", path: "changes/2026/01/25/profile-management/", type: "feature"}
-  suggested_order: ["user-registration", "user-authentication", "password-reset", "profile-management"]
-  shared_concepts_added: ["User", "Session", "Token", "Email"]
-```
-
-### Example 2: User Merges Changes
-
-```
-Agent: [displays 4 changes as above]
-
-User: merge c3 c4
-
-Agent: Merged "password-reset" and "profile-management" into "user-account-management".
-
-[c1] user-registration - feature - MEDIUM
-     ...
-
-[c2] user-authentication - feature - MEDIUM
-     ...
-
-[c3] user-account-management - feature - MEDIUM
-     Password reset and profile management
-     Sections: "Password Reset", "Profile"
-     Endpoints: POST /auth/reset, POST /auth/reset/confirm, GET /users/me, PATCH /users/me
-     Dependencies: c2
-
-Suggested order: c1 → c2 → c3
-
-Options: [A] Accept [M] Merge [S] Split [R] Rename [T] Type [K] Keep single [C] Cancel
-
-User: A
-```
-
-### Example 3: Keep as Single Spec
-
-```
-Agent: [displays 4 changes]
-
-User: K
-
-Agent: Keeping as single change. Creating unified change spec...
-
-Output:
-  success: true
-  external_spec_archived: "archive/user-management-spec.md"
-  changes_created:
-    - {name: "user-management", path: "changes/2026/01/25/user-management/", type: "feature"}
-  suggested_order: ["user-management"]
-```
+| Before | After |
+|--------|-------|
+| Created SPEC.md + PLAN.md immediately | Creates workflow items with context only |
+| Archived to `archive/` | Archives to `.sdd/archive/external-specs/` |
+| No domain analysis | Comprehensive thinking step with domain extraction |
+| Order in session only | Order persisted in workflow.yaml |
+| All specs created upfront | Specs created one at a time through solicitation |
 
 ## Dependencies
 
 This skill orchestrates:
-- `spec-decomposition` - Analyzes spec for multi-change breakdown
-- `change-creation` - Creates individual change directories
+- `workflow-state` - Creates workflow and items
+- `spec-decomposition` - Analyzes spec structure with thinking step
+
+This skill is called by:
+- `/sdd-change new --spec` command
 
 ## Notes
 
-- This skill is conversational and handles user interaction
-- Archives the original external spec in `archive/` for audit/compliance only
-- **CRITICAL:** External specs are consumed ONCE during import, then NEVER read again
-- Generated SPEC.md files embed all relevant content and are completely self-sufficient
-- Implementation agents must NEVER read from `archive/`
-- Decomposition is optional - user can always keep as single spec
-- Dependencies between changes are tracked and affect suggested order
-- **Hierarchical decomposition is MANDATORY** for specs with 2+ H1 sections containing H2+ content
-- Numbers indicate implementation order: `01-epic-*`, `02-epic-*` and `01-feature`, `02-feature`
-- Order is determined by topological sort of dependency graph
-- Product discovery results (if provided) are used to populate domain specs
+- External specs are archived ONCE, then never read again by implementation
+- Context files contain extracted content for use during solicitation
+- All domain analysis output is preserved in context files
+- Items are processed one at a time - user reviews each spec before moving to next
+- Hierarchical decomposition is mandatory for specs meeting criteria (2+ H1 with H2+)
+- Numbers indicate implementation order based on API-first dependency sort

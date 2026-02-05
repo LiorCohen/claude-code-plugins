@@ -37,13 +37,19 @@ cd inventory-tracker
 
 ---
 
-## /sdd-new-change
+## /sdd-change
+
+Unified command for managing change workflows. All state is persisted in `.sdd/workflows/`.
+
+### Subcommands
+
+#### /sdd-change new
 
 Start a new feature, bugfix, refactor, epic, or import from an external spec.
 
 ```
-/sdd-new-change --type <type> --name <name>
-/sdd-new-change --spec <path>
+/sdd-change new --type <type> --name <name>
+/sdd-change new --spec <path>
 ```
 
 **Arguments:**
@@ -54,74 +60,131 @@ Start a new feature, bugfix, refactor, epic, or import from an external spec.
 **What it does:**
 
 *Interactive mode (`--type` and `--name`):*
-1. Runs discovery skills to understand the change
-2. Recommends affected components
-3. **Scaffolds components on-demand** (if not yet scaffolded)
-4. Updates domain glossary with new entities
-5. Creates a spec (`SPEC.md`) with acceptance criteria
-6. Creates an implementation plan (`PLAN.md`)
-7. Places files in `changes/YYYY/MM/DD/<name>/`
+1. Creates a workflow in `.sdd/workflows/<workflow-id>/`
+2. Runs guided requirements gathering (solicitation)
+3. Recommends affected components
+4. **Scaffolds components on-demand** (if not yet scaffolded)
+5. Updates domain glossary with new entities
+6. Creates a spec (`SPEC.md`) with Domain Model and Specs Directory Changes sections
+7. Status becomes `spec_review` - awaiting approval
 
 *External spec mode (`--spec`):*
-1. Analyzes the external spec for change decomposition
-2. Lets you adjust the breakdown (merge, rename, etc.)
-3. Creates self-sufficient change specs with embedded content
-4. Archives original spec to `archive/` for audit
+1. Archives spec to `.sdd/archive/external-specs/`
+2. Analyzes with thinking step (domain extraction, gap analysis)
+3. Creates workflow items with context files
+4. Status becomes `spec_review` for each item
 
 **Examples:**
 ```bash
 # Interactive mode
-/sdd-new-change --type feature --name user-preferences
+/sdd-change new --type feature --name user-preferences
 
 # From external spec
-/sdd-new-change --spec /path/to/requirements.md
+/sdd-change new --spec /path/to/requirements.md
 ```
 
 ---
 
-## /sdd-implement-change
+#### /sdd-change status
 
-Execute an implementation plan.
+Show current workflow status.
 
 ```
-/sdd-implement-change <change-dir>
+/sdd-change status
 ```
 
-**Arguments:**
-- `<change-dir>` (required) - Path to the change directory containing `PLAN.md`
+**What it shows:**
+- Active workflow ID and current item
+- Workflow status (spec_review, plan_review, implementing, etc.)
+- Items pending, in progress, and completed
+- Next action to take
+
+---
+
+#### /sdd-change continue
+
+Resume the current workflow from where you left off.
+
+```
+/sdd-change continue
+```
 
 **What it does:**
-1. Reads the implementation plan
-2. Executes each phase using specialized agents
-3. Runs tests as specified in the plan
+1. Reads workflow state from `.sdd/workflows/<workflow-id>/workflow.yaml`
+2. Determines current status and next action
+3. Continues from that point (spec solicitation, plan review, implementation, etc.)
 
-**Example:**
+---
+
+#### /sdd-change list
+
+List all active workflows.
+
 ```
-/sdd-implement-change changes/2026/01/15/user-preferences
+/sdd-change list
 ```
 
 ---
 
-## /sdd-verify-change
+#### /sdd-change approve spec
+
+Approve a spec and create an implementation plan.
+
+```
+/sdd-change approve spec <change-id>
+```
+
+**What it does:**
+1. Validates the spec is complete
+2. Creates `PLAN.md` with implementation phases
+3. Advances status to `plan_review`
+
+---
+
+#### /sdd-change approve plan
+
+Approve a plan and enable implementation.
+
+```
+/sdd-change approve plan <change-id>
+```
+
+**What it does:**
+1. Validates the plan is complete
+2. Advances status to `plan_approved`
+3. Implementation can now begin
+
+---
+
+#### /sdd-change implement
+
+Execute an approved implementation plan.
+
+```
+/sdd-change implement <change-id>
+```
+
+**What it does:**
+1. Creates a feature branch
+2. Executes each phase using specialized agents
+3. Creates checkpoint commits after each phase
+4. Runs tests as specified in the plan
+
+---
+
+#### /sdd-change verify
 
 Verify implementation matches the spec.
 
 ```
-/sdd-verify-change <change-dir>
+/sdd-change verify <change-id>
 ```
-
-**Arguments:**
-- `<change-dir>` (required) - Path to the change directory containing `SPEC.md`
 
 **What it does:**
 1. Reads the spec and acceptance criteria
 2. Reviews the implemented code
 3. Reports any discrepancies
-
-**Example:**
-```
-/sdd-verify-change changes/2026/01/15/user-preferences
-```
+4. Advances status to `complete` on success
 
 ---
 
@@ -166,7 +229,7 @@ Manage your local development environment and validate artifacts.
 /sdd-run <namespace> <action> [args] [options]
 ```
 
-**When to use:** While workflow commands (`/sdd-init`, `/sdd-implement-change`, etc.) orchestrate multi-step processes with agents, `/sdd-run` gives you direct control over local dev operations—spinning up databases, running migrations, or validating your API contract.
+**When to use:** While workflow commands (`/sdd-init`, `/sdd-change`, etc.) orchestrate multi-step processes with agents, `/sdd-run` gives you direct control over local dev operations—spinning up databases, running migrations, or validating your API contract.
 
 ### Database Operations
 

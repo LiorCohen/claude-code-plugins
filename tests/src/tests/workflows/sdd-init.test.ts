@@ -11,7 +11,7 @@
  * - components/config/ (only config scaffolded)
  * - README.md, CLAUDE.md, .gitignore
  *
- * Full component scaffolding happens on-demand via /sdd-new-change.
+ * Full component scaffolding happens on-demand via /sdd-change new.
  *
  * Token usage is recorded to tests/data/sdd-init.yaml for benchmarking.
  */
@@ -68,7 +68,7 @@ describe('sdd-init command', () => {
   /**
    * WHY: This test validates that sdd-init creates a minimal, functional
    * project structure. Only config component should be scaffolded.
-   * Other components are scaffolded on-demand by /sdd-new-change.
+   * Other components are scaffolded on-demand by /sdd-change new.
    */
   it('creates minimal project structure', async () => {
     console.log(`\nTest directory: ${testProject.path}\n`);
