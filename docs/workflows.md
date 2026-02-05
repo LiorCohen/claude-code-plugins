@@ -11,10 +11,22 @@ To update, invoke the docs-writer agent with your changes.
 
 Every change in SDD follows the same pattern:
 
-1. **Spec** - Define what you're building
-2. **Plan** - Break it into implementation phases
+1. **Spec** - Define what you're building (SPEC.md)
+2. **Plan** - Break it into implementation phases (PLAN.md)
 3. **Implement** - Execute the plan with specialized agents
-4. **Verify** - Confirm the code matches the spec
+4. **Review** - User reviews implementation against spec
+5. **Verify** - Confirm the code matches the spec
+
+### Phase Gating
+
+SDD enforces strict phase gating to ensure quality:
+
+- **Spec → Plan**: ALL specs must be approved before ANY planning starts
+- **Plan → Implement**: ALL plans must be approved before implementation starts
+- **Implement → Review**: Implementation must complete before user review
+- **Review → Complete**: User must approve before workflow completes
+
+This prevents half-finished specs from causing downstream issues.
 
 ## Feature Workflow
 
@@ -34,9 +46,10 @@ You'll go through a guided solicitation workflow:
 
 **What happens automatically:**
 - **Requirements gathering** - SDD guides you through comprehensive solicitation
-- **Component detection** - Determines affected components
-- **On-demand scaffolding** - If a component doesn't exist yet, it's scaffolded now
+- **Component discovery** - Determines what components are needed
 - **Domain updates** - Glossary updated with new entities from your feature
+
+**Note:** Component scaffolding happens during implementation, not during spec creation.
 
 ### 2. Review and Approve the Spec
 
@@ -73,13 +86,80 @@ Specialized agents execute each phase of the plan:
 
 Checkpoint commits are created after each phase for recovery.
 
-### 4. Verify
+### 4. Review
+
+After implementation, submit for user review:
+
+```
+/sdd-change review <change-id>
+```
+
+Review the implementation against the spec. If changes are needed:
+
+```
+/sdd-change request-changes <change-id> --reason "Error messages unclear"
+```
+
+### 5. Verify
+
+When the review passes:
 
 ```
 /sdd-change verify <change-id>
 ```
 
 The `reviewer` agent checks that the implementation matches the spec.
+
+## External Spec Workflow
+
+Use this when importing requirements from an external specification document.
+
+See [External Specs](external-specs.md) for complete details.
+
+### Quick Overview
+
+```
+/sdd-change new --spec /path/to/requirements.md
+```
+
+The workflow:
+
+1. **Archive** - External spec copied to `.sdd/archive/external-specs/`
+2. **Transform** - Classify information, identify gaps, ask clarifying questions
+3. **Discover** - Identify required components through targeted questions
+4. **Decompose** - Break into epics and features with dependencies
+5. **Spec Creation** - Create SPEC.md for each item (one at a time)
+6. **Planning** - After ALL specs approved, create PLAN.md files
+7. **Implementation** - Execute plans in dependency order
+8. **Review** - User reviews each implementation
+9. **Verification** - Final checks
+
+### Phase Progression for Large Specs
+
+For specs that decompose into multiple items:
+
+```
+═══════════════════════════════════════════════════════════════
+ SPEC PHASE (complete ALL specs before planning)
+═══════════════════════════════════════════════════════════════
+
+Epic 1: User Management
+  ✓ 01-registration      SPEC.md approved
+  ● 02-authentication    SPEC.md in progress    ← CURRENT
+  ○ 03-password-reset    Pending
+
+Epic 2: Dashboard
+  ○ 04-analytics         Pending
+  ○ 05-settings          Pending
+
+Progress: 1/5 specs approved
+
+NEXT: Complete 02-authentication spec
+
+Run: /sdd-change continue
+```
+
+The workflow GUIDES you through this sequence - it's not optional.
 
 ## Bugfix Workflow
 
@@ -144,6 +224,45 @@ The workflow tracks dependency order and implements child changes sequentially, 
 
 Verifies each child change individually, then checks that the combined implementation satisfies all epic-level acceptance criteria.
 
+## Regression (Going Back)
+
+Sometimes you need to go back to an earlier phase:
+
+```bash
+# Go back to spec phase
+/sdd-change regress <change-id> --to spec --reason "Need OAuth support"
+
+# Go back to plan phase
+/sdd-change regress <change-id> --to plan --reason "Missing caching layer"
+
+# Request changes during review (implicit regression to implement)
+/sdd-change request-changes <change-id> --reason "Error messages unclear"
+```
+
+Regression:
+- Archives discarded work to `.sdd/archive/regressions/`
+- Flags dependent items for re-review
+- Requires a reason for audit trail
+
+## Open Questions
+
+Specs may have open questions that block approval:
+
+```
+═══════════════════════════════════════════════════════════════
+ SPEC APPROVAL BLOCKED
+═══════════════════════════════════════════════════════════════
+
+Cannot approve 02-authentication - 2 open questions remain:
+
+  O1: What's the rate limit for login attempts?
+  O2: Should failed logins trigger alerts?
+
+Answer these questions or mark as assumptions:
+  /sdd-change answer O1 "5 attempts per minute"
+  /sdd-change assume O1 "Industry standard: 5/min"
+```
+
 ## Configuration Workflow
 
 Use this when you need to add or modify configuration.
@@ -189,14 +308,13 @@ See the [Configuration Guide](config-guide.md) for complete details.
 
 ## On-Demand Scaffolding
 
-Components are scaffolded when you first create a change that needs them:
+Components are scaffolded during implementation when first needed:
 
-1. You create a feature that affects a server component
-2. `/sdd-change new` detects the server component isn't scaffolded yet
-3. The server component is scaffolded automatically
-4. The component is added to `.sdd/sdd-settings.yaml`
-5. Config sections for the component are added
-6. Your feature spec is created
+1. You create a feature that requires a server component
+2. Component discovery identifies the need during spec creation
+3. The component requirement is documented in SPEC.md
+4. During implementation, the component is scaffolded
+5. The component is added to `.sdd/sdd-settings.yaml`
 
 This means your project grows organically - you only have what you've actually needed.
 
@@ -204,16 +322,19 @@ This means your project grows organically - you only have what you've actually n
 
 **Small changes are better.** A feature that takes 6 phases is harder to review than three 2-phase features.
 
-**Specs are living documents.** If requirements change during implementation, update the spec first.
+**Specs are living documents.** If requirements change during implementation, use `/sdd-change regress` to go back to the spec phase.
 
 **Trust the agents.** Each agent has specific expertise. Let `backend-dev` handle server code, `frontend-dev` handle UI.
 
 **Config before code.** When adding features that need configuration, add the config properties first, then implement the feature.
 
-**First change scaffolds components.** Don't worry about component setup - the first change that needs a component will create it automatically.
+**Answer open questions early.** Specs with open questions cannot be approved. Use `/sdd-change answer` or `/sdd-change assume` to resolve them.
+
+**Watch the progress display.** Every command shows your progress. Use `/sdd-change status` to see the full picture.
 
 ## Next Steps
 
+- [External Specs](external-specs.md) - Importing external specifications
 - [Commands](commands.md) - Full command reference
 - [Agents](agents.md) - What each agent does
 - [Configuration Guide](config-guide.md) - Config system details

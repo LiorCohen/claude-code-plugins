@@ -109,3 +109,59 @@ runs:
       input_tokens: 49
       output_tokens: 819
       total_tokens: 868
+  - timestamp: "2026-02-05T21:13:36.524Z"
+    plugin_version: "6.0.0"
+    test_file: "tests/src/tests/workflows/sdd-init.test.ts"
+    test_name: "init-minimal"
+    turn_count: 35
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 37
+        output_tokens: 543
+        total_tokens: 580
+    total:
+      input_tokens: 37
+      output_tokens: 543
+      total_tokens: 580
+  - timestamp: "2026-02-05T21:17:05.556Z"
+    plugin_version: "6.0.0"
+    test_file: "tests/src/tests/workflows/sdd-init.test.ts"
+    test_name: "init-minimal"
+    turn_count: 46
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 48
+        output_tokens: 824
+        total_tokens: 872
+    total:
+      input_tokens: 48
+      output_tokens: 824
+      total_tokens: 872
+  - timestamp: "2026-02-05T21:25:04.420Z"
+    plugin_version: "6.0.0"
+    test_file: "tests/src/tests/workflows/sdd-init.test.ts"
+    test_name: "init-minimal"
+    turn_count: 59
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 61
+        output_tokens: 621
+        total_tokens: 682
+    total:
+      input_tokens: 61
+      output_tokens: 621
+      total_tokens: 682
+  - timestamp: "2026-02-05T21:40:34.161Z"
+    plugin_version: "6.0.0"
+    test_file: "tests/src/tests/workflows/sdd-init.test.ts"
+    test_name: "init-minimal"
+    turn_count: 43
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 45
+        output_tokens: 711
+        total_tokens: 756
+    total:
+      input_tokens: 45
+      output_tokens: 711
+      total_tokens: 756

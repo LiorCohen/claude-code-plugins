@@ -99,8 +99,8 @@ describe('Scaffolding Integration', () => {
 
     expect(result.exitCode).toBe(0);
 
-    // Verify database structure
-    const dbDir = joinPath(targetDir, 'components', 'database');
+    // Verify database structure (pluralized type: databases/<name>)
+    const dbDir = joinPath(targetDir, 'components', 'databases', 'database');
     expect(fileExists(dbDir)).toBe(true);
     expect(fileExists(joinPath(dbDir, 'package.json'))).toBe(true);
     expect(fileExists(joinPath(dbDir, 'README.md'))).toBe(true);
@@ -134,8 +134,8 @@ describe('Scaffolding Integration', () => {
 
     expect(result.exitCode).toBe(0);
 
-    // Check variable substitution
-    const packageJson = joinPath(targetDir, 'components', 'database', 'package.json');
+    // Check variable substitution (pluralized type: databases/<name>)
+    const packageJson = joinPath(targetDir, 'components', 'databases', 'database', 'package.json');
     const content = readFile(packageJson);
 
     expect(content).toContain('@my-app/database');

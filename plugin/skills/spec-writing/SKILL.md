@@ -10,6 +10,20 @@ description: Templates and validation for writing product specifications.
 
 Use templates below as starting points.
 
+## Spec Types: Product vs Tech
+
+**Product Specs** (external input):
+- Focus on WHAT and WHY
+- Typically authored by product managers or stakeholders
+- Archived as-is when imported via external spec workflow
+- `spec_type: product`
+
+**Tech Specs** (generated SPEC.md files):
+- Focus on HOW
+- Generated from product specs + solicitation
+- Full implementation details
+- `spec_type: tech`
+
 ## Spec Lifecycle
 
 **Git is the state machine:**
@@ -19,11 +33,14 @@ Use templates below as starting points.
 
 ## Frontmatter Requirements
 
-Every spec must include:
+### Tech Spec Frontmatter (Default)
+
+Every tech spec (generated SPEC.md) must include:
 
 ```yaml
 ---
 title: Change Name
+spec_type: tech                     # Required: tech (default for generated specs)
 type: feature | bugfix | refactor | epic
 status: active | deprecated | superseded | archived
 domain: Identity | Billing | Core | ...
@@ -36,8 +53,9 @@ superseded_by: [optional, path to new spec]
 ---
 ```
 
-**Required fields:**
+**Required fields for tech specs:**
 - `title`
+- `spec_type` ← Must be `tech`
 - `type` ← Must be `feature`, `bugfix`, `refactor`, or `epic`
 - `status`
 - `domain`
@@ -46,12 +64,94 @@ superseded_by: [optional, path to new spec]
 - `updated`
 - `sdd_version` ← Plugin version used to generate this spec
 
+**Required sections for tech specs:**
+- `## Overview`
+- `## Acceptance Criteria`
+- `## API Contract` (if type involves API changes)
+- `## Domain Model`
+- `## Requirements Discovery` (Q&A trail from solicitation)
+- `## Testing Strategy`
+
+### Product Spec Frontmatter
+
+External/product specs have minimal requirements:
+
+```yaml
+---
+title: Product Spec Name
+spec_type: product                  # Required: product
+status: active | archived
+domain: Identity | Billing | Core | ...
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+---
+```
+
+**Required fields for product specs:**
+- `title`
+- `spec_type` ← Must be `product`
+- `status`
+- `domain`
+- `created`
+- `updated`
+
+**Optional sections for product specs:**
+- `## Overview`
+- `## User Stories`
+- `## Requirements`
+- `## Acceptance Criteria`
+
 ## Validation
 
+### Validation Rules
+
 Run `scripts/validate-spec.py <path>` to check:
-- Required frontmatter fields present (including `issue`)
-- Acceptance criteria in Given/When/Then format
+- Required frontmatter fields present based on `spec_type`
+- Acceptance criteria in Given/When/Then format (tech specs only)
 - All referenced definitions exist in domain glossary
+- Required sections present (tech specs only)
+- Open questions resolved (no BLOCKING open questions remain)
+
+### Validation Error Messages
+
+Validation should return clear, actionable error messages:
+
+```
+Spec validation failed: changes/2026/02/05/a1b2c3/01-auth/SPEC.md
+
+FRONTMATTER ERRORS:
+  - Missing required field: issue
+  - Missing required field: sdd_version
+  - Invalid spec_type: 'unknown' (expected: tech | product)
+
+SECTION ERRORS:
+  - Missing required section: ## API Contract
+  - Missing required section: ## Requirements Discovery
+
+FORMAT ERRORS:
+  - Line 45: Acceptance criterion not in Given/When/Then format
+    Found: "Users can register"
+    Expected: "Given [precondition], when [action], then [result]"
+
+OPEN QUESTIONS (BLOCKING):
+  - O1: What's the rate limit for login attempts?
+  - O2: Should failed logins trigger alerts?
+
+  Resolve these questions before spec can be approved:
+    /sdd-change answer O1 "5 attempts per minute"
+    /sdd-change assume O1 "Industry standard: 5 attempts/min"
+```
+
+### Open Questions Block Approval
+
+Specs CANNOT be approved while open questions remain in the `## Requirements Discovery` section. The validation enforces this:
+
+| Question Status | Effect |
+|----------------|--------|
+| `OPEN` | Blocks spec approval |
+| `ANSWERED` | Does not block |
+| `ASSUMED` | Does not block (assumption documented) |
+| `DEFERRED` | Does not block (requires justification, tracked for later) |
 
 ## Spec Locations
 
@@ -77,11 +177,12 @@ Always use Given/When/Then:
 
 ---
 
-## Template: Feature Spec
+## Template: Feature Spec (Tech Spec)
 
 ```markdown
 ---
 title: [Feature Name]
+spec_type: tech
 type: feature
 status: active
 domain: [Domain Name]
@@ -225,17 +326,46 @@ specs/
 
 ## Requirements Discovery
 
-> Full Q&A trail from spec solicitation.
+> Complete Q&A trail from spec solicitation. Never delete entries.
 
-### Questions & Answers
+### Transformation Phase
 
-| Step | Question | Answer |
-|------|----------|--------|
-| Context | [Question] | [Answer] |
+| # | Question | Answer | Source |
+|---|----------|--------|--------|
+| T1 | [Question about gaps/ambiguities] | [User's answer] | User |
+| T2 | [Question about undefined behavior] | [Default used] | Assumption |
 
-### User Feedback
+### Component Discovery Phase
 
-- [Feedback captured during review]
+| # | Question | Answer | Source |
+|---|----------|--------|--------|
+| D1 | Does data need persistence? | [Answer] | User |
+| D2 | Are there external API consumers? | [Answer] | User |
+
+### Solicitation Phase
+
+| # | Question | Answer | Source |
+|---|----------|--------|--------|
+| S1 | [Deep-dive question for backend] | [Answer] | User |
+| S2 | [Follow-up] [Clarification question] | [Answer] | User |
+
+### User Feedback & Corrections
+
+- [YYYY-MM-DD] [Feedback or correction captured during review]
+
+### Open Questions
+
+> Questions that must be resolved before spec approval. BLOCKING questions prevent approval.
+
+| # | Question | Status | Blocker For |
+|---|----------|--------|-------------|
+| O1 | [Unresolved question] | OPEN | [Section affected] |
+
+**Question Status Legend:**
+- `OPEN` - Not yet answered, blocks approval
+- `ANSWERED` - User provided answer
+- `ASSUMED` - User said "I don't know", default documented
+- `DEFERRED` - Moved to later phase (requires justification)
 
 ## Testing Strategy
 
@@ -269,6 +399,7 @@ specs/
 ```markdown
 ---
 title: [Definition Name]
+spec_type: tech
 status: active
 domain: [Domain]
 issue: [PROJ-XXX]
@@ -307,13 +438,14 @@ sdd_version: [X.Y.Z]
 
 ---
 
-## Template: Epic Spec
+## Template: Epic Spec (Tech Spec)
 
 An epic contains multiple feature-type changes. The epic SPEC.md defines the overall goal, and each child change in `changes/` has its own feature SPEC.md.
 
 ```markdown
 ---
 title: [Epic Name]
+spec_type: tech
 type: epic
 status: active
 domain: [Domain Name]
@@ -359,6 +491,7 @@ Each child change inside `changes/` uses the standard feature template with one 
 ```yaml
 ---
 title: [Feature Name]
+spec_type: tech
 type: feature
 parent_epic: ../SPEC.md
 status: active
@@ -386,3 +519,64 @@ changes/YYYY/MM/DD/<epic-name>/
         ├── SPEC.md
         └── PLAN.md
 ```
+
+---
+
+## Template: Product Spec (External Input)
+
+Product specs are external inputs archived for reference. They focus on WHAT and WHY, not HOW.
+
+```markdown
+---
+title: [Product Spec Name]
+spec_type: product
+status: active
+domain: [Domain Name]
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+---
+
+# [Product Spec Name]
+
+## Overview
+
+[What this product/feature does and why it matters to users]
+
+## User Stories
+
+### [User Group]
+
+- As a [role], I want [capability] so that [benefit]
+
+## Requirements
+
+### Functional Requirements
+
+- [Requirement 1]
+- [Requirement 2]
+
+### Non-Functional Requirements
+
+- [Performance, security, scalability requirements - often missing]
+
+## Acceptance Criteria
+
+- [Criterion 1]
+- [Criterion 2]
+
+## UI/UX Specifications
+
+[Visual designs, mockups, user flows - typically well-specified in product specs]
+
+## Out of Scope
+
+- [What this product spec explicitly does NOT cover]
+```
+
+**Note:** Product specs are typically incomplete:
+- Rich in frontend/UI details
+- Sparse on backend/API/database details
+- Missing edge cases and error handling
+- Implicit assumptions not documented
+
+The transformation process identifies these gaps and asks clarifying questions.

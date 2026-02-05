@@ -10,9 +10,28 @@ import { PLUGIN_DIR, joinPath, readFile } from '@/lib';
 
 const VALIDATE_SPEC_PATH = joinPath(PLUGIN_DIR, 'system', 'src', 'commands', 'spec', 'validate.ts');
 
-// Required fields as defined in the script
+// Legacy required fields (when spec_type is not specified)
 const REQUIRED_FIELDS = ['title', 'status', 'domain', 'issue', 'created', 'updated'];
-const VALID_STATUSES = ['active', 'deprecated', 'superseded', 'archived'];
+
+// Product spec required fields
+const PRODUCT_SPEC_REQUIRED_FIELDS = ['title', 'spec_type', 'status', 'domain', 'created', 'updated'];
+
+// Tech spec required fields
+const TECH_SPEC_REQUIRED_FIELDS = [
+  'title',
+  'spec_type',
+  'type',
+  'status',
+  'domain',
+  'issue',
+  'created',
+  'updated',
+  'sdd_version',
+];
+
+const VALID_SPEC_TYPES = ['product', 'tech'];
+const VALID_CHANGE_TYPES = ['feature', 'bugfix', 'refactor', 'epic'];
+const VALID_STATUSES = ['active', 'deprecated', 'superseded', 'archived', 'draft'];
 const PLACEHOLDER_ISSUES = ['PROJ-XXX', '[PROJ-XXX]', 'TODO', '', '{{ISSUE}}'];
 
 /**
@@ -238,8 +257,8 @@ Just content without frontmatter.`;
       expect(VALID_STATUSES.includes('archived')).toBe(true);
     });
 
-    it('rejects invalid status: draft', () => {
-      expect(VALID_STATUSES.includes('draft')).toBe(false);
+    it('accepts valid status: draft', () => {
+      expect(VALID_STATUSES.includes('draft')).toBe(true);
     });
 
     it('rejects invalid status: pending', () => {
@@ -248,6 +267,68 @@ Just content without frontmatter.`;
 
     it('rejects invalid status: completed', () => {
       expect(VALID_STATUSES.includes('completed')).toBe(false);
+    });
+  });
+
+  /**
+   * WHY: spec_type determines which fields are required.
+   */
+  describe('spec_type validation', () => {
+    it('accepts valid spec_type: product', () => {
+      expect(VALID_SPEC_TYPES.includes('product')).toBe(true);
+    });
+
+    it('accepts valid spec_type: tech', () => {
+      expect(VALID_SPEC_TYPES.includes('tech')).toBe(true);
+    });
+
+    it('rejects invalid spec_type: internal', () => {
+      expect(VALID_SPEC_TYPES.includes('internal')).toBe(false);
+    });
+
+    it('product specs require fewer fields than tech specs', () => {
+      expect(PRODUCT_SPEC_REQUIRED_FIELDS.length).toBeLessThan(TECH_SPEC_REQUIRED_FIELDS.length);
+    });
+
+    it('tech specs require issue field', () => {
+      expect(TECH_SPEC_REQUIRED_FIELDS.includes('issue')).toBe(true);
+    });
+
+    it('product specs do not require issue field', () => {
+      expect(PRODUCT_SPEC_REQUIRED_FIELDS.includes('issue')).toBe(false);
+    });
+
+    it('tech specs require sdd_version field', () => {
+      expect(TECH_SPEC_REQUIRED_FIELDS.includes('sdd_version')).toBe(true);
+    });
+
+    it('tech specs require type (change type) field', () => {
+      expect(TECH_SPEC_REQUIRED_FIELDS.includes('type')).toBe(true);
+    });
+  });
+
+  /**
+   * WHY: Tech specs use change types (feature, bugfix, etc.)
+   */
+  describe('change type validation', () => {
+    it('accepts valid change type: feature', () => {
+      expect(VALID_CHANGE_TYPES.includes('feature')).toBe(true);
+    });
+
+    it('accepts valid change type: bugfix', () => {
+      expect(VALID_CHANGE_TYPES.includes('bugfix')).toBe(true);
+    });
+
+    it('accepts valid change type: refactor', () => {
+      expect(VALID_CHANGE_TYPES.includes('refactor')).toBe(true);
+    });
+
+    it('accepts valid change type: epic', () => {
+      expect(VALID_CHANGE_TYPES.includes('epic')).toBe(true);
+    });
+
+    it('rejects invalid change type: task', () => {
+      expect(VALID_CHANGE_TYPES.includes('task')).toBe(false);
     });
   });
 

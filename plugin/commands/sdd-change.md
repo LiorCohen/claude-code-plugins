@@ -26,6 +26,12 @@ Unified command for the entire change lifecycle. Replaces the separate `sdd-new-
 | `approve plan` | Approve PLAN.md, enable implementation | `/sdd-change approve plan a1b2-1` |
 | `implement` | Start implementation (requires plan_approved) | `/sdd-change implement a1b2-1` |
 | `verify` | Verify implementation, mark complete | `/sdd-change verify a1b2-1` |
+| `review` | Submit for user review (after implementation) | `/sdd-change review a1b2-1` |
+| `plan` | Begin planning phase (after ALL specs approved) | `/sdd-change plan` |
+| `answer` | Answer an open question | `/sdd-change answer O1 "5 attempts per minute"` |
+| `assume` | Mark question as assumption | `/sdd-change assume O1 "Industry standard: 5/min"` |
+| `regress` | Go back to earlier phase | `/sdd-change regress a1b2-1 --to spec --reason "..."` |
+| `request-changes` | Request changes during review | `/sdd-change request-changes a1b2-1 --reason "..."` |
 
 ## Quick Reference
 
@@ -48,14 +54,28 @@ Unified command for the entire change lifecycle. Replaces the separate `sdd-new-
 # Approve the spec for change a1b2-1
 /sdd-change approve spec a1b2-1
 
+# Begin planning phase (after ALL specs approved)
+/sdd-change plan
+
 # Approve the plan
 /sdd-change approve plan a1b2-1
 
 # Start implementation
 /sdd-change implement a1b2-1
 
-# Verify after implementation
+# Submit for review (after implementation)
+/sdd-change review a1b2-1
+
+# Verify and complete
 /sdd-change verify a1b2-1
+
+# Answer open questions (unblocks spec approval)
+/sdd-change answer O1 "5 attempts per minute"
+/sdd-change assume O1 "Industry standard: 5 attempts/min"
+
+# Regression (go back to earlier phase)
+/sdd-change regress a1b2-1 --to spec --reason "Need OAuth support"
+/sdd-change request-changes a1b2-1 --reason "Error messages unclear"
 ```
 
 ---
@@ -114,8 +134,8 @@ INVOKE product-discovery skill with:
   change_type: <from arguments>
   mode: "change"
 
-# Component recommendation
-INVOKE component-recommendation skill with:
+# Component discovery
+INVOKE component-discovery skill with:
   discovery_results: <from above>
   existing_components: <from sdd-settings.yaml>
 
@@ -210,7 +230,39 @@ Archived external spec to: .sdd/archive/external-specs/20260205-feature-spec.md
 (This is read-only - for audit trail only)
 ```
 
-#### Step 5: Product Discovery
+#### Step 5: Transformation (NEW)
+
+Transform the product spec to tech spec context BEFORE decomposition:
+
+```yaml
+INVOKE external-spec-integration skill with:
+  spec_path: <absolute path>
+  spec_outline: <from step 2>
+  mode: "transform"
+```
+
+The transformation performs:
+1. **Classification** - Parse and classify information (domain, constraints, requirements, design)
+2. **Gap Analysis** - Identify missing requirements, edge cases, NFRs
+3. **Clarification Questions** - Ask non-blocking conversational questions about gaps
+4. Record all Q&A for SPEC.md Requirements Discovery section
+
+Output: classified_transformation
+
+#### Step 6: Component Discovery (NEW)
+
+Identify required components through targeted questions:
+
+```yaml
+INVOKE component-discovery skill with:
+  classified_requirements: <from transformation>
+  mode: "external-spec"
+```
+
+This runs ONCE for the entire external spec (not per-item).
+Output is documented in SPEC.md, NOT applied to sdd-settings.yaml yet.
+
+#### Step 7: Product Discovery
 
 ```yaml
 INVOKE product-discovery skill with:
@@ -219,7 +271,9 @@ INVOKE product-discovery skill with:
   mode: "external-spec"
 ```
 
-#### Step 6: Create Workflow
+Note: Does NOT ask about tech stack (that's handled by component-discovery).
+
+#### Step 8: Create Workflow
 
 ```yaml
 INVOKE workflow-state.create_workflow with:
@@ -227,25 +281,27 @@ INVOKE workflow-state.create_workflow with:
   external_source: .sdd/archive/external-specs/20260205-feature-spec.md
 ```
 
-#### Step 7: Decomposition (with Thinking Step)
+#### Step 9: Decomposition (with Thinking Step)
 
 ```yaml
 INVOKE spec-decomposition skill with:
   mode: "hierarchical"
   spec_outline: <from step 2>
   spec_content: <full content>
+  classified_transformation: <from step 5>
+  discovered_components: <from step 6>
   default_domain: <from sdd-settings.yaml or discovery>
 ```
 
 The skill performs:
 1. Domain Analysis (entities, relationships, glossary, bounded contexts)
 2. Specs Directory Impact (before/after, new vs modified)
-3. Dependency Graph
-4. Gap Analysis
-5. Component Mapping
+3. **Dependency Graph** - stored in workflow.yaml for phase gating
+4. Gap Analysis (from transformation)
+5. Component Mapping (from discovery)
 6. API-First Ordering
 
-#### Step 8: Present Decomposition
+#### Step 10: Present Decomposition
 
 Display the hierarchical structure with epics and features:
 
@@ -276,7 +332,7 @@ Options:
   [C] Cancel
 ```
 
-#### Step 9: Create Workflow Items
+#### Step 11: Create Workflow Items
 
 For each accepted item:
 ```yaml
@@ -289,7 +345,7 @@ INVOKE workflow-state.create_item with:
   depends_on: <dependencies>
 ```
 
-#### Step 10: Begin Solicitation for First Item
+#### Step 12: Begin Solicitation for First Item
 
 ```yaml
 INVOKE spec-solicitation skill with:
@@ -300,7 +356,7 @@ INVOKE spec-solicitation skill with:
 
 **IMPORTANT**: Unlike the old flow, we do NOT create all SPEC.md files at once. Each spec is created interactively as the user works through items one at a time.
 
-#### Step 11: Display Next Steps
+#### Step 13: Display Next Steps
 
 ```
 ===============================================================
@@ -747,6 +803,264 @@ Change a1b2-1 marked complete.
 NEXT:
   Next change: a1b2-2 (Authentication)
   Run: /sdd-change continue
+```
+
+---
+
+## Action: plan
+
+Begin planning phase for the workflow (after ALL specs are approved).
+
+### Usage
+
+```
+/sdd-change plan
+```
+
+### Prerequisites
+
+- All items in the workflow must have `spec_status: approved`
+- If any specs are not approved, command fails with list of pending items
+
+### Flow
+
+1. Check phase gate: ALL specs approved
+2. For each item in dependency order:
+   - Invoke planning skill
+   - Create PLAN.md
+   - Set `plan_status: ready_for_review`
+3. Display summary of plans created
+
+### Output
+
+```
+Beginning planning phase...
+
+Checking phase gate: ALL specs approved ✓
+
+Creating plans in dependency order:
+
+  a1b2-1 (Registration)
+    PLAN.md created
+    Status: plan_ready_for_review
+
+  a1b2-2 (Authentication) [depends on: a1b2-1]
+    PLAN.md created
+    Status: plan_ready_for_review
+
+Plans created: 2
+
+NEXT STEPS:
+  Review each PLAN.md file
+  Then run: /sdd-change approve plan <change-id>
+```
+
+---
+
+## Action: review
+
+Submit a change for user review after implementation.
+
+### Usage
+
+```
+/sdd-change review <change-id>
+```
+
+### Flow
+
+1. Validate change exists and `impl_status: complete`
+2. Update `review_status: ready_for_review`
+3. Display review checklist
+
+### Output
+
+```
+Submitting for review: a1b2-1 (Registration)
+
+Implementation complete. Ready for user review.
+
+REVIEW CHECKLIST:
+  [ ] Check SPEC.md requirements are met
+  [ ] Review changed files in git diff
+  [ ] Verify tests pass
+  [ ] Check specs/ changes match declaration
+
+NEXT STEPS:
+  If approved: /sdd-change verify a1b2-1
+  If changes needed: /sdd-change request-changes a1b2-1 --reason "..."
+```
+
+---
+
+## Action: answer
+
+Answer an open question to unblock spec approval.
+
+### Usage
+
+```
+/sdd-change answer <question-id> "<answer>"
+```
+
+### Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `question-id` | Yes | Question ID from SPEC.md (e.g., O1, O2) |
+| `answer` | Yes | The answer to the question |
+
+### Flow
+
+1. Find the question in SPEC.md Requirements Discovery section
+2. Update status from OPEN to ANSWERED
+3. Record answer text
+4. Check if any OPEN questions remain
+
+### Output
+
+```
+Answering question O1...
+
+Question: What are the password requirements?
+Answer: 8+ characters, mixed case, at least one number
+
+Status: ANSWERED
+
+Open questions remaining: 2 (O2, O3)
+```
+
+---
+
+## Action: assume
+
+Mark a question as an assumption (when user doesn't know the answer).
+
+### Usage
+
+```
+/sdd-change assume <question-id> "<assumption>"
+```
+
+### Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `question-id` | Yes | Question ID from SPEC.md (e.g., O1, O2) |
+| `assumption` | Yes | The assumption being made |
+
+### Flow
+
+1. Find the question in SPEC.md Requirements Discovery section
+2. Update status from OPEN to ASSUMED
+3. Record assumption text with "Assumption:" prefix
+4. Check if any OPEN questions remain
+
+### Output
+
+```
+Recording assumption for O1...
+
+Question: What are the password requirements?
+Assumption: Industry standard - 8+ chars, mixed case, number required
+
+Status: ASSUMED
+
+⚠️  Assumptions should be verified before production deployment.
+
+Open questions remaining: 2 (O2, O3)
+```
+
+---
+
+## Action: regress
+
+Go back to an earlier phase (e.g., from planning back to spec).
+
+### Usage
+
+```
+/sdd-change regress <change-id> --to <phase> --reason "<reason>"
+```
+
+### Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `change-id` | Yes | The change to regress |
+| `--to` | Yes | Target phase: `spec` or `plan` |
+| `--reason` | Yes | Reason for regression |
+
+### Flow
+
+1. Validate change exists
+2. Archive current state to `.sdd/archive/regressions/`
+3. Reset status fields for target phase and later
+4. Flag dependent items for re-review
+5. Log regression reason
+
+### Output
+
+```
+Regressing a1b2-1 to spec phase...
+
+Reason: Need to add OAuth support
+
+Archived:
+  PLAN.md → .sdd/archive/regressions/a1b2-1/20260205-120000/PLAN.md
+
+Status changes:
+  spec_status: approved → needs_rereview
+  plan_status: approved → pending
+
+Dependent items flagged for re-review:
+  a1b2-2 (Authentication) - depends on a1b2-1
+
+NEXT STEPS:
+  Edit SPEC.md to add OAuth requirements
+  Then run: /sdd-change approve spec a1b2-1
+```
+
+---
+
+## Action: request-changes
+
+Request changes during the review phase.
+
+### Usage
+
+```
+/sdd-change request-changes <change-id> --reason "<reason>"
+```
+
+### Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `change-id` | Yes | The change to request changes for |
+| `--reason` | Yes | What changes are needed |
+
+### Flow
+
+1. Validate change exists and `review_status: ready_for_review`
+2. Update `review_status: changes_requested`
+3. Log the reason in workflow state
+4. Reset `impl_status` to allow re-implementation
+
+### Output
+
+```
+Requesting changes for: a1b2-1 (Registration)
+
+Reason: Error messages need to be more user-friendly
+
+Status changes:
+  review_status: ready_for_review → changes_requested
+  impl_status: complete → in_progress
+
+NEXT STEPS:
+  Address the feedback
+  Then run: /sdd-change review a1b2-1
 ```
 
 ---

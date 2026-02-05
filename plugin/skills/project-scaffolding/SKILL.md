@@ -175,3 +175,63 @@ skills/project-scaffolding/templates/
     ├── SNAPSHOT.md
     └── glossary.md
 ```
+
+## .gitignore Rules
+
+**CRITICAL: The `.sdd/` directory MUST be version controlled.**
+
+The generated `.gitignore` should:
+- Include standard ignores (node_modules, build artifacts, IDE files)
+- **NEVER include `.sdd/` or any `.sdd/*` patterns**
+- **NEVER include `specs/` or `changes/` directories**
+
+### Required .gitignore Content
+
+```gitignore
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+
+# Test coverage
+coverage/
+
+# IMPORTANT: .sdd/ is NOT ignored - it contains version-controlled SDD artifacts
+# Do NOT add .sdd/ to this file
+```
+
+### Repair Behavior
+
+When running in repair/upgrade mode, check existing `.gitignore`:
+1. If `.sdd` or `.sdd/` pattern exists, remove it
+2. If `specs/` pattern exists, remove it
+3. If `changes/` pattern exists, remove it
+4. Log warning: "Removed .sdd from .gitignore - SDD artifacts must be version controlled"
+
+## Related Skills
+
+- **config-scaffolding**: Scaffolds config components (separate from project scaffolding)
+- **backend-scaffolding**: Scaffolds server/backend components
+- **frontend-scaffolding**: Scaffolds webapp components
+- **database-scaffolding**: Scaffolds database components

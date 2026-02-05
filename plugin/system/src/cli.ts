@@ -28,8 +28,9 @@ import { handleContract } from '@/commands/contract';
 import { handleConfig } from '@/commands/config';
 import { handleEnvironment } from '@/commands/env';
 import { handlePermissions } from '@/commands/permissions';
+import { handleWorkflow } from '@/commands/workflow';
 
-const NAMESPACES = ['scaffolding', 'spec', 'version', 'hook', 'database', 'contract', 'config', 'env', 'permissions'] as const;
+const NAMESPACES = ['scaffolding', 'spec', 'version', 'hook', 'database', 'contract', 'config', 'env', 'permissions', 'workflow'] as const;
 type Namespace = (typeof NAMESPACES)[number];
 
 const HELP_TEXT = `
@@ -89,6 +90,9 @@ Namespaces:
   permissions   Permission management
     configure   Merge SDD recommended permissions into project settings
 
+  workflow      Workflow phase gate management
+    check-gate  Check if prerequisites are met to advance to target phase
+
 Global Options:
   --json        JSON output mode
   --verbose     Verbose logging
@@ -118,6 +122,7 @@ const COMMAND_HANDLERS: Readonly<Record<Namespace, CommandHandler>> = {
   config: handleConfig,
   env: handleEnvironment,
   permissions: handlePermissions,
+  workflow: handleWorkflow,
 };
 
 const showHelp = (options: GlobalOptions): CommandResult => {

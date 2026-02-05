@@ -375,3 +375,59 @@ runs:
       input_tokens: 140
       output_tokens: 677
       total_tokens: 817
+  - timestamp: "2026-02-05T21:14:02.405Z"
+    plugin_version: "6.0.0"
+    test_file: "tests/src/tests/workflows/sdd-change-new.test.ts"
+    test_name: "change-new-feature"
+    turn_count: 25
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 27
+        output_tokens: 366
+        total_tokens: 393
+    total:
+      input_tokens: 27
+      output_tokens: 366
+      total_tokens: 393
+  - timestamp: "2026-02-05T21:16:46.903Z"
+    plugin_version: "6.0.0"
+    test_file: "tests/src/tests/workflows/sdd-change-new.test.ts"
+    test_name: "change-new-feature"
+    turn_count: 28
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 110
+        output_tokens: 421
+        total_tokens: 531
+    total:
+      input_tokens: 110
+      output_tokens: 421
+      total_tokens: 531
+  - timestamp: "2026-02-05T21:24:33.399Z"
+    plugin_version: "6.0.0"
+    test_file: "tests/src/tests/workflows/sdd-change-new.test.ts"
+    test_name: "change-new-feature"
+    turn_count: 30
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 77
+        output_tokens: 488
+        total_tokens: 565
+    total:
+      input_tokens: 77
+      output_tokens: 488
+      total_tokens: 565
+  - timestamp: "2026-02-05T21:40:36.322Z"
+    plugin_version: "6.0.0"
+    test_file: "tests/src/tests/workflows/sdd-change-new.test.ts"
+    test_name: "change-new-feature"
+    turn_count: 23
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 2061
+        output_tokens: 397
+        total_tokens: 2458
+    total:
+      input_tokens: 2061
+      output_tokens: 397
+      total_tokens: 2458

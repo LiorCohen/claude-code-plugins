@@ -352,6 +352,24 @@ sdd-init NEVER overwrites existing files:
 
 ---
 
+## Available Component Types
+
+Components are scaffolded on-demand when your first change needs them. Available types:
+
+| Type | Description |
+|------|-------------|
+| **Server** | Node.js/TypeScript backend with CMDO architecture |
+| **Webapp** | React/TypeScript frontend with MVVM pattern |
+| **Database** | PostgreSQL migrations, seeds, and management scripts |
+| **Contract** | OpenAPI specifications and type generation |
+| **Helm** | Kubernetes deployment charts |
+| **Testing** | Testkube test definitions |
+| **CI/CD** | GitHub Actions workflow definitions |
+
+When you run `/sdd-change new`, the system will scaffold needed components automatically.
+
+---
+
 ## Important Notes
 
 - **No arguments needed** - project name from current directory

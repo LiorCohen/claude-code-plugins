@@ -153,27 +153,48 @@ spec_outline: <pre-extracted outline with line ranges>
 spec_content: <full spec content>
 default_domain: <primary domain>
 include_thinking: true  # Enable comprehensive domain analysis
+
+# NEW: Accept transformation and discovery output
+classified_transformation:  # From external-spec-integration transformation step
+  domain_knowledge: {...}
+  constraints: {...}
+  requirements: {...}
+  design_details: {...}
+  gaps: {...}
+  clarifications: [...]
+  assumptions: [...]
+
+discovered_components:  # From component-discovery skill
+  - type: server
+    reason: "..."
+  - type: webapp
+    reason: "..."
 ```
 
 **Algorithm:**
 
 1. Group sections by H1 headers (each H1 becomes an epic)
 2. Within each H1, H2/H3 sections become features
-3. **Thinking Step** (if include_thinking=true):
+3. **Use transformation output** (if provided):
+   - Pre-classified requirements inform decomposition
+   - Gaps identify areas needing solicitation focus
+   - Assumptions document what was pre-determined
+4. **Thinking Step** (if include_thinking=true):
    - Domain Analysis (entities, relationships, glossary, bounded contexts)
    - Specs Impact Analysis (before/after, new vs modified)
    - Gap Analysis (what's missing or assumed)
-   - Component Mapping (which components affected)
-4. Build dependency graph:
+   - Component Mapping (which components affected - use discovered_components)
+5. **Build dependency graph**:
    - Features depend on other features (based on concept/API references)
    - Epics depend on other epics (if any feature depends on another epic's feature)
-5. **API-First Ordering** (topological sort with priority):
+   - **Store dependencies in decomposition output for workflow.yaml**
+6. **API-First Ordering** (topological sort with priority):
    - API Contracts / Interfaces first
    - Data Models / Database second
    - Backend Services / Business Logic third
    - Frontend Components / UI fourth
    - Infrastructure / DevOps last
-6. Assign numbers: 01, 02, 03, etc.
+7. Assign numbers: 01, 02, 03, etc.
 
 **Output (HierarchicalDecompositionResult):**
 
@@ -237,6 +258,41 @@ epics:
 shared_concepts: ["User", "Session", "Token"]
 suggested_epic_order: [e1, e2, e3]
 warnings: []
+
+# Dependencies (for workflow.yaml)
+dependency_graph:
+  items:
+    - id: f1
+      depends_on: []
+    - id: f2
+      depends_on: [f1]  # Authentication depends on Registration
+    - id: f3
+      depends_on: [f2]  # Password Reset depends on Authentication
+    - id: f4
+      depends_on: [f1]  # Analytics depends on User model from Registration
+    - id: f5
+      depends_on: [f4]
+  epics:
+    - id: e1
+      depends_on: []
+    - id: e2
+      depends_on: [e1]  # Dashboard depends on User Management
+    - id: e3
+      depends_on: [e1]  # Billing depends on User Management
+
+# Components mapping (from discovered_components or derived)
+components_per_item:
+  f1: [server, database, contract]
+  f2: [server, contract, webapp]
+  f3: [server, contract, webapp]
+  f4: [server, webapp]
+  f5: [webapp]
+
+# Transformation data (passed through for context files)
+transformation_data:
+  clarifications: <from input>
+  assumptions: <from input>
+  gaps: <from input>
 
 # Thinking Step Output (if include_thinking=true)
 thinking:
