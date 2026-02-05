@@ -60,6 +60,7 @@
 
 ## Inbox (unprioritized)
 
+- [#80](1-inbox/80/): Plans should become YAML files
 - [#76](1-inbox/76/): Git worktrees for parallel spec/plan execution
 - [#74](1-inbox/74/): Task performance scoring system
 - [#72](1-inbox/72/): Fix broken test benchmarks

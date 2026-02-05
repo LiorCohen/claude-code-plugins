@@ -1,0 +1,22 @@
+---
+id: 80
+title: Plans should become YAML files
+priority:
+status: open
+created: 2026-02-04
+depends_on: []
+blocks: []
+---
+
+# Task 80: Plans should become YAML files
+
+## Description
+
+Convert plan files from markdown format (`plan.md`) to YAML format (`plan.yaml`). This would make plans machine-readable and easier to parse programmatically, while maintaining human readability.
+
+## Acceptance Criteria
+
+- [ ] Plans are stored as YAML files instead of markdown
+- [ ] Plan schema is defined and documented
+- [ ] Existing plans are migrated to the new format
+- [ ] Task management skill updated to handle YAML plans
