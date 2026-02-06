@@ -408,13 +408,15 @@ User: /tasks implement 19
 ```
 
 **Workflow:**
-1. Create and switch to a feature branch (e.g., `feature/task-19-<slug>`)
-2. Find task folder
-3. Move folder to `4-implementing/`
-4. Update `task.md` frontmatter: `status: implementing`
-5. Update INDEX.md
+1. Create a feature branch (e.g., `feature/task-19-<slug>`)
+2. Create a git worktree at `.worktrees/task-<id>/` on that branch
+3. Find task folder
+4. Move folder to `4-implementing/`
+5. Update `task.md` frontmatter: `status: implementing`
+6. Update INDEX.md
+7. Confirm with the worktree path (e.g., "Worktree created at `.worktrees/task-19/`")
 
-**IMPORTANT:** Always create a side branch before implementing. Never implement directly on main.
+**IMPORTANT:** Always create a side branch before implementing. Never implement directly on main. The worktree keeps main available in the primary working directory while implementation happens in the worktree.
 
 ### Submit for Review
 
@@ -441,6 +443,8 @@ User: /tasks complete 7
 2. Move folder to `6-complete/`
 3. Update `task.md` frontmatter: `status: complete`, add `completed` date
 4. Update INDEX.md
+5. If a worktree exists at `.worktrees/task-<id>/`, remove it with `git worktree remove`
+6. Delete the feature branch if it has been merged
 
 ### Reject Task
 
@@ -485,7 +489,7 @@ User: /tasks consolidate 28 into 27
 
 1. **Inbox first** - New tasks go to inbox, prioritize later
 2. **Keep atomic** - One clear outcome per task
-3. **Branch before implementing** - Always create a feature branch before starting work
+3. **Worktree per task** - `/tasks implement` creates a worktree at `.worktrees/task-<id>/`, keeping main clean
 4. **Consolidate related** - Don't duplicate effort
 5. **Preserve on consolidate** - Never lose original task content when consolidating
 6. **Update both** - Task folder AND INDEX.md must stay in sync
@@ -537,7 +541,7 @@ When the user gives task-related instructions, **automatically move the task to 
 |------------------|-----------------|--------|
 | "Plan task 19" / "Create a plan for #19" | `planning` | Move to `2-planning/`, create `plan.md` |
 | "Task 19 is ready" / "Mark #19 ready" | `ready` | Move to `3-ready/` |
-| "Let's work on task 19" / "Implement #19" | `implementing` | Move to `4-implementing/`, create branch |
+| "Let's work on task 19" / "Implement #19" | `implementing` | Move to `4-implementing/`, create branch + worktree |
 | "Task 19 is ready for review" / "Submit #19" | `reviewing` | Move to `5-reviewing/` |
 | "Task 19 is done" / "Complete #19" | `complete` | Move to `6-complete/`, add completion date |
 | "Reject task 19" / "Close #19 as wontfix" | `rejected` | Move to `7-rejected/` |

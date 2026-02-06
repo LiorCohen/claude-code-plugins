@@ -10,6 +10,9 @@ test-apps/
 # Claude prompts
 prompts/
 
+# Worktrees
+.worktrees/
+
 # Python
 __pycache__/
 *.pyc
