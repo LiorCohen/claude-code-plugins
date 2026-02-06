@@ -54,6 +54,7 @@
 - **manifest-validation** - Validate plugin/marketplace manifests before commits
 - **plugin-testing-standards** - Follow when writing or modifying tests
 - **typescript-standards** - Follow when writing TypeScript code
+- **skills-standards** - Follow when creating or reviewing skills
 
 ## Repository Structure
 
@@ -67,7 +68,8 @@ sdd/
 │       ├── tasks/                    # Task management skill
 │       ├── manifest-validation/      # Validate plugin manifests
 │       ├── plugin-testing-standards/ # Testing methodology for plugins
-│       └── typescript-standards/     # TypeScript coding standards
+│       ├── typescript-standards/     # TypeScript coding standards
+│       └── skills-standards/        # Standards for authoring skills
 ├── .claude-plugin/
 │   └── marketplace.json              # Marketplace manifest
 ├── .tasks/                              # Task data
