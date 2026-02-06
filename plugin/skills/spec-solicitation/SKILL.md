@@ -1,6 +1,7 @@
 ---
 name: spec-solicitation
 description: Guided requirements gathering skill for interactive spec creation. Used for ALL spec creation - both interactive and external spec paths. Uses non-blocking conversational interaction.
+user-invocable: false
 ---
 
 # Spec Solicitation Skill

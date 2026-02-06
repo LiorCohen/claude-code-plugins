@@ -1,6 +1,7 @@
 ---
 name: scaffolding
 description: Orchestrates project scaffolding using component-specific scaffolding skills.
+user-invocable: false
 ---
 
 # Scaffolding Skill

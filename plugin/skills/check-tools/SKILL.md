@@ -1,3 +1,9 @@
+---
+name: check-tools
+description: Verify that required and optional tools are installed before running SDD commands.
+user-invocable: false
+---
+
 # Check Tools Skill
 
 Verify that required and optional tools are installed before running SDD commands.

@@ -1,6 +1,7 @@
 ---
 name: database-scaffolding
 description: Scaffolds PostgreSQL database component with migrations, seeds, and management scripts.
+user-invocable: false
 ---
 
 # Database Scaffolding Skill

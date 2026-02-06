@@ -1,6 +1,7 @@
 ---
 name: frontend-scaffolding
 description: Scaffolds React/TypeScript frontend components with MVVM architecture.
+user-invocable: false
 ---
 
 # Frontend Scaffolding Skill

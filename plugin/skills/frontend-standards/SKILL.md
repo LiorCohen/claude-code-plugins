@@ -1,6 +1,7 @@
 ---
 name: frontend-standards
 description: MVVM architecture standards for React/TypeScript frontends with TanStack ecosystem and TailwindCSS.
+user-invocable: false
 ---
 
 

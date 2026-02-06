@@ -1,6 +1,7 @@
 ---
 name: change-creation
 description: Create change specification and implementation plan with dynamic phase generation. Supports feature, bugfix, refactor, and epic types.
+user-invocable: false
 ---
 
 # Change Creation Skill

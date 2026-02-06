@@ -1,3 +1,9 @@
+---
+name: local-env
+description: Manage local Kubernetes development environments for SDD projects.
+user-invocable: false
+---
+
 # Local Environment Skill
 
 Manage local Kubernetes development environments for SDD projects.

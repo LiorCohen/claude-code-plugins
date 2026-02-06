@@ -1,6 +1,7 @@
 ---
 name: project-scaffolding
 description: Scaffolds project-level structure (root files, specs).
+user-invocable: false
 ---
 
 # Project Scaffolding Skill

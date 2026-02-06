@@ -1,6 +1,7 @@
 ---
 name: domain-population
 description: Populate domain specs (glossary, entity definitions, use-cases) from discovery results.
+user-invocable: false
 ---
 
 # Domain Population Skill

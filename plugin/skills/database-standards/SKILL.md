@@ -1,6 +1,7 @@
 ---
 name: database-standards
 description: PostgreSQL database standards for migrations, seeds, and schema management.
+user-invocable: false
 ---
 
 # Database Standards Skill

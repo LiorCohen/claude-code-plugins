@@ -1,6 +1,7 @@
 ---
 name: spec-index
 description: Manage spec registry and generate snapshots.
+user-invocable: false
 ---
 
 

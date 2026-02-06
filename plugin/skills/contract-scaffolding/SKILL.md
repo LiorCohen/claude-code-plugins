@@ -1,6 +1,7 @@
 ---
 name: contract-scaffolding
 description: Scaffolds OpenAPI contract component with type generation.
+user-invocable: false
 ---
 
 # Contract Scaffolding Skill

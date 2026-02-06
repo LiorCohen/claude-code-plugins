@@ -1,6 +1,7 @@
 ---
 name: workflow-state
 description: Internal skill for managing workflow lifecycle state in .sdd/workflows/. Provides session-independent, resumable workflow tracking.
+user-invocable: false
 ---
 
 # Workflow State Skill

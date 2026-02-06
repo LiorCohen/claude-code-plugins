@@ -1,6 +1,7 @@
 ---
 name: testing-standards
 description: Standards for test suites including unit, integration, and e2e tests with Testkube.
+user-invocable: false
 ---
 
 # Testing Standards Skill

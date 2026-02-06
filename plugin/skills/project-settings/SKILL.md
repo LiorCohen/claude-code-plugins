@@ -1,6 +1,7 @@
 ---
 name: project-settings
 description: Manage project settings in .sdd/sdd-settings.yaml including component settings that drive scaffolding.
+user-invocable: false
 ---
 
 # Project Settings Skill

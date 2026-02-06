@@ -1,6 +1,7 @@
 ---
 name: epic-planning
 description: Templates and guidelines for epic-level planning with multiple feature changes.
+user-invocable: false
 ---
 
 

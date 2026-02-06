@@ -1,6 +1,7 @@
 ---
 name: e2e-testing
 description: End-to-end testing with Playwright - browser automation, visual regression, test data management.
+user-invocable: false
 ---
 
 

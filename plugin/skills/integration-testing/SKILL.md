@@ -1,6 +1,7 @@
 ---
 name: integration-testing
 description: Integration testing patterns - database setup/teardown, API testing, contract testing, and Testkube execution.
+user-invocable: false
 ---
 
 

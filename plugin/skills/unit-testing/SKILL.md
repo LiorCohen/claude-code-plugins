@@ -1,6 +1,7 @@
 ---
 name: unit-testing
 description: Unit testing patterns with Vitest - mocking, fixtures, isolation, and fast feedback.
+user-invocable: false
 ---
 
 

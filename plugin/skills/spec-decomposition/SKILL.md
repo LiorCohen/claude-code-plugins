@@ -1,6 +1,7 @@
 ---
 name: spec-decomposition
 description: Analyze specifications and decompose into independent changes.
+user-invocable: false
 ---
 
 # Spec Decomposition Skill

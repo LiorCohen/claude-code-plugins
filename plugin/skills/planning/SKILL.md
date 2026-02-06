@@ -1,6 +1,7 @@
 ---
 name: planning
 description: Templates and guidance for implementation plans with dynamic phase generation.
+user-invocable: false
 ---
 
 # Planning Skill

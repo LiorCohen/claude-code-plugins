@@ -1,6 +1,7 @@
 ---
 name: backend-scaffolding
 description: Scaffolds Node.js/TypeScript backend components with CMDO architecture, driven by component settings.
+user-invocable: false
 ---
 
 # Backend Scaffolding Skill

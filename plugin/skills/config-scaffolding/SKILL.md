@@ -1,6 +1,7 @@
 ---
 name: config-scaffolding
 description: Scaffolds the config component for centralized configuration management, driven by component settings.
+user-invocable: false
 ---
 
 # Config Scaffolding Skill

@@ -1,6 +1,7 @@
 ---
 name: spec-writing
 description: Templates and validation for writing product specifications.
+user-invocable: false
 ---
 
 

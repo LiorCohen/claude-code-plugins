@@ -1,6 +1,7 @@
 ---
 name: postgresql
 description: "PostgreSQL database agent: deploy locally (Docker/K8s), manage schemas, run queries, analyze performance, configure permissions, and seed data."
+user-invocable: false
 ---
 
 # PostgreSQL Skill

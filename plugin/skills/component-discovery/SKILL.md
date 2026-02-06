@@ -1,6 +1,7 @@
 ---
 name: component-discovery
 description: Discover required technical components through targeted questions based on classified requirements.
+user-invocable: false
 ---
 
 # Component Discovery Skill

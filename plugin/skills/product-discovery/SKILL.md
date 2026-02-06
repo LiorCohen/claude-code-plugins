@@ -1,6 +1,7 @@
 ---
 name: product-discovery
 description: Interactive discovery of product requirements through adaptive questioning.
+user-invocable: false
 ---
 
 # Product Discovery Skill

@@ -1,6 +1,7 @@
 ---
 name: external-spec-integration
 description: Process external specifications through transformation, classification, gap analysis, component discovery, and decomposition. Creates workflow items with classified context.
+user-invocable: false
 ---
 
 # External Spec Integration Skill

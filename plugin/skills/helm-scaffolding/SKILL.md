@@ -1,6 +1,7 @@
 ---
 name: helm-scaffolding
 description: Scaffolds Helm charts for SDD components, driven by component settings.
+user-invocable: false
 ---
 
 # Helm Scaffolding Skill
