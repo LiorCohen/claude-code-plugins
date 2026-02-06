@@ -49,9 +49,8 @@ When a user provides an external specification via `/sdd-change new --spec`:
 | `spec_path` | Yes | Absolute path to the external specification file |
 | `spec_outline` | Yes | Pre-extracted outline from sdd-change (sections with line ranges) |
 | `target_dir` | Yes | Absolute path to the project directory |
-| `primary_domain` | Yes | Primary domain for the project |
+| `primary_domain` | No | Primary domain for the project (inferred from spec if not set) |
 | `workflow_id` | Yes | Workflow ID from workflow-state skill |
-| `discovery_results` | No | Results from product-discovery skill |
 
 ## Output
 

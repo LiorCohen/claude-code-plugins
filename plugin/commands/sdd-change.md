@@ -125,25 +125,13 @@ INVOKE workflow-state.create_workflow with:
 
 Returns `workflow_id` for tracking.
 
-#### Step 4: Discovery Skills (Mandatory)
+#### Step 4: Component Discovery
 
 ```yaml
-# Product discovery
-INVOKE product-discovery skill with:
+INVOKE component-discovery skill with:
   change_name: <from arguments>
   change_type: <from arguments>
-  mode: "change"
-
-# Component discovery
-INVOKE component-discovery skill with:
-  discovery_results: <from above>
   existing_components: <from sdd-settings.yaml>
-
-# Domain population
-INVOKE domain-population skill with:
-  target_dir: <current directory>
-  discovery_results: <from above>
-  change_name: <from arguments>
 ```
 
 #### Step 5: On-Demand Component Scaffolding
@@ -262,18 +250,7 @@ INVOKE component-discovery skill with:
 This runs ONCE for the entire external spec (not per-item).
 Output is documented in SPEC.md, NOT applied to sdd-settings.yaml yet.
 
-#### Step 7: Product Discovery
-
-```yaml
-INVOKE product-discovery skill with:
-  spec_outline: <from step 2>
-  spec_path: <absolute path>
-  mode: "external-spec"
-```
-
-Note: Does NOT ask about tech stack (that's handled by component-discovery).
-
-#### Step 8: Create Workflow
+#### Step 7: Create Workflow
 
 ```yaml
 INVOKE workflow-state.create_workflow with:
@@ -281,7 +258,7 @@ INVOKE workflow-state.create_workflow with:
   external_source: .sdd/archive/external-specs/20260205-feature-spec.md
 ```
 
-#### Step 9: Decomposition (with Thinking Step)
+#### Step 8: Decomposition (with Thinking Step)
 
 ```yaml
 INVOKE spec-decomposition skill with:
@@ -290,7 +267,7 @@ INVOKE spec-decomposition skill with:
   spec_content: <full content>
   classified_transformation: <from step 5>
   discovered_components: <from step 6>
-  default_domain: <from sdd-settings.yaml or discovery>
+  default_domain: <from sdd-settings.yaml>
 ```
 
 The skill performs:
@@ -301,7 +278,7 @@ The skill performs:
 5. Component Mapping (from discovery)
 6. API-First Ordering
 
-#### Step 10: Present Decomposition
+#### Step 9: Present Decomposition
 
 Display the hierarchical structure with epics and features:
 
@@ -332,7 +309,7 @@ Options:
   [C] Cancel
 ```
 
-#### Step 11: Create Workflow Items
+#### Step 10: Create Workflow Items
 
 For each accepted item:
 ```yaml
@@ -345,7 +322,7 @@ INVOKE workflow-state.create_item with:
   depends_on: <dependencies>
 ```
 
-#### Step 12: Begin Solicitation for First Item
+#### Step 11: Begin Solicitation for First Item
 
 ```yaml
 INVOKE spec-solicitation skill with:
@@ -356,7 +333,7 @@ INVOKE spec-solicitation skill with:
 
 **IMPORTANT**: Unlike the old flow, we do NOT create all SPEC.md files at once. Each spec is created interactively as the user works through items one at a time.
 
-#### Step 13: Display Next Steps
+#### Step 12: Display Next Steps
 
 ```
 ===============================================================

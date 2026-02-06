@@ -38,24 +38,12 @@ claude
 ### Step 1.2: Run SDD Init
 
 ```
-/sdd-init --name restaurant-app
+/sdd-init
 ```
 
-SDD guides you through product discovery with questions about your application.
+SDD verifies your environment, detects the project name from the directory, and creates a minimal project structure with just a config component.
 
-**Answer the questions:**
-
-| Question | Your Answer |
-|----------|-------------|
-| What does your product do? | A restaurant management system for viewing menus and placing orders |
-| Who are the users? | Restaurant staff and customers |
-| What's the primary domain? | Restaurant Operations |
-| What type of application? | Fullstack |
-
-SDD recommends components based on your answers. Accept the defaults:
-- config, contract, server, webapp, database, helm, testing, cicd
-
-Type `yes` to approve and SDD scaffolds your project structure.
+Components are scaffolded on-demand when you create your first change.
 
 ### Step 1.3: Install Dependencies
 
@@ -267,7 +255,7 @@ git checkout main && git merge feature/your-feature
 
 | Step | Command |
 |------|---------|
-| Initialize project | `/sdd-init --name <name>` |
+| Initialize project | `/sdd-init` |
 | Create feature spec | `/sdd-change new --type feature --name <name>` |
 | Approve spec | `/sdd-change approve spec <change-id>` |
 | Approve plan | `/sdd-change approve plan <change-id>` |

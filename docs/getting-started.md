@@ -119,7 +119,7 @@ SDD uses a **change-driven** approach:
 3. **Domain grows organically** - Glossary and definitions populated from your changes
 
 This means:
-- No upfront product discovery or architecture decisions
+- No upfront architecture decisions needed
 - Each change adds exactly what it needs
 - Your project structure reflects what you've actually built
 
@@ -140,7 +140,7 @@ After creating your change spec, review and approve it:
 | **Minimal init** | Only creates config component; everything else on-demand |
 | **On-demand scaffolding** | Components created when first change needs them |
 | **Change-driven** | Every feature, bugfix, or refactor starts as a change spec |
-| **Discovery per change** | Product understanding grows with each change |
+| **Component discovery** | Required components identified per change |
 
 ## Next Steps
 
