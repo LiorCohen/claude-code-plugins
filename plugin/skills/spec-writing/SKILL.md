@@ -106,7 +106,7 @@ updated: YYYY-MM-DD
 
 ### Validation Rules
 
-Run `scripts/validate-spec.py <path>` to check:
+Run `npx sdd-system spec validate <path>` to check:
 - Required frontmatter fields present based on `spec_type`
 - Acceptance criteria in Given/When/Then format (tech specs only)
 - All referenced definitions exist in domain glossary

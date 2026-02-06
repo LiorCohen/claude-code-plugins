@@ -89,14 +89,14 @@ Supports multiple named frontend instances:
 
 Called programmatically by the scaffolding script:
 
-```python
-from frontend_scaffolding import scaffold_frontend
+```typescript
+import { scaffoldFrontend } from './frontend-scaffolding';
 
-scaffold_frontend(
-    target_dir="/path/to/project",
-    component_name="admin",         # Creates webapp-admin/
-    project_name="my-app",
-)
+scaffoldFrontend({
+  targetDir: '/path/to/project',
+  componentName: 'admin',         // Creates webapp-admin/
+  projectName: 'my-app',
+});
 ```
 
 ## Templates Location
