@@ -15,6 +15,20 @@
     "index_updated": {
       "type": "boolean",
       "description": "Whether changes/INDEX.md was updated with the new change entry"
+    },
+    "child_specs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Paths to child change SPEC.md files (for epic type changes)"
+    },
+    "child_plans": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Paths to child change PLAN.md files (for epic type changes)"
     }
   },
   "required": [

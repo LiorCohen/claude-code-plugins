@@ -203,7 +203,7 @@ Each phase should result in a reviewable PR:
 
 ## Epic Plans
 
-For `type: epic` changes, use the `epic-planning` skill. Epics contain multiple feature-type changes in a `changes/` subdirectory, each with its own SPEC.md and PLAN.md.
+For `type: epic` changes, delegate to the `change-creation` skill with `type: epic`. It handles the full epic lifecycle: directory structure, parent and child SPEC.md/PLAN.md creation, workflow tracking, and implementation sequencing.
 
 ---
 

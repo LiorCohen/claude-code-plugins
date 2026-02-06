@@ -76,6 +76,48 @@
         "type": "string"
       },
       "description": "Component names from sdd-settings.yaml affected by this change"
+    },
+    "child_changes": {
+      "type": "array",
+      "description": "Child change definitions for epic type changes",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Child change directory name"
+          },
+          "title": {
+            "type": "string",
+            "description": "Child change display title"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the child change"
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Names of other child changes this one depends on"
+          }
+        }
+      }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Epic-level acceptance criteria (for epic type changes)"
+    },
+    "cross_cutting_concerns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Cross-cutting concerns spanning multiple child changes (for epic type changes)"
     }
   },
   "required": [

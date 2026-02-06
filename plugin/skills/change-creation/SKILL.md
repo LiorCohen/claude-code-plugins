@@ -231,6 +231,57 @@ Each phase should result in a reviewable PR:
 2. Each sub-phase gets its own PR
 3. Document splits in plan
 
+## Epic Lifecycle
+
+Epics group multiple feature-type changes under a single goal. The creation workflow (Steps 1-8 above) handles epic SPEC.md and PLAN.md generation using the `epic` type templates. This section covers epic-specific tracking, implementation, and failure handling.
+
+### Workflow Tracking
+
+Epics are tracked in `.sdd/workflows/<workflow-id>/workflow.yaml`:
+
+```yaml
+items:
+  - id: 01-user-management
+    title: User Management
+    type: epic
+    status: pending
+    children:
+      - id: 01-registration
+        change_id: a1b2-1
+        title: Registration
+        type: feature
+        status: pending
+```
+
+- Epic items have `type: epic` and a `children` array
+- Only leaf features get change_ids (epics don't)
+- Epic status is derived from child statuses
+
+### Implementing an Epic
+
+For each child change, in dependency order:
+
+1. **Branch**: `git checkout -b epic/<epic-name>/<change-name>`
+2. **Implement**: Follow the child change's PLAN.md (standard feature implementation)
+3. **Test**: Ensure all tests pass
+4. **PR**: Create PR with change scope (one PR per child change)
+5. **Review**: Get approval
+6. **Merge**: Merge to main
+7. **Update**: Mark change complete in epic PLAN.md
+
+### Handling Failures
+
+If a child change fails review:
+1. Address feedback on the change branch
+2. Do NOT modify other change branches
+3. Re-submit for review
+
+If requirements change mid-epic:
+1. Update parent SPEC.md
+2. Update affected child SPECs
+3. Re-plan affected changes
+4. Document changes in epic PLAN.md
+
 ## Spec Validation Rules
 
 ### Required Frontmatter Fields
