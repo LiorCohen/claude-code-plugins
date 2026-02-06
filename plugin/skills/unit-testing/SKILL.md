@@ -28,7 +28,7 @@ Fast, isolated tests that verify individual functions and modules. Unit tests ru
 
 Place test files next to the code they test:
 
-```
+```text
 src/model/use-cases/
 ├── create_user.ts
 ├── create_user.test.ts      # Unit test for create_user
@@ -394,3 +394,9 @@ Before committing unit tests, verify:
 - [ ] All async operations properly awaited
 - [ ] Error scenarios tested
 - [ ] Tests run fast (< 100ms per test)
+
+---
+
+## Input / Output
+
+This skill defines no input parameters or structured output.

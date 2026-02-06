@@ -1,6 +1,6 @@
 ---
 name: spec-solicitation
-description: Guided requirements gathering skill for interactive spec creation. Used for ALL spec creation - both interactive and external spec paths. Uses non-blocking conversational interaction.
+description: Guided requirements gathering through structured questions to create comprehensive specifications. Produces a complete requirements document via non-blocking conversational interaction.
 user-invocable: false
 ---
 
@@ -70,25 +70,15 @@ This includes:
 
 ## Input
 
-| Parameter | Required | Description |
-|-----------|----------|-------------|
-| `change_id` | Yes | The change ID from workflow-state (e.g., `a1b2-1`) |
-| `workflow_id` | Yes | The workflow ID (e.g., `a1b2c3`) |
-| `context_path` | No | Path to context.md (for external spec items) |
-| `resume` | No | If true, resume from solicitation-workflow.yaml |
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts change ID, workflow ID, optional context path, and resume flag.
 
 ## Output
 
-```yaml
-success: true
-spec_content: |
-  ---
-  title: ...
-  ---
-  # Spec content...
-spec_path: .sdd/workflows/a1b2c3/drafts/01-api-contracts/SPEC.md
-status: spec_review  # Ready for user review
-```
+Schema: [`output.schema.json`](./output.schema.json)
+
+Returns success status, complete SPEC.md content, save path, and review status.
 
 ## solicitation-workflow.yaml Schema
 
@@ -284,7 +274,7 @@ Questions to ask:
 
 **For Server (if discovered):**
 
-```
+```text
 For each entity derived from UI:
   - What fields does [Entity] have?
   - Which fields are required vs optional?
@@ -299,7 +289,7 @@ For each user action:
 
 **For Database (if discovered):**
 
-```
+```text
   - Entity attributes and types?
   - Required indexes?
   - Soft or hard deletes?
@@ -308,7 +298,7 @@ For each user action:
 
 **For API Contract (if discovered):**
 
-```
+```text
   - Request/response schemas for each endpoint?
   - Error codes and messages?
   - Authentication method?
@@ -318,7 +308,7 @@ For each user action:
 **For Webapp (if discovered):**
 
 External specs usually have good UI detail. Only ask about:
-```
+```text
   - Loading/empty/error states (if not in mockups)?
   - Any interactions not clear from mockups?
 ```
@@ -331,7 +321,7 @@ On resume (when `resume: true`):
 
 1. Read `solicitation-workflow.yaml`
 2. Display summary of collected answers so far:
-   ```
+   ```text
    Resuming spec solicitation for: API Contracts
 
    Previously collected:
@@ -433,7 +423,7 @@ During spec review, when user provides feedback:
 
 ### Interactive Path (No External Context)
 
-```
+```typescript
 User: /sdd-change new --type feature --name user-auth
 
 Agent: Starting spec solicitation for: user-auth
@@ -460,7 +450,7 @@ Agent: Please review the spec. When satisfied, run /sdd-change approve spec a1b2
 
 ### External Path (With Context)
 
-```
+```yaml
 User: /sdd-change continue
 
 Agent: Resuming workflow a1b2c3
@@ -483,7 +473,7 @@ Agent: Got it. Adding password reset to the requirements.
 
 ### Resume Mid-Solicitation
 
-```
+```yaml
 User: /sdd-change continue
 
 Agent: Resuming spec solicitation for: API Contracts (a1b2-1)

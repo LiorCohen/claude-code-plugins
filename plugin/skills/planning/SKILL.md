@@ -25,21 +25,19 @@ Plans are created as part of the `/sdd-change` workflow:
 5. User reviews and approves plan via `/sdd-change approve plan <change-id>`
 6. Implementation can begin via `/sdd-change implement <change-id>`
 
-**Plan creation is triggered by spec approval**, not by separate command.
+**Plan creation requires an approved SPEC.md** as input — it does not run independently.
 
-### Input from workflow-state
+## Input
 
-When invoked, this skill receives:
-- `change_id`: The workflow-scoped change ID (e.g., `a1b2-1`)
-- `spec_path`: Path to the approved SPEC.md
-- `workflow_id`: Workflow ID for context
+Schema: [`input.schema.json`](./input.schema.json)
 
-### Output to workflow-state
+Accepts change ID, path to approved SPEC.md, and workflow ID.
 
-After plan creation:
-- PLAN.md saved via `workflow_state.save_plan()`
-- Status updated to `plan_review`
-- Checkpoint commit created
+## Output
+
+Schema: [`output.schema.json`](./output.schema.json)
+
+Returns path to created PLAN.md and review status.
 
 ## SPEC.md vs PLAN.md Separation
 
@@ -129,7 +127,7 @@ If SPEC.md says a component is needed but it's not in `sdd-settings.yaml` yet, t
 1. **Read required components** from SPEC.md `## Components` section
 2. **Reference existing components** from `.sdd/sdd-settings.yaml` for details
 3. **Order by dependency graph:**
-   ```
+   ```text
    config ──────┐
                 │
    contract ────┼──→ server (includes DB) ──→ helm

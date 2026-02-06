@@ -44,45 +44,15 @@ Plans are generated dynamically based on:
 
 ## Input
 
-| Parameter | Required | Description |
-|-----------|----------|-------------|
-| `name` | Yes | Directory name (lowercase, hyphens) |
-| `type` | Yes | Change type: `feature`, `bugfix`, `refactor`, or `epic` |
-| `title` | Yes | Display title for the change |
-| `description` | Yes | Brief description (1-2 sentences) |
-| `domain` | Yes | Primary domain (e.g., "Identity", "Billing") |
-| `issue` | No | Issue reference (e.g., "PROJ-123"), defaults to "TBD" |
-| `user_stories` | No | List of user stories (feature type only) |
-| `acceptance_criteria` | No | List of acceptance criteria |
-| `api_endpoints` | No | List of API endpoints affected |
-| `glossary_terms` | No | Domain terms to add/update in glossary |
-| `domain_definitions` | No | Definition specs to create/update |
-| `architecture_updates` | No | Architecture doc updates needed |
-| `external_source` | No | Path to archived external spec (audit trail only) |
-| `source_content` | No | Full markdown content from external spec section |
-| `decomposition_id` | No | UUID linking related changes |
-| `prerequisites` | No | List of prerequisite changes (for dependencies) |
-| `affected_files` | No | List of files affected (bugfix/refactor types) |
-| `affected_components` | No | List of component names from .sdd/sdd-settings.yaml |
-| `root_cause` | No | Root cause description (bugfix type only) |
-| `refactor_goals` | No | List of refactoring goals (refactor type only) |
-| `child_changes` | No | List of child change names (epic type only) |
-| `epic_goal` | No | Overall epic goal (epic type only) |
-| `mode` | No | `spec-only` (no PLAN.md) or `full` (default - both SPEC.md and PLAN.md) |
-| `domain_model` | No | Domain model from thinking step (entities, relationships, glossary, contexts) |
-| `specs_impact` | No | Specs directory changes (before/after, changes summary) |
-| `requirements_discovery` | No | Q&A trail from spec solicitation |
-| `system_analysis` | No | Inferred requirements, gaps, cross-references |
-| `components_list` | No | New and modified components |
-| `workflow_id` | No | Workflow ID for change-id assignment |
-| `change_id` | No | Pre-assigned change ID from workflow-state |
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts change metadata (name, type, title, domain), optional workflow context, and content from spec solicitation or external integration.
 
 ## Output
 
-Returns a result with:
-- `spec_path`: Path to created SPEC.md
-- `plan_path`: Path to created PLAN.md
-- `index_updated`: Boolean indicating INDEX.md was updated
+Schema: [`output.schema.json`](./output.schema.json)
+
+Returns paths to created SPEC.md and PLAN.md files, and whether the index was updated.
 
 ## Workflow
 
@@ -220,7 +190,7 @@ This is a **technical specification**. It must be thorough and self-sufficient -
        |
        v
 [External Service]
-```
+```text
 
 ### Data Model
 
@@ -235,7 +205,7 @@ CREATE TABLE table_name (
   field_2 TIMESTAMP DEFAULT NOW(),
   -- ...
 );
-```
+```sql
 
 **Modified Tables:**
 
@@ -284,7 +254,7 @@ Request:
   "field_1": "string (required)",
   "field_2": "number (optional, default: 0)"
 }
-```
+```json
 
 Response (201):
 ```json
@@ -294,7 +264,7 @@ Response (201):
   "field_2": "number",
   "created_at": "ISO8601"
 }
-```
+```json
 
 Error Responses:
 | Status | Code | Description |
@@ -364,14 +334,14 @@ Error Responses:
 
 ### Relationships
 
-```
+```text
 User ─────────────┐
   │               │
   │ has-many      │ owns
   ▼               ▼
 Session ◄──── AuthToken
         issued-for
-```
+```text
 
 ### Glossary
 
@@ -391,17 +361,17 @@ Session ◄──── AuthToken
 
 ### Before
 
-```
+```text
 specs/
 ├── domain/
 │   └── user.md
 └── api/
     └── users.md
-```
+```text
 
 ### After
 
-```
+```text
 specs/
 ├── domain/
 │   ├── user.md          # MODIFIED - add session relationship
@@ -410,7 +380,7 @@ specs/
 └── api/
     ├── users.md
     └── auth.md          # NEW - authentication endpoints
-```
+```text
 
 ### Changes Summary
 
@@ -581,7 +551,7 @@ specs/
 
 - [Related Spec](path/to/spec.md)
 - [External Doc](https://example.com)
-```
+```markdown
 
 **For `type: bugfix`:**
 
@@ -678,7 +648,7 @@ This is a **technical specification** for a refactoring. It must document the cu
 
 ```
 [Current architecture diagram]
-```
+```typescript
 
 ### Code Metrics
 
@@ -702,7 +672,7 @@ This is a **technical specification** for a refactoring. It must document the cu
 ```typescript
 // Example of current problematic code
 [code snippet]
-```
+```typescript
 
 ## Proposed Design
 
@@ -710,9 +680,9 @@ This is a **technical specification** for a refactoring. It must document the cu
 
 > How the code will be structured after refactor
 
-```
+```text
 [New architecture diagram]
-```
+```text
 
 ### Design Decisions
 
@@ -727,7 +697,7 @@ This is a **technical specification** for a refactoring. It must document the cu
 ```typescript
 // Example of refactored code
 [code snippet]
-```
+```typescript
 
 ## Transformation Plan
 
@@ -824,7 +794,7 @@ This is a **technical specification** for a refactoring. It must document the cu
 
 - [Design doc or RFC if applicable]
 - [Related refactors]
-```
+```markdown
 
 **For `type: epic`:**
 
@@ -881,7 +851,7 @@ This is a **technical specification** for a refactoring. It must document the cu
 
 After creating the epic's own SPEC.md and PLAN.md, create child change directories:
 
-```
+```text
 changes/YYYY/MM/DD/<epic-name>/
 ├── SPEC.md
 ├── PLAN.md
@@ -905,7 +875,7 @@ Create `changes/YYYY/MM/DD/<name>/PLAN.md` using dynamic phase generation.
 1. **Read project components** from `.sdd/sdd-settings.yaml`
 2. **Filter to affected components** (from SPEC.md `affected_components`)
 3. **Order by dependency graph:**
-   ```
+   ```text
    config ──────┐
                 │
    contract ────┼──→ server (includes DB) ──→ helm
@@ -1285,7 +1255,7 @@ Implement child changes in this order:
 change-1
     ↓
 change-2 (requires: change-1)
-```
+```markdown
 
 ## PR Strategy
 
@@ -1372,7 +1342,7 @@ Each criterion must be independently testable.
 
 ### Feature Example
 
-```
+```yaml
 Input:
   name: user-authentication
   type: feature
@@ -1398,7 +1368,7 @@ Output:
 
 ### Bugfix Example
 
-```
+```yaml
 Input:
   name: fix-session-timeout
   type: bugfix

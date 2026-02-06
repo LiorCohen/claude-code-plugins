@@ -22,7 +22,7 @@ target_dir: /path/to/project
 
 **Creates:**
 
-```
+```text
 project/
 ├── .sdd/
 │   └── sdd-settings.yaml     # Minimal settings (config component only)
@@ -54,7 +54,7 @@ target_dir: /path/to/project
 
 **Creates:**
 
-```
+```text
 project/
 ├── .sdd/
 │   └── sdd-settings.yaml
@@ -85,7 +85,7 @@ This makes it safe to run multiple times for repair/upgrade scenarios.
 
 ## When to Use
 
-This skill is called by:
+Use during:
 - `/sdd-init` in minimal mode
 - Upgrade/repair workflows in full mode
 
@@ -150,18 +150,30 @@ No changes yet. Create your first change with:
 
 ```
 /sdd-change new --type feature --name <feature-name>
-```
+```text
 
 ## Domain Knowledge
 
 Domain knowledge (glossary, personas, use cases) is populated when you create changes.
 ```
 
+## Input
+
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts scaffolding mode, project name, target directory, and optional description and domain.
+
+## Output
+
+Schema: [`output.schema.json`](./output.schema.json)
+
+Returns success status and list of created files.
+
 ## Templates Location
 
 Templates are in this skill's `templates/` directory:
 
-```
+```text
 skills/project-scaffolding/templates/
 ├── minimal/
 │   ├── sdd-settings.yaml
@@ -232,7 +244,7 @@ When running in repair/upgrade mode, check existing `.gitignore`:
 
 ## Related Skills
 
-- **config-scaffolding**: Scaffolds config components (separate from project scaffolding)
-- **backend-scaffolding**: Scaffolds server/backend components
-- **frontend-scaffolding**: Scaffolds webapp components
-- **database-scaffolding**: Scaffolds database components
+- **config-scaffolding** — Generates the config component for centralized configuration. Accepts component settings from `sdd-settings.yaml` and produces `config.yaml`, validation schemas, and TypeScript types.
+- **backend-scaffolding** — Generates server/backend components with CMDO architecture. Accepts component name and settings; produces the directory structure with handlers, orchestrators, and repositories.
+- **frontend-scaffolding** — Generates webapp components with MVVM architecture. Accepts component name and settings; produces the directory structure with views, view-models, and TanStack integration.
+- **database-scaffolding** — Generates PostgreSQL database components. Accepts component name and settings; produces the directory structure with migrations, seeds, and management scripts.

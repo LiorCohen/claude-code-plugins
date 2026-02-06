@@ -29,7 +29,7 @@ Tests that verify multiple components working together with real infrastructure.
 
 ### Directory Organization
 
-```
+```text
 components/<testing-component>/
 ├── tests/
 │   └── integration/
@@ -545,3 +545,9 @@ Before committing integration tests, verify:
 - [ ] Error scenarios tested (400, 401, 403, 404, 409, 500)
 - [ ] Testkube YAML definition created/updated
 - [ ] Tests run successfully via `testkube run test`
+
+---
+
+## Input / Output
+
+This skill defines no input parameters or structured output.

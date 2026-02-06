@@ -23,7 +23,7 @@ Testing components provide systematic quality assurance:
 
 ## Directory Structure
 
-```
+```text
 components/testing[-{name}]/
 ├── package.json              # Test runner scripts
 ├── tsconfig.json             # TypeScript config
@@ -397,8 +397,14 @@ Before committing test changes:
 
 ---
 
+## Input / Output
+
+This skill defines no input parameters or structured output.
+
+
+---
+
 ## Related Skills
 
-- `backend-standards` - Server code being tested
-- `frontend-standards` - Frontend code being tested
-- `plugin-testing-standards` - Additional testing methodology
+- `backend-standards` — Defines the CMDO architecture layers being tested. Understanding handler → orchestrator → repository separation determines test boundary decisions and mocking strategies.
+- `frontend-standards` — Defines the MVVM architecture being tested. Understanding view → view-model → model separation determines component test strategies and TanStack Query mocking patterns.

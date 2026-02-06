@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Spec Writing Output",
+  "description": "Output from spec writing, including the generated markdown and validation results.",
+  "type": "object",
+  "properties": {
+    "spec_markdown": {
+      "type": "string",
+      "description": "Complete SPEC.md content in markdown format"
+    },
+    "validation_result": {
+      "type": "object",
+      "description": "Validation results for the generated specification",
+      "properties": {
+        "required_fields": {
+          "type": "boolean",
+          "description": "Whether all required metadata fields are present"
+        },
+        "required_sections": {
+          "type": "boolean",
+          "description": "Whether all required sections are present"
+        },
+        "format_valid": {
+          "type": "boolean",
+          "description": "Whether the markdown format is valid"
+        },
+        "open_questions_blocking": {
+          "type": "boolean",
+          "description": "Whether there are unresolved open questions blocking approval"
+        }
+      },
+      "required": [
+        "required_fields",
+        "required_sections",
+        "format_valid",
+        "open_questions_blocking"
+      ]
+    }
+  },
+  "required": [
+    "spec_markdown",
+    "validation_result"
+  ]
+}

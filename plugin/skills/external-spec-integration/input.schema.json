@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "External Spec Integration Input",
+  "description": "Input parameters for integrating an external specification file into the SDD workflow.",
+  "type": "object",
+  "properties": {
+    "spec_path": {
+      "type": "string",
+      "description": "Absolute path to the external spec file to integrate"
+    },
+    "target_dir": {
+      "type": "string",
+      "description": "Absolute path to the project directory"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Workflow ID from workflow-state for tracking"
+    },
+    "primary_domain": {
+      "type": "string",
+      "description": "Business domain name for the spec"
+    }
+  },
+  "required": [
+    "spec_path",
+    "target_dir",
+    "workflow_id"
+  ]
+}

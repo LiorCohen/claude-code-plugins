@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Spec Solicitation Input",
+  "description": "Input parameters for the interactive specification solicitation process.",
+  "type": "object",
+  "properties": {
+    "change_id": {
+      "type": "string",
+      "description": "Workflow-scoped change ID for the spec being solicited"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Workflow ID for tracking the solicitation"
+    },
+    "context_path": {
+      "type": "string",
+      "description": "Path to context.md file providing context from external specs"
+    },
+    "resume": {
+      "type": "boolean",
+      "description": "Whether to resume from a previously saved solicitation state"
+    }
+  },
+  "required": [
+    "change_id",
+    "workflow_id"
+  ]
+}

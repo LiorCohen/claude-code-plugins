@@ -10,13 +10,17 @@ Creates an OpenAPI contract component that defines the API specification and gen
 
 ## When to Use
 
-This skill is called by the main `scaffolding` skill when creating a contract component. Contract components support multiple instances (e.g., `contracts/customer-api/`, `contracts/back-office-api/`).
+Use when creating a contract component. Contract components support multiple instances (e.g., `contracts/customer-api/`, `contracts/back-office-api/`).
+
+## Prerequisites
+
+- `sdd-system` CLI available in PATH (installed via the SDD plugin's npm package)
 
 ## What It Creates
 
 The directory path is `components/contracts/{name}/` based on the component name in `.sdd/sdd-settings.yaml`.
 
-```
+```text
 components/contracts/{name}/
 ├── package.json          # Build scripts (call sdd-system CLI)
 ├── openapi.yaml          # OpenAPI 3.0 specification
@@ -69,26 +73,31 @@ type Greeting = components['schemas']['Greeting'];
 
 ## Usage
 
-Called programmatically by the scaffolding system during project creation via `sdd-system scaffolding project`.
+Runs during project creation via `sdd-system scaffolding project`.
 
 ## Templates Location
 
 All templates are colocated in this skill's `templates/` directory:
 
-```
+```text
 skills/components/contract/contract-scaffolding/templates/
 ├── package.json
 └── openapi.yaml
 ```
 
+## Input
+
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts contract name and optional project metadata for OpenAPI spec generation.
+
 ## Related Skills
 
-- `api-design` - API design patterns and conventions
-- `typescript-standards` - TypeScript coding conventions
+- `typescript-standards` — Generated TypeScript types must follow these coding conventions. Defines strict typing, readonly patterns, and import standards.
 
 ## Integration with Other Components
 
-```
+```text
                     ┌─────────────────┐
                     │    contract/    │
                     │  openapi.yaml   │

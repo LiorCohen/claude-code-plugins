@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Workflow State Output",
+  "description": "Output from workflow state operations, including the current workflow phase and progress tracking.",
+  "type": "object",
+  "properties": {
+    "workflow_id": {
+      "type": "string",
+      "description": "Workflow identifier"
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "spec",
+        "plan",
+        "implement",
+        "review"
+      ],
+      "description": "Current workflow phase"
+    },
+    "progress": {
+      "type": "object",
+      "description": "Progress tracking for the workflow",
+      "properties": {
+        "total_items": {
+          "type": "integer",
+          "description": "Total number of items in the workflow"
+        },
+        "specs_completed": {
+          "type": "integer",
+          "description": "Number of specifications completed"
+        },
+        "plans_completed": {
+          "type": "integer",
+          "description": "Number of plans completed"
+        },
+        "implemented": {
+          "type": "integer",
+          "description": "Number of items implemented"
+        }
+      }
+    }
+  },
+  "required": [
+    "workflow_id",
+    "phase",
+    "progress"
+  ]
+}

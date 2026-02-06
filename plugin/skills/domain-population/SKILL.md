@@ -50,30 +50,15 @@ rm /tmp/sdd-domain-config.json
 
 ## Input
 
-| Field | Required | Description |
-|-------|----------|-------------|
-| `target_dir` | Yes | Absolute path to the project directory |
-| `primary_domain` | Yes | Primary business domain |
-| `product_description` | Yes | 1-2 sentence problem statement |
-| `user_personas` | No | List of user types with actions |
-| `core_workflows` | No | List of main capabilities |
-| `domain_entities` | No | List of domain entity names |
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts target directory, domain name, product description, and optional personas, workflows, and entities.
 
 ## Output
 
-```yaml
-success: true
-files_updated:
-  - specs/domain/glossary.md
-  - specs/domain/definitions/team.md
-  - specs/domain/definitions/project.md
-  - specs/domain/definitions/task.md
-  - specs/domain/definitions/user.md
-  - specs/domain/use-cases/create-projects.md
-  - specs/domain/use-cases/assign-tasks.md
-  - specs/domain/use-cases/update-progress.md
-  - specs/SNAPSHOT.md
-```
+Schema: [`output.schema.json`](./output.schema.json)
+
+Returns success status and list of updated domain spec files.
 
 ## File Templates
 
@@ -196,7 +181,7 @@ Adds to `specs/SNAPSHOT.md`:
 
 ### Output
 
-```
+```text
 Populating domain specs for: Task Management
 
 Creating entity definitions...

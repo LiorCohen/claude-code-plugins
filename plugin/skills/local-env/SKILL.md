@@ -179,3 +179,9 @@ kubectl describe pod <pod-name> -n <namespace>
 /sdd-run env forward stop
 /sdd-run env forward start
 ```
+
+---
+
+## Input / Output
+
+This skill defines no input parameters or structured output.

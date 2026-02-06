@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Spec Solicitation Output",
+  "description": "Output from the spec solicitation process, including the generated specification content.",
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean",
+      "description": "Whether the solicitation completed successfully"
+    },
+    "spec_content": {
+      "type": "string",
+      "description": "Complete SPEC.md markdown content generated from solicitation"
+    },
+    "spec_path": {
+      "type": "string",
+      "description": "Location where the SPEC.md file will be saved"
+    },
+    "status": {
+      "type": "string",
+      "description": "Current solicitation status (e.g., spec_review)"
+    }
+  },
+  "required": [
+    "success",
+    "spec_content",
+    "spec_path",
+    "status"
+  ]
+}

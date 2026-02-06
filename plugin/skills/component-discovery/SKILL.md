@@ -32,36 +32,9 @@ It only analyzes and documents. Implementation decides when to actually create c
 
 ## Input
 
-### Interactive Mode
+Schema: [`input.schema.json`](./input.schema.json)
 
-Receives change context and asks the Core Discovery Questions to determine components:
-
-```yaml
-change_name: "user-auth"
-change_type: "feature"
-existing_components: <from sdd-settings.yaml>
-```
-
-### External Spec Mode
-
-Receives classified transformation output:
-
-```yaml
-classified_requirements:
-  functional:
-    - "Users can register with email"
-    - "Users can login"
-    - "Dashboard shows analytics"
-  non_functional:
-    - "API latency < 200ms"
-    - "Support 10k concurrent users"
-  design_details:
-    ui_specs: [...]
-    user_flows: [...]
-  domain_knowledge:
-    entities: ["User", "Session", "Dashboard"]
-    relationships: [...]
-```
+Accepts change name, type, existing components, and optionally classified requirements from external spec processing.
 
 ## Discovery Questions
 
@@ -118,7 +91,7 @@ External specs usually have good detail here. Extract rather than ask:
 
 When UI/UX is involved and spec doesn't include visual assets:
 
-```
+```text
 Do you have any visual assets I can reference?
   - Mockups or wireframes (Figma, Sketch, etc.)
   - Screenshots of existing UI
@@ -133,92 +106,9 @@ requirements than from text descriptions alone.
 
 ## Output
 
-Returns discovered components for documentation in SPEC.md. Components are NOT created yet - that happens during implementation.
+Schema: [`output.schema.json`](./output.schema.json)
 
-```yaml
-# For SPEC.md ## Components section
-discovered_components:
-  - type: server
-    reason: "Backend for auth + analytics endpoints"
-    derived_from:
-      - requirement: "Users can login"
-      - requirement: "Dashboard shows analytics"
-  - type: webapp
-    reason: "Dashboard UI"
-    derived_from:
-      - design_detail: "Dashboard mockups"
-  - type: database
-    reason: "User data persistence"
-    derived_from:
-      - requirement: "Users can register with email"
-  - type: contract
-    reason: "API definition between webapp and server"
-    derived_from:
-      - requirement: "Users can login"
-
-# Full component configuration (for when implementation starts)
-project_type: "fullstack"
-components:
-  # === CONFIG (mandatory singleton) ===
-  - name: config
-    type: config
-    settings: {}
-
-  # === CONTRACT ===
-  - name: task-api
-    type: contract
-    settings:
-      visibility: internal       # public | internal
-
-  # === DATABASE ===
-  - name: task-db
-    type: database
-    settings:
-      provider: postgresql
-      dedicated: false
-
-  # === SERVER ===
-  - name: task-server
-    type: server
-    settings:
-      server_type: api           # api | worker | cron | hybrid
-      databases: [task-db]       # Database components this server uses
-      provides_contracts: [task-api]  # Contracts this server implements
-      consumes_contracts: []     # Contracts this server calls
-      helm: true
-
-  # === WEBAPP ===
-  - name: task-dashboard
-    type: webapp
-    settings:
-      contracts: [task-api]      # Contracts this webapp uses
-      helm: true
-
-  # === HELM (one per deployment configuration) ===
-  - name: task-server-api
-    type: helm
-    settings:
-      deploys: task-server       # Server/webapp component to deploy
-      deploy_type: server        # server | webapp
-      deploy_modes: [api]        # For servers: which modes
-      ingress: true
-
-  - name: task-dashboard-web
-    type: helm
-    settings:
-      deploys: task-dashboard
-      deploy_type: webapp
-      ingress: true
-      assets: bundled            # bundled | entrypoint
-
-  # === TESTING ===
-  - name: task-tests
-    type: testing
-
-  # === CICD ===
-  - name: task-ci
-    type: cicd
-```
+Returns detected project type and a list of components with names, types, and settings.
 
 ## Component Settings
 
@@ -295,7 +185,7 @@ Map discovered information to technical needs:
 
 ### Step 2: Present Recommendation with Settings
 
-```
+```text
 Based on what you've described, I recommend:
 
 **Components:**
@@ -329,7 +219,7 @@ If user wants changes, update both components and settings:
 
 **For Server (if multiple processing needs):**
 
-```
+```text
 Should the backend be a single service or multiple?
 - Single API server
 - API + Worker (hybrid mode in one deployment)
@@ -480,7 +370,7 @@ components:
 
 ### Workflow Position
 
-```
+```text
 External Spec → Transformation → **Component Discovery** → Decomposition → SPEC.md
                                         ↓
                                   Documents in SPEC.md

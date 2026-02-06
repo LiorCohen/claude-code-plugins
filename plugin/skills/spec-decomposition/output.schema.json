@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Spec Decomposition Output",
+  "description": "Output from spec decomposition, varying by mode: outline sections, hierarchical epics, or extracted section content.",
+  "type": "object",
+  "properties": {
+    "mode": {
+      "type": "string",
+      "description": "Decomposition mode that was used"
+    },
+    "is_directory": {
+      "type": "boolean",
+      "description": "Whether the spec represents a directory-level specification (outline mode)"
+    },
+    "sections": {
+      "type": "array",
+      "description": "Outline sections extracted from the spec (outline mode)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "integer",
+            "description": "Heading level (1-6)"
+          },
+          "header": {
+            "type": "string",
+            "description": "Section header text"
+          },
+          "start_line": {
+            "type": "integer",
+            "description": "Starting line number of the section"
+          },
+          "end_line": {
+            "type": "integer",
+            "description": "Ending line number of the section"
+          }
+        }
+      }
+    },
+    "epics": {
+      "type": "array",
+      "description": "Epic groupings with child features (hierarchical mode)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Epic identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Epic directory name"
+          },
+          "title": {
+            "type": "string",
+            "description": "Epic display title"
+          },
+          "features": {
+            "type": "array",
+            "description": "Child features belonging to this epic"
+          }
+        }
+      }
+    },
+    "dependency_graph": {
+      "type": "object",
+      "description": "Dependency relationships between decomposed items"
+    }
+  },
+  "required": [
+    "mode"
+  ]
+}

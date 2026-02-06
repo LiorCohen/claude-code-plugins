@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Change Creation Input",
+  "description": "Input parameters for creating a new change (feature, bugfix, refactor, or epic) in the SDD workflow.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Directory name for the change (lowercase, hyphens, no spaces)"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "feature",
+        "bugfix",
+        "refactor",
+        "epic"
+      ],
+      "description": "Type of change being created"
+    },
+    "title": {
+      "type": "string",
+      "description": "Display title for the change"
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of the change (1-2 sentences)"
+    },
+    "domain": {
+      "type": "string",
+      "description": "Primary business domain for the change"
+    },
+    "issue": {
+      "type": "string",
+      "description": "Issue reference (e.g., PROJ-123)"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "spec-only",
+        "full"
+      ],
+      "default": "full",
+      "description": "Processing mode: spec-only creates only SPEC.md, full creates both SPEC.md and PLAN.md"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Workflow ID for change-id assignment"
+    },
+    "change_id": {
+      "type": "string",
+      "description": "Pre-assigned change ID from workflow-state"
+    },
+    "external_source": {
+      "type": "string",
+      "description": "Path to archived external spec file"
+    },
+    "source_content": {
+      "type": "string",
+      "description": "Full markdown content from external spec"
+    },
+    "decomposition_id": {
+      "type": "string",
+      "description": "UUID linking related changes from a decomposition"
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Prerequisite change names that must be completed first"
+    },
+    "affected_components": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Component names from sdd-settings.yaml affected by this change"
+    }
+  },
+  "required": [
+    "name",
+    "type",
+    "title",
+    "description",
+    "domain"
+  ]
+}

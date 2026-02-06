@@ -10,11 +10,11 @@ Creates a React/TypeScript frontend component following the MVVM (Model-View-Vie
 
 ## When to Use
 
-This skill is called by the main `scaffolding` skill when creating webapp components. It can create multiple named instances (e.g., `webapp-admin`, `webapp-public`).
+Use when creating webapp components. Supports multiple named instances (e.g., `webapp-admin`, `webapp-public`).
 
 ## What It Creates
 
-```
+```text
 components/<webapp-name>/
 ├── package.json
 ├── tsconfig.json
@@ -103,7 +103,7 @@ scaffoldFrontend({
 
 All templates are colocated in this skill's `templates/` directory:
 
-```
+```text
 skills/components/frontend/frontend-scaffolding/templates/
 ├── package.json
 ├── tsconfig.json
@@ -170,8 +170,14 @@ webapp-{name}:
 
 ---
 
+## Input
+
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts webapp name, project metadata, and optional contract list for API client generation.
+
 ## Related Skills
 
-- `frontend-standards` - MVVM architecture and TanStack patterns
-- `typescript-standards` - TypeScript coding conventions
-- `unit-testing` - Unit testing patterns for frontend code
+- `frontend-standards` — Generated frontend code must follow these standards. Defines MVVM architecture with TanStack Router/Query, component structure, and state management patterns.
+- `typescript-standards` — Generated TypeScript files must follow these coding conventions. Defines strict typing, readonly patterns, branded types, and import standards.
+- `unit-testing` — Generated test files must follow these patterns. Defines Vitest setup, mocking strategies, fixture patterns, and assertion conventions for frontend components.

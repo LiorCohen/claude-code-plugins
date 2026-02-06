@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Settings Output",
+  "description": "Output from project settings operations, including the settings file path and component configurations.",
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean",
+      "description": "Whether the settings operation completed successfully"
+    },
+    "file_path": {
+      "type": "string",
+      "description": "Path to the sdd-settings.yaml file"
+    },
+    "components": {
+      "type": "array",
+      "description": "Current component configurations after the operation"
+    }
+  },
+  "required": [
+    "success",
+    "file_path"
+  ]
+}

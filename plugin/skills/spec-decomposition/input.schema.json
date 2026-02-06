@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Spec Decomposition Input",
+  "description": "Input parameters for decomposing a specification into sections, outlines, or hierarchical epics and features.",
+  "type": "object",
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": [
+        "outline",
+        "section",
+        "hierarchical"
+      ],
+      "description": "Decomposition mode: outline extracts structure, section extracts a single section, hierarchical creates epic/feature hierarchy"
+    },
+    "spec_content": {
+      "type": "string",
+      "description": "Markdown content of the specification to decompose"
+    },
+    "spec_path": {
+      "type": "string",
+      "description": "Path to the spec file being decomposed"
+    },
+    "section_header": {
+      "type": "string",
+      "description": "Section header to extract (used in section mode)"
+    },
+    "default_domain": {
+      "type": "string",
+      "description": "Default domain to assign to decomposed changes"
+    },
+    "include_thinking": {
+      "type": "boolean",
+      "description": "Whether to include reasoning/thinking output in results"
+    },
+    "spec_outline": {
+      "type": "object",
+      "description": "Sections with line ranges for targeted decomposition (used in hierarchical mode)"
+    }
+  },
+  "required": [
+    "mode",
+    "spec_content"
+  ]
+}

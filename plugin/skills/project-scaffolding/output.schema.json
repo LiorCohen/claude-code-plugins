@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Scaffolding Output",
+  "description": "Output from project scaffolding, indicating success and which files were created.",
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean",
+      "description": "Whether the scaffolding completed successfully"
+    },
+    "files_created": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Paths of all files created during scaffolding"
+    }
+  },
+  "required": [
+    "success",
+    "files_created"
+  ]
+}

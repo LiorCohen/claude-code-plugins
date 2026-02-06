@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Settings Input",
+  "description": "Input parameters for CRUD operations on the sdd-settings.yaml project configuration.",
+  "type": "object",
+  "properties": {
+    "operation": {
+      "type": "string",
+      "enum": [
+        "create",
+        "read",
+        "update",
+        "get_component_dirs"
+      ],
+      "description": "Settings operation to perform"
+    },
+    "project_name": {
+      "type": "string",
+      "description": "Project name (used for create operation)"
+    },
+    "project_description": {
+      "type": "string",
+      "description": "Project description (used for create operation)"
+    },
+    "project_domain": {
+      "type": "string",
+      "description": "Business domain (used for create operation)"
+    },
+    "project_type": {
+      "type": "string",
+      "enum": [
+        "fullstack",
+        "backend",
+        "frontend",
+        "custom"
+      ],
+      "description": "Project type classification"
+    },
+    "plugin_version": {
+      "type": "string",
+      "description": "SDD plugin version (used for create operation)"
+    },
+    "components": {
+      "type": "array",
+      "description": "Component definitions to configure",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Component name identifier"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "server",
+              "webapp",
+              "database",
+              "contract",
+              "helm",
+              "config",
+              "testing",
+              "cicd"
+            ],
+            "description": "Component type classification"
+          },
+          "settings": {
+            "type": "object",
+            "description": "Component-specific configuration settings"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "operation"
+  ]
+}

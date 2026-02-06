@@ -184,6 +184,18 @@ Components are organized by type:
 - **Hybrid modes**: If `server_type: hybrid`, `modes` must have 2+ entries
 - **Deploy modes**: `deploy_modes` must be subset of server's available modes
 
+## Input
+
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts operation type and operation-specific parameters for managing sdd-settings.yaml.
+
+## Output
+
+Schema: [`output.schema.json`](./output.schema.json)
+
+Returns success status, file path, and current component configurations.
+
 ## Operations
 
 ### Operation: `create`
@@ -215,7 +227,7 @@ Get the actual directory names for all components.
 
 ## Settings Lifecycle
 
-```
+```text
 ┌─────────────────┐
 │   sdd-init      │  Settings defined during project creation
 └────────┬────────┘

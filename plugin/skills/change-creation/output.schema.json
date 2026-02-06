@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Change Creation Output",
+  "description": "Output from the change creation process, including paths to created files and index update status.",
+  "type": "object",
+  "properties": {
+    "spec_path": {
+      "type": "string",
+      "description": "Path to the created SPEC.md file"
+    },
+    "plan_path": {
+      "type": "string",
+      "description": "Path to the created PLAN.md file (not present in spec-only mode)"
+    },
+    "index_updated": {
+      "type": "boolean",
+      "description": "Whether changes/INDEX.md was updated with the new change entry"
+    }
+  },
+  "required": [
+    "spec_path",
+    "index_updated"
+  ]
+}

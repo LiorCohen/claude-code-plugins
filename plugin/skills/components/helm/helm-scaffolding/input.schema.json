@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Helm Scaffolding Input",
+  "description": "Input parameters for scaffolding a Helm chart for deploying a server, webapp, or umbrella component.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Chart name"
+    },
+    "deploys": {
+      "type": "string",
+      "description": "Target component name being deployed"
+    },
+    "deploy_type": {
+      "type": "string",
+      "description": "Type of deployment",
+      "enum": ["server", "webapp", "umbrella"]
+    },
+    "deploy_modes": {
+      "type": "array",
+      "description": "Server modes to deploy (e.g., api, worker, cron). Used for hybrid servers",
+      "items": {
+        "type": "string",
+        "description": "A server mode to deploy"
+      }
+    },
+    "ingress": {
+      "type": "boolean",
+      "description": "Whether to generate ingress.yaml"
+    },
+    "assets": {
+      "type": "string",
+      "description": "Webapp asset strategy",
+      "enum": ["bundled", "entrypoint"]
+    }
+  },
+  "required": ["name", "deploys", "deploy_type"]
+}

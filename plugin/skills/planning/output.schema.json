@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Planning Output",
+  "description": "Output from the planning process, including the plan path and its review status.",
+  "type": "object",
+  "properties": {
+    "plan_path": {
+      "type": "string",
+      "description": "Path to the created PLAN.md file"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "approved"
+      ],
+      "description": "Review status of the created plan"
+    }
+  },
+  "required": [
+    "plan_path",
+    "status"
+  ]
+}

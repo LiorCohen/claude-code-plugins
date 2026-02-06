@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Contract Scaffolding Input",
+  "description": "Input parameters for scaffolding an API contract component with OpenAPI specification.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Contract name (lowercase, hyphens, determines directory path)"
+    },
+    "project_name": {
+      "type": "string",
+      "description": "Project name for OpenAPI info section"
+    },
+    "project_description": {
+      "type": "string",
+      "description": "API description for OpenAPI info section"
+    }
+  },
+  "required": ["name"]
+}

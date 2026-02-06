@@ -12,7 +12,7 @@ Creates database component structure for PostgreSQL-based projects.
 
 The directory path depends on the component name as defined in `.sdd/sdd-settings.yaml`: `components/{type}-{name}/` (when type and name differ). Database components support multiple instances (e.g., `database-app-db/`, `database-analytics-db/`).
 
-```
+```text
 components/database[-<name>]/
 ├── package.json              # npm scripts (call sdd-system CLI)
 ├── README.md                 # Component documentation
@@ -62,6 +62,8 @@ sdd-system database reset <component-name>
 
 ## Prerequisites
 
+- `sdd-system` CLI available in PATH (installed via the SDD plugin's npm package)
+
 The CLI commands require:
 - PostgreSQL 14+ (client tools: `psql`, `createdb`, `dropdb`)
 - Environment variables set:
@@ -75,7 +77,7 @@ The CLI commands require:
 
 Create numbered SQL files for sequential execution:
 
-```
+```text
 migrations/
 ├── 001_initial_schema.sql
 ├── 002_add_users_table.sql
@@ -86,13 +88,13 @@ migrations/
 Each migration should:
 - Be wrapped in `BEGIN`/`COMMIT` for transactional safety
 - Be idempotent where possible (use `IF NOT EXISTS`)
-- Follow patterns from the [postgresql skill](../postgresql/SKILL.md)
+- Delegate to the `postgresql` skill for SQL syntax patterns, index strategies, and constraint conventions
 
 ## Seed Conventions
 
 Create numbered SQL files for seed data:
 
-```
+```text
 seeds/
 ├── 001_lookup_data.sql
 ├── 002_admin_users.sql
@@ -102,13 +104,13 @@ seeds/
 Each seed file should:
 - Use `ON CONFLICT DO NOTHING` for idempotency
 - Be wrapped in transactions
-- Follow patterns from [postgresql seed-data reference](../postgresql/references/seed-data.md)
+- Delegate to the `postgresql` skill for seed data patterns and idempotent insert conventions
 
 ## Integration with Server Component
 
 The database component works alongside the server component:
 
-```
+```text
 components/
 ├── database/           # Schema, migrations, seeds
 │   └── migrations/
@@ -168,7 +170,13 @@ export type DatabaseConfig = Readonly<{
 
 ---
 
+## Input
+
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts database name and optional project name for migration and seed template generation.
+
 ## Related Skills
 
-- [postgresql](../postgresql/SKILL.md) - SQL patterns, deployment, and best practices
-- [backend-scaffolding](../../backend/backend-scaffolding/SKILL.md) - Server component with DAL layer
+- [postgresql](../postgresql/SKILL.md) — Delegate to this for SQL patterns, Docker/K8s deployment, schema management, and performance tuning. Provides migration SQL templates, seed data patterns, and introspection queries.
+- [backend-scaffolding](../../backend/backend-scaffolding/SKILL.md) — Generates the server component that contains the DAL layer querying this database. The server's repository layer imports database connection config and executes queries against the schema defined here.

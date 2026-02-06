@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Spec Writing Input",
+  "description": "Input parameters for generating a SPEC.md specification document.",
+  "type": "object",
+  "properties": {
+    "spec_type": {
+      "type": "string",
+      "enum": [
+        "tech",
+        "product"
+      ],
+      "description": "Specification type: tech for technical specs, product for product specs"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "feature",
+        "bugfix",
+        "refactor",
+        "epic"
+      ],
+      "description": "Type of change the spec describes"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title of the specification"
+    },
+    "domain": {
+      "type": "string",
+      "description": "Business domain for the specification"
+    },
+    "issue": {
+      "type": "string",
+      "description": "Issue reference (e.g., PROJ-123)"
+    },
+    "sdd_version": {
+      "type": "string",
+      "description": "SDD version used for spec generation"
+    }
+  },
+  "required": [
+    "spec_type",
+    "type",
+    "title",
+    "domain"
+  ]
+}

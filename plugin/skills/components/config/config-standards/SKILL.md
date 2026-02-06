@@ -19,7 +19,7 @@ Standards and patterns for SDD configuration management.
 
 ## Directory Structure
 
-```
+```text
 components/config/
 ├── package.json                # Workspace package for type imports
 ├── tsconfig.json               # TypeScript config
@@ -224,8 +224,10 @@ Validation happens:
 - At `/sdd-config generate` time (CLI)
 - At server startup (runtime)
 
-## Related Skills
+---
 
-- `config-scaffolding` - Creates the config component structure
-- `helm-standards` - How Helm charts consume config
-- `backend-scaffolding` - How servers load config
+## Input / Output
+
+This skill defines no input parameters or structured output.
+
+
