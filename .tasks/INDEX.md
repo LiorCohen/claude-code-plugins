@@ -42,10 +42,8 @@
 - [#70](1-inbox/70/): Git checkpoint workflow for AI-assisted development
 - [#71](1-inbox/71/): Anti-stop hook to prevent accidental session termination
 - [#16](1-inbox/16/): Plan changes should cascade to dependent items
-- [#27](1-inbox/27/): JSON Schema for skills + validation skill
 - [#56](1-inbox/56/): Create architecture skill with meaningful guidance
 - [#66](1-inbox/66/): Single context-aware SDD command
-- [#63](1-inbox/63/): Consolidate overlapping skills
 
 ---
 
@@ -69,7 +67,6 @@
 - [#72](1-inbox/72/): Fix broken test benchmarks
 - [#69](1-inbox/69/): Fix sdd-init workflow test timeout
 - [#12](1-inbox/12/): User onboarding and process state tracking
-- [#14](1-inbox/14/): Unclear when to run type generation
 - [#20](1-inbox/20/): Plugin installation debugging skill + workflow fix
 - [#21](1-inbox/21/): Project sanity verification command
 - [#23](1-inbox/23/): Autocomplete for SDD command arguments
@@ -79,13 +76,12 @@
 - [#39](1-inbox/39/): Capture ad-hoc code changes and sync specs
 - [#40](1-inbox/40/): Fix sdd-change-new test - spec format mismatch
 - [#43](1-inbox/43/): CI/CD components and .github folder integration
-- [#52](1-inbox/52/): Clean up .gitkeep and placeholder content
-- [#54](1-inbox/54/): Missing postgresql-standards skill
 
 ---
 
 ## Complete
 
+- [#27](6-complete/27/): JSON Schema for skills + validation skill ✓ (2026-02-06)
 - [#89](6-complete/89/): Skills standards audit report ✓ (2026-02-06)
 - [#88](6-complete/88/): Remove product-discovery skill ✓ (2026-02-06)
 - [#87](6-complete/87/): Reorganize component skills into colocated directory structure ✓ (2026-02-06)
@@ -117,7 +113,10 @@
 
 ## Rejected
 
-(none)
+- [#14](9-rejected/14/): Unclear when to run type generation — obsolete with workflow gating (v6.1.0)
+- [#52](9-rejected/52/): Clean up .gitkeep and placeholder content — obsolete with on-demand scaffolding (#78)
+- [#54](9-rejected/54/): Missing postgresql-standards skill — already exists at components/database/postgresql/
+- [#63](9-rejected/63/): Consolidate overlapping skills — addressed by #87, #88, #89
 
 ---
 
