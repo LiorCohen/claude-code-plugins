@@ -2,7 +2,7 @@
 id: 89
 title: Skills standards audit report — 2026-02-06
 priority: medium
-status: open
+status: ready
 created: 2026-02-06
 depends_on: []
 blocks: [27]

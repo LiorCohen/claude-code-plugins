@@ -10,7 +10,7 @@
 
 ## Ready
 
-(none)
+- [#89](3-ready/89/): Skills standards audit report — 2026-02-06
 
 ---
 
@@ -63,7 +63,6 @@
 
 ## Inbox (unprioritized)
 
-- [#89](1-inbox/89/): Skills standards audit report — 2026-02-06
 - [#80](1-inbox/80/): Plans should become YAML files
 - [#76](1-inbox/76/): Git worktrees for parallel spec/plan execution
 - [#74](1-inbox/74/): Task performance scoring system
