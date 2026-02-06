@@ -24,9 +24,8 @@ Initialize a new SDD project with minimal structure.
 4. Creates minimal structure (config component only)
 5. Initializes git and commits
 
-**What it does NOT do (deferred to first change):**
-- Product discovery
-- Domain population
+**What it does NOT do (deferred to implementation):**
+- Domain population (glossary, entity definitions, use-cases)
 - Full component scaffolding
 
 **Example:**

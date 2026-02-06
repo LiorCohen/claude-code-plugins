@@ -33,9 +33,8 @@ This command follows an approval-based workflow that verifies environment, creat
 | 3     | Git init + commit |
 | 4     | Completion message |
 
-**What's NOT done during init (deferred to first change):**
-- Product discovery
-- Domain population
+**What's NOT done during init (deferred to implementation):**
+- Domain population (glossary, entity definitions, use-cases)
 - Full component scaffolding
 - Creating `changes/` directory
 - Creating `specs/domain/` or `specs/architecture/`

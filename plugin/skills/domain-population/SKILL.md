@@ -1,16 +1,16 @@
 ---
 name: domain-population
-description: Populate domain specs (glossary, entity definitions, use-cases) from discovery results.
+description: Populate domain specs (glossary, entity definitions, use-cases) from SPEC.md content during implementation.
 user-invocable: false
 ---
 
 # Domain Population Skill
 
-Populates the domain specification files with content extracted from product discovery.
+Populates the domain specification files with content extracted from change context.
 
 ## Purpose
 
-After project scaffolding, this skill:
+During implementation, this skill:
 - Updates `specs/domain/glossary.md` with discovered entities
 - Creates entity definition stubs in `specs/domain/definitions/`
 - Creates use-case stubs in `specs/domain/use-cases/`
@@ -18,9 +18,8 @@ After project scaffolding, this skill:
 
 ## When to Use
 
-- During `/sdd-init` after scaffolding completes
-- When refreshing domain specs from new discovery
-- When importing domain concepts from external specs
+- During `/sdd-change implement` to execute domain updates from SPEC.md
+- When importing domain concepts from external specs during implementation
 
 ## Usage
 
@@ -138,7 +137,7 @@ status: draft
 
 ## Actors
 
-- <User type from discovery>
+- <User type from SPEC.md>
 
 ## Preconditions
 

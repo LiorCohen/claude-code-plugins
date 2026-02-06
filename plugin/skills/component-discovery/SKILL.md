@@ -28,11 +28,21 @@ It only analyzes and documents. Implementation decides when to actually create c
 
 - After transformation step in external spec workflow
 - Runs ONCE after transformation, before decomposition
-- During `/sdd-init` after product discovery (interactive mode)
+- During `/sdd-change new` interactive mode to identify needed components
 
 ## Input
 
-### External Spec Mode (Primary)
+### Interactive Mode
+
+Receives change context and asks the Core Discovery Questions to determine components:
+
+```yaml
+change_name: "user-auth"
+change_type: "feature"
+existing_components: <from sdd-settings.yaml>
+```
+
+### External Spec Mode
 
 Receives classified transformation output:
 
@@ -51,28 +61,6 @@ classified_requirements:
   domain_knowledge:
     entities: ["User", "Session", "Dashboard"]
     relationships: [...]
-```
-
-### Interactive Mode (Legacy)
-
-Receives discovery results from the `product-discovery` skill:
-
-```yaml
-discovery_results:
-  product_description: "Task management for engineering teams"
-  primary_domain: "Task Management"
-  user_personas:
-    - type: "Project Manager"
-      actions: "create projects, assign tasks"
-    - type: "Team Member"
-      actions: "update progress"
-  core_workflows:
-    - "Create projects"
-    - "Assign tasks"
-  domain_entities: ["Team", "Project", "Task"]
-  integrations: ["Slack"]
-  constraints: []
-  scope: "mvp"
 ```
 
 ## Discovery Questions

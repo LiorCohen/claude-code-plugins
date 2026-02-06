@@ -86,6 +86,7 @@
 
 ## Complete
 
+- [#88](6-complete/88/): Remove product-discovery skill ✓ (2026-02-06)
 - [#87](6-complete/87/): Reorganize component skills into colocated directory structure ✓ (2026-02-06)
 - [#85](6-complete/85/): External spec workflow UX and architecture improvements ✓ (2026-02-05)
 - [#81](6-complete/81/): Redesign sdd-change with external spec workflow ✓ (2026-02-05)
