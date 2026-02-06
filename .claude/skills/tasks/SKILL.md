@@ -446,8 +446,14 @@ User: /tasks complete 7
 3. Update `task.md` frontmatter: `status: complete`, add `completed` date
 4. Update INDEX.md
 5. Commit the task transition on main (e.g., "Tasks: Move #7 to complete")
-6. If a worktree exists at `.worktrees/task-<id>/`, remove it with `git worktree remove`
-7. Delete the feature branch if it has been merged
+6. If a worktree exists at `.worktrees/task-<id>/`:
+   a. **Verify no work is lost** before removing:
+      - Check for uncommitted changes in the worktree (`git -C .worktrees/task-<id> status`)
+      - Check for commits not merged into main (`git log main..<branch> --oneline`)
+      - If unmerged commits exist, merge the feature branch into main first
+      - If uncommitted changes exist, **stop and warn the user** — do not proceed
+   b. Remove the worktree with `git worktree remove`
+7. Delete the feature branch only if it has been fully merged into main
 
 ### Reject Task
 
@@ -493,11 +499,12 @@ User: /tasks consolidate 28 into 27
 1. **Inbox first** - New tasks go to inbox, prioritize later
 2. **Keep atomic** - One clear outcome per task
 3. **Worktree per task** - `/tasks implement` creates a worktree at `.worktrees/task-<id>/`, keeping main clean
-4. **Consolidate related** - Don't duplicate effort
-5. **Preserve on consolidate** - Never lose original task content when consolidating
-6. **Update both** - Task folder AND INDEX.md must stay in sync
-7. **Add context** - When completing, summarize what was done
-8. **Date everything** - Completion dates help track velocity
+4. **Never lose work** - Before removing a worktree, always verify all commits are merged and no uncommitted changes exist
+5. **Consolidate related** - Don't duplicate effort
+6. **Preserve on consolidate** - Never lose original task content when consolidating
+7. **Update both** - Task folder AND INDEX.md must stay in sync
+8. **Add context** - When completing, summarize what was done
+9. **Date everything** - Completion dates help track velocity
 
 ## Lifecycles
 
