@@ -7,6 +7,9 @@
 # Test outputs
 test-apps/
 
+# Claude prompts
+prompts/
+
 # Python
 __pycache__/
 *.pyc
