@@ -16,13 +16,13 @@
 
 ## Implementing
 
-- [#89](4-implementing/89/): Skills standards audit report — 2026-02-06
+(none)
 
 ---
 
 ## Reviewing
 
-(none)
+- [#89](5-reviewing/89/): Skills standards audit report — 2026-02-06
 
 ---
 
