@@ -22,7 +22,7 @@
 
 ## Reviewing
 
-- [#89](5-reviewing/89/): Skills standards audit report — 2026-02-06
+(none)
 
 ---
 
@@ -86,6 +86,7 @@
 
 ## Complete
 
+- [#89](6-complete/89/): Skills standards audit report ✓ (2026-02-06)
 - [#88](6-complete/88/): Remove product-discovery skill ✓ (2026-02-06)
 - [#87](6-complete/87/): Reorganize component skills into colocated directory structure ✓ (2026-02-06)
 - [#85](6-complete/85/): External spec workflow UX and architecture improvements ✓ (2026-02-05)
