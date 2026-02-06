@@ -171,4 +171,4 @@ export type DatabaseConfig = Readonly<{
 ## Related Skills
 
 - [postgresql](../postgresql/SKILL.md) - SQL patterns, deployment, and best practices
-- [backend-scaffolding](../backend-scaffolding/SKILL.md) - Server component with DAL layer
+- [backend-scaffolding](../../backend/backend-scaffolding/SKILL.md) - Server component with DAL layer

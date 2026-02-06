@@ -14,7 +14,7 @@ import { SKILLS_DIR, joinPath, fileExists, readFile } from '@/lib';
  * Without it, sdd-init can't create the required config component.
  */
 describe('config-scaffolding Skill', () => {
-  const SKILL_PATH = joinPath(SKILLS_DIR, 'config-scaffolding', 'SKILL.md');
+  const SKILL_PATH = joinPath(SKILLS_DIR, 'components', 'config', 'config-scaffolding', 'SKILL.md');
 
   it('SKILL.md exists', () => {
     expect(fileExists(SKILL_PATH)).toBe(true);
@@ -47,7 +47,7 @@ describe('config-scaffolding Skill', () => {
  * Without it, developers don't know the patterns to follow.
  */
 describe('config-standards Skill', () => {
-  const SKILL_PATH = joinPath(SKILLS_DIR, 'config-standards', 'SKILL.md');
+  const SKILL_PATH = joinPath(SKILLS_DIR, 'components', 'config', 'config-standards', 'SKILL.md');
 
   it('SKILL.md exists', () => {
     expect(fileExists(SKILL_PATH)).toBe(true);
@@ -90,7 +90,7 @@ describe('config-standards Skill', () => {
  * Without it, helm charts won't correctly mount and inject config.
  */
 describe('helm-standards Skill', () => {
-  const SKILL_PATH = joinPath(SKILLS_DIR, 'helm-standards', 'SKILL.md');
+  const SKILL_PATH = joinPath(SKILLS_DIR, 'components', 'helm', 'helm-standards', 'SKILL.md');
 
   it('SKILL.md exists', () => {
     expect(fileExists(SKILL_PATH)).toBe(true);
@@ -140,7 +140,7 @@ describe('helm-standards Skill', () => {
  * Without it, there's no automated way to create SDD-compliant charts.
  */
 describe('helm-scaffolding Skill', () => {
-  const SKILL_PATH = joinPath(SKILLS_DIR, 'helm-scaffolding', 'SKILL.md');
+  const SKILL_PATH = joinPath(SKILLS_DIR, 'components', 'helm', 'helm-scaffolding', 'SKILL.md');
 
   it('SKILL.md exists', () => {
     expect(fileExists(SKILL_PATH)).toBe(true);

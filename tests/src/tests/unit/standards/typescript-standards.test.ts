@@ -90,7 +90,7 @@ describe('TypeScript Standards Conformance', () => {
   });
 
   describe('typescript-standards skill sync', () => {
-    it('.claude and plugin versions are identical', () => {
+    it('.claude and plugin versions have identical content', () => {
       const claudeVersion = readFileSync(
         join(REPO_ROOT, '.claude/skills/typescript-standards/SKILL.md'),
         'utf-8'
@@ -100,7 +100,10 @@ describe('TypeScript Standards Conformance', () => {
         'utf-8'
       );
 
-      expect(claudeVersion).toBe(pluginVersion);
+      // Strip plugin-only frontmatter attributes before comparing
+      const normalized = pluginVersion.replace(/^user-invocable:.*\n/m, '');
+
+      expect(claudeVersion).toBe(normalized);
     });
   });
 

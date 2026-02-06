@@ -9,7 +9,7 @@
 import { describe, expect, it } from 'vitest';
 import { SKILLS_DIR, joinPath, fileExists, readFile } from '@/lib';
 
-const BACKEND_TEMPLATES_DIR = joinPath(SKILLS_DIR, 'backend-scaffolding', 'templates');
+const BACKEND_TEMPLATES_DIR = joinPath(SKILLS_DIR, 'components', 'backend', 'backend-scaffolding', 'templates');
 
 /**
  * WHY: load_config.ts is the entry point for configuration loading.

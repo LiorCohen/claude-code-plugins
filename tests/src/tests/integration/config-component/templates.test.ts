@@ -9,7 +9,7 @@
 import { describe, expect, it } from 'vitest';
 import { SKILLS_DIR, joinPath, fileExists, isDirectory, readFile } from '@/lib';
 
-const CONFIG_TEMPLATES_DIR = joinPath(SKILLS_DIR, 'config-scaffolding', 'templates');
+const CONFIG_TEMPLATES_DIR = joinPath(SKILLS_DIR, 'components', 'config', 'config-scaffolding', 'templates');
 
 /**
  * WHY: The package.json template defines how the config component is

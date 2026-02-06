@@ -282,7 +282,7 @@ npm run generate:types
 
 ### Step 4: Implement in Server
 
-Follow [backend-standards](../backend-standards/SKILL.md) implementation order.
+Follow [backend-standards](../../backend/backend-standards/SKILL.md) implementation order.
 
 ---
 

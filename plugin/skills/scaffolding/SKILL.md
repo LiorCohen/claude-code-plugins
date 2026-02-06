@@ -15,12 +15,12 @@ This skill coordinates multiple component scaffolding skills:
 | Skill | Purpose | Templates Location |
 |-------|---------|-------------------|
 | `project-scaffolding` | Root files, specs | `skills/project-scaffolding/templates/` |
-| `config-scaffolding` | Config component (mandatory) | `skills/config-scaffolding/templates/` |
-| `backend-scaffolding` | Server components (CMDO) | `skills/backend-scaffolding/templates/` |
-| `frontend-scaffolding` | Webapp components (MVVM) | `skills/frontend-scaffolding/templates/` |
-| `contract-scaffolding` | OpenAPI contract | `skills/contract-scaffolding/templates/` |
-| `database-scaffolding` | PostgreSQL database | `skills/database-scaffolding/templates/` |
-| `helm-scaffolding` | Helm charts for K8s deployment | `skills/helm-scaffolding/templates/` |
+| `config-scaffolding` | Config component (mandatory) | `skills/components/config/config-scaffolding/templates/` |
+| `backend-scaffolding` | Server components (CMDO) | `skills/components/backend/backend-scaffolding/templates/` |
+| `frontend-scaffolding` | Webapp components (MVVM) | `skills/components/frontend/frontend-scaffolding/templates/` |
+| `contract-scaffolding` | OpenAPI contract | `skills/components/contract/contract-scaffolding/templates/` |
+| `database-scaffolding` | PostgreSQL database | `skills/components/database/database-scaffolding/templates/` |
+| `helm-scaffolding` | Helm charts for K8s deployment | `skills/components/helm/helm-scaffolding/templates/` |
 
 ## When to Use
 
@@ -235,29 +235,36 @@ skills/
 │   └── templates/
 │       ├── project/          # README.md, CLAUDE.md, package.json
 │       └── specs/            # INDEX.md, SNAPSHOT.md, glossary.md
-├── config-scaffolding/
-│   ├── SKILL.md
-│   └── templates/
-│       ├── package.json      # Workspace package
-│       ├── tsconfig.json     # TypeScript config
-│       ├── envs/             # Environment configs
-│       ├── schemas/          # JSON schemas
-│       └── types/            # TypeScript types
-├── backend-scaffolding/
-│   ├── SKILL.md
-│   └── templates/            # Server component files
-├── frontend-scaffolding/
-│   ├── SKILL.md
-│   └── templates/            # Webapp component files
-├── contract-scaffolding/
-│   ├── SKILL.md
-│   └── templates/            # openapi.yaml, package.json
-├── database-scaffolding/
-│   ├── SKILL.md
-│   └── templates/            # migrations/, seeds/
-├── helm-scaffolding/
-│   ├── SKILL.md
-│   └── templates/            # Chart.yaml, values.yaml, templates/
+├── components/
+│   ├── backend/
+│   │   └── backend-scaffolding/
+│   │       ├── SKILL.md
+│   │       └── templates/            # Server component files
+│   ├── config/
+│   │   └── config-scaffolding/
+│   │       ├── SKILL.md
+│   │       └── templates/
+│   │           ├── package.json      # Workspace package
+│   │           ├── tsconfig.json     # TypeScript config
+│   │           ├── envs/             # Environment configs
+│   │           ├── schemas/          # JSON schemas
+│   │           └── types/            # TypeScript types
+│   ├── contract/
+│   │   └── contract-scaffolding/
+│   │       ├── SKILL.md
+│   │       └── templates/            # openapi.yaml, package.json
+│   ├── database/
+│   │   └── database-scaffolding/
+│   │       ├── SKILL.md
+│   │       └── templates/            # migrations/, seeds/
+│   ├── frontend/
+│   │   └── frontend-scaffolding/
+│   │       ├── SKILL.md
+│   │       └── templates/            # Webapp component files
+│   └── helm/
+│       └── helm-scaffolding/
+│           ├── SKILL.md
+│           └── templates/            # Chart.yaml, values.yaml, templates/
 └── scaffolding/
     └── SKILL.md              # This file (orchestrator)
 ```

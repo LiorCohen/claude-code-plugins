@@ -229,7 +229,7 @@ npm run psql  # Verify schema
 
 ### Step 5: Update Server DAL
 
-Follow [backend-standards](../backend-standards/SKILL.md) for DAL layer.
+Follow [backend-standards](../../backend/backend-standards/SKILL.md) for DAL layer.
 
 ---
 

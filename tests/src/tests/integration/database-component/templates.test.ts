@@ -9,7 +9,7 @@
 import { describe, expect, it } from 'vitest';
 import { SKILLS_DIR, joinPath, fileExists, isDirectory, readFile } from '@/lib';
 
-const DATABASE_TEMPLATES_DIR = joinPath(SKILLS_DIR, 'database-scaffolding', 'templates');
+const DATABASE_TEMPLATES_DIR = joinPath(SKILLS_DIR, 'components', 'database', 'database-scaffolding', 'templates');
 
 /**
  * WHY: The package.json template defines how the database component is
