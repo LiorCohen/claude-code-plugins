@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Workflow State Input",
+  "description": "Input parameters for managing workflow state operations including creation, status updates, and queries.",
+  "type": "object",
+  "properties": {
+    "operation": {
+      "type": "string",
+      "enum": [
+        "create_workflow",
+        "create_item",
+        "update_status",
+        "regress",
+        "get_workflow",
+        "list_workflows"
+      ],
+      "description": "Workflow operation to perform"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Workflow ID for operations on existing workflows"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "external",
+        "interactive"
+      ],
+      "description": "Workflow source type (used for create_workflow)"
+    },
+    "external_source": {
+      "type": "string",
+      "description": "Path to archived spec file (used for create_workflow with external source)"
+    },
+    "item_id": {
+      "type": "string",
+      "description": "Item ID within the workflow (used for create_item)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Item title (used for create_item)"
+    },
+    "item_type": {
+      "type": "string",
+      "enum": [
+        "feature",
+        "epic"
+      ],
+      "description": "Item type (used for create_item)"
+    },
+    "field": {
+      "type": "string",
+      "description": "Status field to update (used for update_status)"
+    },
+    "status": {
+      "type": "string",
+      "description": "New status value to set (used for update_status)"
+    },
+    "to_phase": {
+      "type": "string",
+      "enum": [
+        "spec",
+        "plan"
+      ],
+      "description": "Target phase for regression (used for regress)"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Reason for the regression (used for regress)"
+    }
+  },
+  "required": [
+    "operation"
+  ]
+}

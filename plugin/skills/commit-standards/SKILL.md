@@ -28,7 +28,7 @@ Create consistent, well-documented commits that maintain a clear project history
 
 ## Commit Message Format
 
-```
+```text
 [Action] [Component]: [Description], bump to [project version]
 
 [Detailed explanation - same as changelog body]
@@ -52,7 +52,7 @@ Co-Authored-By: SDD Plugin vX.Y.Z
 
 ### Examples
 
-```
+```text
 Add user-auth: Implement login and registration flow, bump to 1.2.0
 
 - JWT-based authentication with refresh tokens
@@ -63,7 +63,7 @@ Add user-auth: Implement login and registration flow, bump to 1.2.0
 Co-Authored-By: SDD Plugin v5.1.0
 ```
 
-```
+```text
 Fix api-gateway: Resolve timeout on large payloads, bump to 1.1.1
 
 Increased default timeout from 30s to 120s for file upload endpoints.
@@ -72,7 +72,7 @@ Added chunked transfer encoding support.
 Co-Authored-By: SDD Plugin v5.1.0
 ```
 
-```
+```text
 Docs specs: Add user-auth change spec and plan
 
 Created change spec and implementation plan for user authentication feature.
@@ -88,7 +88,7 @@ Note: The "bump to X.Y.Z" suffix is only included when a version bump occurs.
 
 ### Directory Structure
 
-```
+```text
 changelog/
 ├── v1.md    # All 1.x releases
 ├── v2.md    # All 2.x releases
@@ -134,7 +134,7 @@ Example: Version `5.1.0` → add entry to `changelog/v5.md`
 
 The detailed description in the commit message should be **identical** to the changelog entry body. Write once, use for both:
 
-```
+```text
 # Commit message body:
 - JWT-based authentication with refresh tokens
 - Registration with email verification
@@ -190,7 +190,7 @@ Version bump is NOT required for:
 
 When implementing from a spec, reference the change directory:
 
-```
+```text
 Add user-auth: Implement login flow (changes/2026/01/user-auth)
 
 Implements phase 1 of the user-auth change spec.
@@ -221,13 +221,13 @@ When a commit completes work tracked in a plan, update the plan status:
 If your changes would result in multiple changelog entries, split them into separate commits.
 
 **Wrong:**
-```
+```bash
 git add . && git commit -m "Add feature A, fix bug B, refactor C"
 # Results in 3 changelog entries in one commit
 ```
 
 **Correct:**
-```
+```bash
 git add feature-files && git commit -m "Add feature A"
 git add bugfix-files && git commit -m "Fix bug B"
 git add refactor-files && git commit -m "Refactor C"
@@ -260,7 +260,7 @@ git log origin/main..HEAD --oneline
 
 Before committing, verify:
 
-```
+```text
 [ ] Version in .sdd/sdd-settings.yaml updated (if version bump needed)
 [ ] Changelog entry in changelog/vN.md
 [ ] Commit body matches changelog body
@@ -273,7 +273,7 @@ Before committing, verify:
 
 ## Quick Reference
 
-```
+```text
 Any filesystem change? → Commit immediately to prevent data loss
 
 Code change? → Version bump → Changelog (changelog/vN.md) → Commit
@@ -282,3 +282,9 @@ Spec/plan?   → Changelog (changelog/vN.md) → Commit
 
 Always: Verify project version with user before committing
 ```
+
+---
+
+## Input / Output
+
+This skill defines no input parameters or structured output.

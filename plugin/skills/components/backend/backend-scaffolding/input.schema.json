@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Backend Scaffolding Input",
+  "description": "Input parameters for scaffolding a backend server component with operator lifecycle, DAL layers, and HTTP handlers.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Component name (lowercase, hyphens)"
+    },
+    "server_type": {
+      "type": "string",
+      "description": "Server type determining operator lifecycle",
+      "enum": ["api", "worker", "cron", "hybrid"]
+    },
+    "databases": {
+      "type": "array",
+      "description": "Database component names to generate DAL layers for",
+      "items": {
+        "type": "string",
+        "description": "Database component name"
+      }
+    },
+    "provides_contracts": {
+      "type": "array",
+      "description": "Contract names this server provides (triggers HTTP handler generation)",
+      "items": {
+        "type": "string",
+        "description": "Contract name provided by this server"
+      }
+    },
+    "consumes_contracts": {
+      "type": "array",
+      "description": "Contract names this server consumes (triggers API client generation)",
+      "items": {
+        "type": "string",
+        "description": "Contract name consumed by this server"
+      }
+    },
+    "helm": {
+      "type": "boolean",
+      "description": "Whether to skip Helm chart scaffolding (default true)"
+    }
+  },
+  "required": ["name", "server_type"]
+}

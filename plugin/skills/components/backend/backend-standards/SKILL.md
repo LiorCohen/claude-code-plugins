@@ -13,7 +13,7 @@ CMDO ("Commando") architecture for Node.js/TypeScript backends with strict separ
 
 ## Architecture: CMDO (Controller Model DAL Operator)
 
-```
+```text
 Operator → Controller → Model Use Cases
    ↓            ↓              ↑
 Config → [All layers] → Dependencies (injected by Controller)
@@ -96,7 +96,7 @@ Provides raw I/O capabilities and orchestrates application lifecycle. **NO domai
 - NO knowledge of what the raw I/O will be used for
 
 **Lifecycle State Machine:**
-```
+```text
 IDLE → STARTING:PROBES → STARTING:DATABASE → STARTING:HTTP_SERVER → RUNNING
                                                                         ↓
 STOPPED ← STOPPING:PROBES ← STOPPING:DATABASE ← STOPPING:HTTP_SERVER ←─┘
@@ -117,7 +117,7 @@ When a signal is received:
 4. Exit with code 0 (success) or 1 (error)
 
 **Structure:**
-```
+```text
 src/operator/
 ├── create_operator.ts      # Main factory, state machine, lifecycle
 ├── create_database.ts      # Database connection pool
@@ -148,7 +148,7 @@ Environment parsing, validation, type-safe config objects.
 **What it does NOT contain:** Business logic, database queries.
 
 **Structure:**
-```
+```text
 src/config/
 ├── index.ts                # loadConfig() function, Config type
 └── validation.ts           # Optional: validation helpers
@@ -175,7 +175,7 @@ Request/response handling, combines I/O + config for domain-specific operations,
 **What it does NOT contain:** Database queries, business logic (delegates to Model).
 
 **Structure:**
-```
+```text
 src/controller/
 ├── http_handlers/          # One file per API namespace
 │   ├── users.ts            # Exports usersRouter
@@ -219,7 +219,7 @@ const createUser = async (
 **What it does NOT contain:** HTTP handling, direct database queries, external imports.
 
 **Structure:**
-```
+```text
 src/model/
 ├── definitions/            # TypeScript types ONLY (no Zod/validation)
 │   ├── user.ts
@@ -249,7 +249,7 @@ Data access functions that directly handle database queries. **No repository pat
 **What it does NOT contain:** Business logic, HTTP handling, repository abstractions.
 
 **Structure:**
-```
+```text
 src/dal/
 ├── find_user_by_id.ts
 ├── insert_user.ts
@@ -353,7 +353,7 @@ Wrap business operations with spans using `@opentelemetry/api`.
 
 **CRITICAL: Use lowercase_with_underscores for ALL filenames**
 
-```
+```text
 ✅ create_user.ts, find_user_by_id.ts, user_repository.ts
 ❌ createUser.ts (camelCase), CreateUser.ts (PascalCase), create-user.ts (kebab-case)
 ```
@@ -435,7 +435,7 @@ Only modify if the feature requires:
 
 ## Config Schema
 
-Server components require configuration from `components/config/`. See [backend-scaffolding](../backend-scaffolding/SKILL.md) for the minimal config schema generated when scaffolding a server component.
+Server components require configuration from `components/config/`. The [backend-scaffolding](../backend-scaffolding/SKILL.md) skill generates the initial server structure including a minimal config schema with `port`, `host`, and `logLevel` fields.
 
 ---
 
@@ -455,3 +455,9 @@ Before committing backend code, verify:
 - [ ] All layers use structured logging with required fields
 - [ ] No sensitive data in logs
 - [ ] Implementation followed correct order: Contract → Model → DAL → Controller
+
+---
+
+## Input / Output
+
+This skill defines no input parameters or structured output.

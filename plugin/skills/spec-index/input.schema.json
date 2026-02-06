@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Spec Index Input",
+  "description": "Input parameters for generating or validating the specification index.",
+  "type": "object",
+  "properties": {
+    "command": {
+      "type": "string",
+      "enum": [
+        "generate-index",
+        "generate-snapshot",
+        "validate"
+      ],
+      "description": "Index operation to perform: generate-index creates INDEX.md, generate-snapshot creates a point-in-time snapshot, validate checks consistency"
+    },
+    "changes_dir": {
+      "type": "string",
+      "description": "Path to the changes/ directory containing change folders"
+    },
+    "specs_dir": {
+      "type": "string",
+      "description": "Path to the specs/ directory containing archived specifications"
+    }
+  },
+  "required": [
+    "command"
+  ]
+}

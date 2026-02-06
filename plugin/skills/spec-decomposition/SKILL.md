@@ -12,17 +12,9 @@ Analyze a specification document to identify natural change boundaries and retur
 
 ## Input
 
-| Parameter | Required | Description |
-|-----------|----------|-------------|
-| `spec_content` | Yes | The markdown content of the specification to analyze |
-| `spec_path` | No | Original path to the spec file (for reference tracking) |
-| `default_domain` | No | Default domain to use if not detected |
-| `mode` | No | `"outline"` to extract structure only, `"section"` to analyze one section, `"hierarchical"` for two-level epic/feature decomposition, or omit for full analysis |
-| `section_header` | If mode=section | Header text of the section being analyzed (e.g., `"## User Auth"`) |
-| `spec_is_directory` | No | If true, spec is a directory with multiple files |
-| `spec_files` | If spec_is_directory | List of markdown files in the spec directory |
+Schema: [`input.schema.json`](./input.schema.json)
 
----
+Accepts decomposition mode, spec content, and mode-specific parameters for outline, section, or hierarchical decomposition.
 
 ## Chunked Outline Extraction
 
@@ -381,7 +373,9 @@ If `mode` is omitted, perform full analysis on the entire `spec_content`. This i
 
 ## Output
 
-Returns a `DecompositionResult` structure (see Data Structures below).
+Schema: [`output.schema.json`](./output.schema.json)
+
+Returns mode-specific results: outline sections, or hierarchical epic/feature groupings with dependency graph.
 
 ## Algorithm
 
@@ -444,7 +438,7 @@ Build a directed acyclic graph (DAG) of change dependencies.
 
 Score each change's independence (0.0 to 1.0):
 
-```
+```text
 Independence Score =
   + 0.3 if has own API endpoints
   + 0.2 if has own data model/entities
@@ -540,7 +534,7 @@ recommend_epic: boolean    # true if changes.length >= 3 (signals epic structure
 ```
 
 **Epic Recommendation:**
-When `recommend_epic` is true (3+ changes identified), the calling skill should consider wrapping the changes in an epic structure. This provides better organization for larger decompositions.
+When `recommend_epic` is true (3+ changes identified), the changes should be wrapped in an epic structure. This provides better organization for larger decompositions.
 
 ## Special Cases
 
@@ -571,7 +565,7 @@ If a change has > 15 acceptance criteria:
 
 ## Operations
 
-The caller can perform these operations on the result:
+Available operations on the result:
 
 ### Merge Changes
 
@@ -606,7 +600,7 @@ Update the change type:
 
 ## Example Usage
 
-```
+```yaml
 Input:
   spec_content: <markdown content>
   spec_path: /path/to/product-requirements.md

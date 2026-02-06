@@ -10,7 +10,11 @@ Scaffolds Helm charts for deploying SDD components to Kubernetes. Charts are gen
 
 ## When to Use
 
-This skill is called by the main `scaffolding` skill when creating helm components. It creates Helm charts that integrate with the SDD config system.
+Use when creating Helm chart components. Creates Helm charts that integrate with the SDD config system.
+
+## Prerequisites
+
+- `sdd-system` CLI available in PATH (installed via the SDD plugin's npm package)
 
 ## Settings-Driven Scaffolding
 
@@ -117,7 +121,7 @@ Helm charts live at `components/helm_charts/<name>/`:
 
 ### Server Chart Structure
 
-```
+```text
 components/helm_charts/<name>/
 ├── Chart.yaml                # Chart metadata
 ├── values.yaml               # Default values
@@ -135,7 +139,7 @@ components/helm_charts/<name>/
 
 ### Webapp Chart Structure
 
-```
+```text
 components/helm_charts/<name>/
 ├── Chart.yaml
 ├── values.yaml
@@ -149,7 +153,7 @@ components/helm_charts/<name>/
 
 ### Umbrella Chart Structure
 
-```
+```text
 components/helm_charts/umbrella/
 ├── Chart.yaml                # Lists all charts as dependencies
 └── values.yaml               # Enable/disable individual charts
@@ -173,7 +177,7 @@ components/helm_charts/umbrella/
 
 Templates are organized by deployment target:
 
-```
+```text
 skills/components/helm/helm-scaffolding/
 ├── templates/                 # Legacy (single deployment)
 ├── templates-server/          # Server charts
@@ -251,8 +255,12 @@ Cluster-level observability (Victoria Metrics, Victoria Logs) is set up separate
 
 ---
 
+## Input
+
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts chart name, deploy target, deployment type, and optional settings for modes, ingress, and webapp assets.
+
 ## Related Skills
 
-- `helm-standards` - Standards for Helm charts
-- `config-scaffolding` - Creates the config component
-- `backend-scaffolding` - Creates the server component that this chart deploys
+- `helm-standards` — Generated Helm charts must follow these standards. Defines `values.yaml` structure, template patterns, settings-driven configuration, and release naming conventions.

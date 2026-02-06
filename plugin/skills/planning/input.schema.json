@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Planning Input",
+  "description": "Input parameters for creating an implementation plan from an approved specification.",
+  "type": "object",
+  "properties": {
+    "change_id": {
+      "type": "string",
+      "description": "Workflow-scoped change ID identifying the change to plan"
+    },
+    "spec_path": {
+      "type": "string",
+      "description": "Path to the approved SPEC.md file"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Workflow ID for tracking"
+    }
+  },
+  "required": [
+    "change_id",
+    "spec_path",
+    "workflow_id"
+  ]
+}

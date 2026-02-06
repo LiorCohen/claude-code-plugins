@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "External Spec Integration Output",
+  "description": "Output from external spec integration, including archived spec location and created workflow items.",
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean",
+      "description": "Whether the integration completed successfully"
+    },
+    "external_spec_archived": {
+      "type": "string",
+      "description": "Path to the archived copy of the external spec"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Workflow ID associated with this integration"
+    },
+    "is_hierarchical": {
+      "type": "boolean",
+      "description": "Whether the spec was decomposed into an epic with child features"
+    },
+    "items_created": {
+      "type": "array",
+      "description": "Workflow items created from the external spec",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique item identifier"
+          },
+          "change_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Assigned change ID, or null if not yet assigned"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "epic",
+              "feature"
+            ],
+            "description": "Item type classification"
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title for the workflow item"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "success",
+    "external_spec_archived",
+    "workflow_id",
+    "is_hierarchical",
+    "items_created"
+  ]
+}

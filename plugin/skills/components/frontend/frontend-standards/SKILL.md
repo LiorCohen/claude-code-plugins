@@ -13,7 +13,7 @@ MVVM architecture for React/TypeScript frontends with strict separation between 
 
 ## Architecture: MVVM (Model-View-ViewModel)
 
-```
+```text
 View (React Components) → ViewModel (Hooks) → Model (Business Logic)
          ↓                       ↓                    ↓
     TailwindCSS            TanStack Query         Services/API
@@ -34,7 +34,7 @@ View (React Components) → ViewModel (Hooks) → Model (Business Logic)
 
 ## Directory Structure
 
-```
+```text
 src/
 ├── pages/                    # Page components (Views + ViewModels + Models)
 │   ├── home_page/
@@ -546,3 +546,9 @@ Before committing frontend code, verify:
 - [ ] No implicit global code (all code explicitly invoked)
 - [ ] Zustand stores follow readonly pattern
 - [ ] Props interfaces use `readonly` modifier
+
+---
+
+## Input / Output
+
+This skill defines no input parameters or structured output.

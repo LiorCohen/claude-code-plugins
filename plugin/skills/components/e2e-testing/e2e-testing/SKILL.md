@@ -29,7 +29,7 @@ Full browser automation tests that verify complete user journeys. E2E tests run 
 
 ### Directory Organization
 
-```
+```text
 components/<testing-component>/tests/e2e/
 ├── tests/
 │   ├── auth/
@@ -611,3 +611,9 @@ Before committing E2E tests, verify:
 - [ ] Testkube YAML definition created/updated
 - [ ] Tests run successfully via `testkube run test`
 - [ ] Visual regression baselines committed if used
+
+---
+
+## Input / Output
+
+This skill defines no input parameters or structured output.

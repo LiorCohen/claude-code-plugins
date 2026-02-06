@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Frontend Scaffolding Input",
+  "description": "Input parameters for scaffolding a frontend webapp component with API client generation and configuration.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Webapp name (lowercase, hyphens)"
+    },
+    "project_name": {
+      "type": "string",
+      "description": "Project name"
+    },
+    "project_description": {
+      "type": "string",
+      "description": "Project description"
+    },
+    "primary_domain": {
+      "type": "string",
+      "description": "Primary business domain"
+    },
+    "contracts": {
+      "type": "array",
+      "description": "Contract names this webapp consumes (drives API client generation and config)",
+      "items": {
+        "type": "string",
+        "description": "Contract name consumed by this webapp"
+      }
+    }
+  },
+  "required": ["name"]
+}

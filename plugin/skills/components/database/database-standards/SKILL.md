@@ -21,9 +21,13 @@ Database components manage schema evolution and seed data:
 
 ---
 
+## Prerequisites
+
+- `sdd-system` CLI available in PATH (installed via the SDD plugin's npm package)
+
 ## Directory Structure
 
-```
+```text
 components/database[-{name}]/
 ├── package.json              # npm scripts (call sdd-system CLI)
 ├── migrations/               # Schema migrations (numbered)
@@ -39,7 +43,7 @@ components/database[-{name}]/
 
 ## Config Schema
 
-Database components require connection configuration from `components/config/`. See [database-scaffolding](../database-scaffolding/SKILL.md) for the minimal config schema generated when scaffolding a database component.
+Database components require connection configuration from `components/config/`. The [database-scaffolding](../database-scaffolding/SKILL.md) skill generates the initial database structure including a minimal config schema with `host`, `port`, `database`, `user`, and `password` fields.
 
 ---
 
@@ -47,7 +51,7 @@ Database components require connection configuration from `components/config/`. 
 
 ### File Naming
 
-```
+```text
 migrations/
 ├── 001_initial_schema.sql
 ├── 002_add_users_table.sql
@@ -132,7 +136,7 @@ COMMIT;
 
 ### File Naming
 
-```
+```text
 seeds/
 ├── 001_lookup_data.sql
 ├── 002_admin_users.sql
@@ -229,7 +233,7 @@ npm run psql  # Verify schema
 
 ### Step 5: Update Server DAL
 
-Follow [backend-standards](../../backend/backend-standards/SKILL.md) for DAL layer.
+The backend DAL layer must follow [backend-standards](../../backend/backend-standards/SKILL.md) — it defines CMDO architecture with strict layer separation, including repository patterns for database queries, connection pooling rules, and typed result mapping.
 
 ---
 
@@ -252,7 +256,7 @@ npm run psql         # Open psql shell
 
 When a project has multiple databases:
 
-```
+```text
 components/
 ├── database-orders/      # Orders domain
 │   └── migrations/
@@ -282,8 +286,15 @@ Before committing database changes:
 
 ---
 
+## Input / Output
+
+This skill defines no input parameters or structured output.
+
+
+---
+
 ## Related Skills
 
-- `backend-standards` - DAL layer that queries the database
-- `config-standards` - Database config management
-- `helm-standards` - Kubernetes deployment with secrets
+- `backend-standards` — Delegate to this for DAL implementation patterns. Defines CMDO repository layer for database queries, connection pooling, and typed result mapping.
+- `config-standards` — Delegate to this for database connection configuration. Defines how `host`, `port`, `database`, `user`, and `password` fields are structured in the config component.
+- `helm-standards` — Delegate to this for Kubernetes deployment of database components. Defines how database secrets and connection strings are injected via Helm values.

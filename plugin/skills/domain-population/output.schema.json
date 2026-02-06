@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Domain Population Output",
+  "description": "Output from domain population, indicating success and which files were updated.",
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean",
+      "description": "Whether the domain population completed successfully"
+    },
+    "files_updated": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Paths of domain files that were created or updated"
+    }
+  },
+  "required": [
+    "success",
+    "files_updated"
+  ]
+}

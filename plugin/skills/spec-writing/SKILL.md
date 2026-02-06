@@ -11,6 +11,22 @@ user-invocable: false
 
 Use templates below as starting points.
 
+## Prerequisites
+
+- `sdd-system` CLI available in PATH (installed via the SDD plugin's npm package)
+
+## Input
+
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts spec type, change type, title, domain, and optional issue reference.
+
+## Output
+
+Schema: [`output.schema.json`](./output.schema.json)
+
+Returns complete SPEC.md markdown and validation results for required fields, sections, and format.
+
 ## Spec Types: Product vs Tech
 
 **Product Specs** (external input):
@@ -117,7 +133,7 @@ Run `npx sdd-system spec validate <path>` to check:
 
 Validation should return clear, actionable error messages:
 
-```
+```text
 Spec validation failed: changes/2026/02/05/a1b2c3/01-auth/SPEC.md
 
 FRONTMATTER ERRORS:
@@ -172,7 +188,7 @@ Specs CANNOT be approved while open questions remain in the `## Requirements Dis
 
 Always use Given/When/Then:
 
-```
+```markdown
 - [ ] **AC1:** Given [precondition], when [action], then [expected result]
 ```
 
@@ -228,12 +244,12 @@ sdd_version: [X.Y.Z]
 **Request:**
 ```json
 { "field": "type" }
-```
+```json
 
 **Response (2XX):**
 ```json
 { "data": { "field": "type" } }
-```
+```json
 
 **Errors:**
 | Status | Code | Condition |
@@ -263,9 +279,9 @@ sdd_version: [X.Y.Z]
 
 ### Relationships
 
-```
+```text
 [Entity A] ──── [relationship] ───→ [Entity B]
-```
+```text
 
 ### Glossary
 
@@ -283,17 +299,17 @@ sdd_version: [X.Y.Z]
 
 ### Before
 
-```
+```text
 specs/
 └── [current structure]
-```
+```text
 
 ### After
 
-```
+```text
 specs/
 └── [new structure with comments: # NEW, # MODIFIED]
-```
+```text
 
 ### Changes Summary
 
@@ -391,7 +407,7 @@ specs/
 ## Out of Scope
 
 - [What this feature explicitly does NOT cover]
-```
+```yaml
 
 ---
 
@@ -508,7 +524,7 @@ The `parent_epic` field links the child back to the epic spec.
 
 ### Epic Directory Structure
 
-```
+```text
 changes/YYYY/MM/DD/<epic-name>/
 ├── SPEC.md                    # Epic-level spec
 ├── PLAN.md                    # Epic-level plan (change ordering)

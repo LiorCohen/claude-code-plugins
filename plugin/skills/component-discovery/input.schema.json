@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Component Discovery Input",
+  "description": "Input parameters for discovering project components based on a change and its requirements.",
+  "type": "object",
+  "properties": {
+    "change_name": {
+      "type": "string",
+      "description": "Name of the change being worked on"
+    },
+    "change_type": {
+      "type": "string",
+      "enum": [
+        "feature",
+        "bugfix",
+        "refactor",
+        "epic"
+      ],
+      "description": "Type of change being worked on"
+    },
+    "existing_components": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Components already defined in sdd-settings.yaml"
+    },
+    "classified_requirements": {
+      "type": "object",
+      "description": "Requirements from external spec classification",
+      "properties": {
+        "functional": {
+          "type": "array",
+          "description": "Functional requirements extracted from the spec"
+        },
+        "non_functional": {
+          "type": "array",
+          "description": "Non-functional requirements extracted from the spec"
+        },
+        "design_details": {
+          "type": "object",
+          "description": "Design detail information extracted from the spec"
+        },
+        "domain_knowledge": {
+          "type": "object",
+          "description": "Domain knowledge information extracted from the spec"
+        }
+      }
+    }
+  },
+  "required": [
+    "change_name",
+    "change_type"
+  ]
+}

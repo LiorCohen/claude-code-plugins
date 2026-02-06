@@ -26,6 +26,18 @@ This skill coordinates multiple component scaffolding skills:
 
 Use this skill when you need to create the SDD project structure after the user has approved the project configuration.
 
+## Input
+
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts project name, target directory, component list, and optional description, domain, and skills directory.
+
+## Output
+
+Schema: [`output.schema.json`](./output.schema.json)
+
+Returns success status, list of scaffolded components, and next steps.
+
 ## Usage
 
 After gathering project configuration in `/sdd-init`, call the scaffold script:
@@ -228,7 +240,7 @@ The script executes in this order:
 
 Templates are colocated with their scaffolding skills:
 
-```
+```text
 skills/
 ├── project-scaffolding/
 │   ├── SKILL.md

@@ -10,7 +10,7 @@ Creates a Node.js/TypeScript backend component following the CMDO (Config, Model
 
 ## When to Use
 
-This skill is called by the main `scaffolding` skill when creating server components. It can create multiple named instances (e.g., `main-server`, `background-worker`).
+Use when creating server components. Supports multiple named instances (e.g., `main-server`, `background-worker`).
 
 ## Settings-Driven Scaffolding
 
@@ -70,7 +70,7 @@ const scaffoldServer = async (component: ServerComponent): Promise<void> => {
 
 ### Base Structure (Always Created)
 
-```
+```text
 components/servers/<name>/
 ├── package.json
 ├── tsconfig.json
@@ -101,7 +101,7 @@ components/servers/<name>/
 
 ### Conditional: HTTP Server (when `server_type` includes `api`)
 
-```
+```text
 └── src/
     └── operator/
         └── create_http_server.ts   # HTTP server setup (port 3000)
@@ -109,7 +109,7 @@ components/servers/<name>/
 
 ### Conditional: HTTP Handlers (when `provides_contracts` is non-empty)
 
-```
+```text
 └── src/
     └── controller/
         └── http_handlers/
@@ -120,7 +120,7 @@ components/servers/<name>/
 
 For each database in `databases`, creates:
 
-```
+```text
 └── src/
     └── dal/
         └── <database-name>/
@@ -166,7 +166,7 @@ Servers live at `components/servers/<name>/`:
 
 All templates are colocated in this skill's `templates/` directory:
 
-```
+```text
 skills/components/backend/backend-scaffolding/templates/
 ├── package.json
 ├── tsconfig.json
@@ -237,10 +237,14 @@ background-worker:
 
 ---
 
+## Input
+
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts component name, server type, and optional settings for databases, contracts, and Helm chart generation.
+
 ## Related Skills
 
-- `backend-standards` - Coding standards for backend development
-- `typescript-standards` - TypeScript coding conventions
-- `unit-testing` - Unit testing patterns for backend code
-- `config-scaffolding` - Creates the config component
-- `helm-scaffolding` - Creates Helm charts for deployment
+- `backend-standards` — Generated server code must follow these standards. Defines CMDO architecture with handler → orchestrator → repository layering, strict layer separation, and dependency injection.
+- `typescript-standards` — Generated TypeScript files must follow these coding conventions. Defines strict typing, readonly patterns, branded types, and import standards.
+- `unit-testing` — Generated test files must follow these patterns. Defines Vitest setup, mocking strategies, and isolation conventions for backend services.

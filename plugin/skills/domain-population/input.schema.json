@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Domain Population Input",
+  "description": "Input parameters for populating domain knowledge files in the project.",
+  "type": "object",
+  "properties": {
+    "target_dir": {
+      "type": "string",
+      "description": "Absolute path to the project directory"
+    },
+    "primary_domain": {
+      "type": "string",
+      "description": "Business domain name (e.g., e-commerce, healthcare)"
+    },
+    "product_description": {
+      "type": "string",
+      "description": "1-2 sentence description of the product"
+    },
+    "user_personas": {
+      "type": "array",
+      "description": "User personas who interact with the system",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Persona type or role name"
+          },
+          "actions": {
+            "type": "string",
+            "description": "Key actions this persona performs"
+          }
+        }
+      }
+    },
+    "core_workflows": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Main capabilities and workflows of the system"
+    },
+    "domain_entities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Domain entity names (e.g., Order, Customer, Product)"
+    }
+  },
+  "required": [
+    "target_dir",
+    "primary_domain",
+    "product_description"
+  ]
+}

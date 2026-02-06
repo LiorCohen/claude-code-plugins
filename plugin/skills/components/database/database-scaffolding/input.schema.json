@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Database Scaffolding Input",
+  "description": "Input parameters for scaffolding a database component with migrations and seed data.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Database name (lowercase, hyphens, determines directory path)"
+    },
+    "project_name": {
+      "type": "string",
+      "description": "Project name for comments and naming"
+    }
+  },
+  "required": ["name"]
+}

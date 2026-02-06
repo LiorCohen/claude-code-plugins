@@ -23,7 +23,7 @@ Contract components are the single source of truth for API types:
 
 ## Directory Structure
 
-```
+```text
 components/contract[-{name}]/
 ├── package.json          # Build scripts (generate:types, validate)
 ├── tsconfig.json         # TypeScript config for generated types
@@ -38,7 +38,7 @@ components/contract[-{name}]/
 
 ## Config Schema
 
-Contract components do not require application config from `components/config/`. They are build-time artifacts, not runtime services. See [contract-scaffolding](../contract-scaffolding/SKILL.md) for the directory structure created when scaffolding.
+Contract components do not require application config from `components/config/`. They are build-time artifacts, not runtime services. The [contract-scaffolding](../contract-scaffolding/SKILL.md) skill generates an `openapi.yaml`, `package.json` with type generation scripts, and a `generated/` directory for TypeScript types.
 
 ---
 
@@ -282,7 +282,7 @@ npm run generate:types
 
 ### Step 4: Implement in Server
 
-Follow [backend-standards](../../backend/backend-standards/SKILL.md) implementation order.
+Server endpoint implementation must follow [backend-standards](../../backend/backend-standards/SKILL.md) — it defines the CMDO handler → orchestrator → repository layering that contract endpoints are built upon.
 
 ---
 
@@ -290,7 +290,7 @@ Follow [backend-standards](../../backend/backend-standards/SKILL.md) implementat
 
 When a project has multiple contracts (e.g., public API vs internal API):
 
-```
+```text
 components/contracts/
 ├── public-api/           # External-facing API
 │   └── openapi.yaml
@@ -320,8 +320,14 @@ Before committing contract changes:
 
 ---
 
+## Input / Output
+
+This skill defines no input parameters or structured output.
+
+
+---
+
 ## Related Skills
 
-- `backend-standards` - How servers implement contract endpoints
-- `frontend-standards` - How webapps consume contract types
-- `api-design` - API design patterns and best practices
+- `backend-standards` — Delegate to this for server-side endpoint implementation. Defines the CMDO handler → orchestrator → repository layering that contract endpoints are built upon.
+- `frontend-standards` — Delegate to this for webapp consumption of generated types. Defines MVVM patterns and TanStack Query hooks that use the TypeScript types generated from OpenAPI specs.

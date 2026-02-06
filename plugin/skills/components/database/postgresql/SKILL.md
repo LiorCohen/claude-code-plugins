@@ -547,3 +547,9 @@ Detailed documentation for specific topics:
 - [Introspection Queries](references/introspection-queries.md) - Schema exploration
 - [Performance Tuning](references/performance-tuning.md) - EXPLAIN, indexes, configuration
 - [Common Errors](references/common-errors.md) - Error messages and solutions
+
+---
+
+## Input / Output
+
+This skill defines no input parameters or structured output.

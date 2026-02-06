@@ -27,7 +27,7 @@ Read the files, know the state. This enables aggressive context compaction and a
 
 ## Directory Structure
 
-```
+```text
 .sdd/
 ├── sdd-settings.yaml
 ├── archive/
@@ -245,7 +245,7 @@ Regression archives discarded work to `.sdd/archive/regressions/`.
 
 ## Internal API
 
-These operations are called by other skills (sdd-change, spec-solicitation, change-creation, etc.):
+Available operations:
 
 ### workflow_state.create_workflow(source, external_source?)
 
@@ -692,6 +692,18 @@ Checkpoints are created automatically on workflow state changes:
 | Regression | `checkpoint: <change-id> regressed to <phase>` | `workflow.yaml`, archived files |
 | Decomposition revised | `checkpoint: decomposition revised (<type>)` | `workflow.yaml`, archived files |
 
+## Input
+
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts operation type and operation-specific parameters for workflow lifecycle management.
+
+## Output
+
+Schema: [`output.schema.json`](./output.schema.json)
+
+Returns workflow ID, current phase, and progress tracking.
+
 ## Workflow ID Generation
 
 Workflow IDs are short, unique identifiers:
@@ -739,11 +751,10 @@ Change IDs are workflow-scoped:
 
 ## Consumers
 
-This skill is called by:
-- `sdd-change` command - creates workflows and manages lifecycle
-- `spec-solicitation` skill - reads context, saves specs
-- `change-creation` skill - saves plans
-- External-spec-integration skill - creates workflows and items from decomposition
+- `sdd-change` command — creates workflows and manages lifecycle
+- `spec-solicitation` skill — reads context, saves specs
+- `change-creation` skill — saves plans
+- `external-spec-integration` skill — creates workflows and items from decomposition
 
 ## Recovery Scenarios
 

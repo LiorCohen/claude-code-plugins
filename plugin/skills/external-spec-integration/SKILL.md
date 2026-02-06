@@ -44,49 +44,15 @@ When a user provides an external specification via `/sdd-change new --spec`:
 
 ## Input
 
-| Parameter | Required | Description |
-|-----------|----------|-------------|
-| `spec_path` | Yes | Absolute path to the external specification file |
-| `spec_outline` | Yes | Pre-extracted outline from sdd-change (sections with line ranges) |
-| `target_dir` | Yes | Absolute path to the project directory |
-| `primary_domain` | No | Primary domain for the project (inferred from spec if not set) |
-| `workflow_id` | Yes | Workflow ID from workflow-state skill |
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts path to external spec file, target directory, workflow ID, and optional domain.
 
 ## Output
 
-```yaml
-success: true
-external_spec_archived: ".sdd/archive/external-specs/20260205-feature-spec.md"
-workflow_id: a1b2c3
-is_hierarchical: true
-items_created:
-  - id: 01-user-management
-    change_id: null  # Epics don't get change_ids
-    type: epic
-    title: User Management
-    children:
-      - id: 01-registration
-        change_id: a1b2-1
-        type: feature
-        title: Registration
-        context_path: .sdd/workflows/a1b2c3/drafts/01-user-management/01-registration/context.md
-      - id: 02-authentication
-        change_id: a1b2-2
-        type: feature
-        title: Authentication
-        context_path: .sdd/workflows/a1b2c3/drafts/01-user-management/02-authentication/context.md
-thinking_output:
-  domain_model:
-    entities: [User, Session, Token]
-    relationships: ["User has-many Sessions"]
-    glossary_terms: 5
-    bounded_contexts: [Identity, Analytics]
-  specs_impact:
-    new: [specs/domain/session.md, specs/api/auth.md]
-    modified: [specs/domain/user.md]
-  gaps_identified: ["Password policy not specified"]
-  recommended_order: [01-registration, 02-authentication, ...]
-```
+Schema: [`output.schema.json`](./output.schema.json)
+
+Returns archived spec path, workflow ID, hierarchical flag, and list of created workflow items.
 
 ## Workflow
 
@@ -110,7 +76,7 @@ thinking_output:
 
 Before transformation, estimate spec size:
 
-```
+```text
 Estimated tokens ≈ character_count / 4
 ```
 
@@ -134,7 +100,7 @@ spec_info:
 
 For large specs, display:
 
-```
+```text
 ═══════════════════════════════════════════════════════════════
  LARGE SPEC DETECTED
 ═══════════════════════════════════════════════════════════════
@@ -228,7 +194,7 @@ gaps:
 
 Present what was found, then ask questions ONE AT A TIME:
 
-```
+```text
 ═══════════════════════════════════════════════════════════════
  TRANSFORMATION COMPLETE
 ═══════════════════════════════════════════════════════════════
@@ -258,7 +224,7 @@ above, then let me know when you're ready to continue.
 
 Then ask ONE question at a time:
 
-```
+```text
 Let's fill in the gaps. First question:
 
 What are your password requirements?
@@ -320,7 +286,7 @@ The `spec_outline` is already extracted. Detect hierarchical decomposition:
 
 **Display for hierarchical specs:**
 
-```
+```text
 I found the following structure in this spec:
 
 EPICS (from H1 sections):
@@ -446,7 +412,7 @@ recommended_order:
 
 Show the analysis to user for review:
 
-```
+```text
 ═══════════════════════════════════════════════════════════════
  DOMAIN ANALYSIS
 ═══════════════════════════════════════════════════════════════
@@ -565,8 +531,7 @@ This skill orchestrates:
 - `component-discovery` - Identifies needed components (NEW)
 - `spec-decomposition` - Analyzes spec structure with thinking step
 
-This skill is called by:
-- `/sdd-change new --spec` command
+Trigger: `/sdd-change new --spec` command.
 
 ## Workflow Steps Summary
 

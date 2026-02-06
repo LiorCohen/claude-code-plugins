@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Config Scaffolding Input",
+  "description": "Input parameters for scaffolding the config component. The config component dynamically generates sections based on all other components' settings.",
+  "type": "object",
+  "properties": {
+    "components": {
+      "type": "array",
+      "description": "Component definitions that drive config generation",
+      "items": {
+        "type": "object",
+        "description": "A single component definition used to generate a config section",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Component name"
+          },
+          "type": {
+            "type": "string",
+            "description": "Component type determining which config template to apply",
+            "enum": ["server", "webapp", "database", "contract", "helm"]
+          },
+          "settings": {
+            "type": "object",
+            "description": "Component-specific settings passed through to the config template"
+          }
+        }
+      }
+    }
+  },
+  "required": ["components"]
+}

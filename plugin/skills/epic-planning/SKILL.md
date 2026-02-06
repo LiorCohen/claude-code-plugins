@@ -13,7 +13,7 @@ Epics are a change type that groups multiple feature-type changes under a single
 
 ## Epic Structure
 
-```
+```text
 changes/YYYY/MM/DD/<workflow-id>/<NN-epic-name>/
 ├── SPEC.md                    # Epic specification (overall goals, all ACs)
 ├── PLAN.md                    # Epic plan (change ordering, dependencies)
@@ -25,6 +25,18 @@ changes/YYYY/MM/DD/<workflow-id>/<NN-epic-name>/
         ├── SPEC.md
         └── PLAN.md
 ```
+
+## Input
+
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts epic metadata (name, title, description, domain), child change definitions, and optional acceptance criteria.
+
+## Output
+
+Schema: [`output.schema.json`](./output.schema.json)
+
+Returns paths to epic and child SPEC.md and PLAN.md files.
 
 ## Workflow Integration
 
@@ -109,7 +121,7 @@ change-1
 change-2 (requires: change-1)
     ↓
 change-3 (requires: change-2)
-```
+```markdown
 
 ## PR Strategy
 
@@ -239,7 +251,7 @@ If requirements change mid-epic:
 
 ## Quick Reference
 
-```
+```typescript
 Epic = Change type containing multiple feature changes
 Child Change = Standard feature change inside changes/ subdirectory
 SPEC.md (epic) = Overall goals and all ACs

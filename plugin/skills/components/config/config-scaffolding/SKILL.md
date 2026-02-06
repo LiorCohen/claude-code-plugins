@@ -10,11 +10,15 @@ Scaffolds the mandatory config component for centralized configuration managemen
 
 ## When to Use
 
-This skill is called by the main `scaffolding` skill during project initialization. The config component is **mandatory** - every SDD project has exactly one.
+Use during project initialization to create the config component. The config component is **mandatory** — every SDD project has exactly one.
+
+## Prerequisites
+
+- `sdd-system` CLI available in PATH (installed via the SDD plugin's npm package)
 
 ## What It Creates
 
-```
+```text
 components/config/
 ├── package.json                # Minimal package for workspace imports
 ├── tsconfig.json               # TypeScript config for type exports
@@ -168,7 +172,7 @@ Each environment has its own directory under `envs/`:
 
 All templates are colocated in this skill's `templates/` directory:
 
-```
+```text
 skills/components/config/config-scaffolding/templates/
 ├── package.json
 ├── tsconfig.json
@@ -192,8 +196,12 @@ When settings change (via `/sdd-settings`), the config component is automaticall
 3. **Contract added to consumes_contracts** → API subsection added
 4. **Existing sections** → Never modified or deleted (preserves user changes)
 
+## Input
+
+Schema: [`input.schema.json`](./input.schema.json)
+
+Accepts the full list of project components whose settings drive dynamic config section generation.
+
 ## Related Skills
 
-- `config-standards` - Standards and patterns for configuration
-- `backend-scaffolding` - Backend components that consume config
-- `helm-scaffolding` - Helm charts that inject config at deploy time
+- `config-standards` — Generated config files must follow these standards. Defines naming conventions, validation patterns, environment-specific overrides, and TypeScript type generation rules.

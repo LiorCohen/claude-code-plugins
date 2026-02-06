@@ -68,11 +68,15 @@ Each deployment configuration gets its own helm chart. A single server can have 
 | `ingress: true` | Includes `ingress.yaml` |
 | `ingress: false` | No ingress (internal service only) |
 
+## Prerequisites
+
+- `sdd-system` CLI available in PATH (installed via the SDD plugin's npm package)
+
 ## Directory Structure
 
 Helm charts live at `components/helm_charts/<name>/`:
 
-```
+```text
 components/helm_charts/
 ├── main-server-api/          # API deployment
 │   ├── Chart.yaml
@@ -353,9 +357,13 @@ env:
 6. **Validate config before deploy** - Use `/sdd-config validate` in CI/CD
 7. **Independent scaling** - Use separate deployments for hybrid modes
 
+---
+
+## Input / Output
+
+This skill defines no input parameters or structured output.
+
+
 ## Related Skills
 
-- `helm-scaffolding` - Scaffolds Helm chart structure
-- `config-scaffolding` - Creates the config component
-- `config-standards` - Standards for configuration management
-- `backend-scaffolding` - Creates the server component that charts deploy
+- `config-standards` — Delegate to this for config naming and structure conventions. Defines the config schema patterns that Helm `values.yaml` must align with.

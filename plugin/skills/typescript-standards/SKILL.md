@@ -369,7 +369,7 @@ import { helper } from '../user/internal/helper';     // NEVER
 - Clear module boundaries (what's in `index.ts` is the public contract)
 
 **Example module structure:**
-```
+```text
 user/
 ├── index.ts           # Public API - import from here
 ├── createUser.ts      # Implementation - don't import directly
@@ -480,3 +480,9 @@ Before committing TypeScript code, verify:
 - [ ] **Path aliases for deep imports** - use `@/` instead of `../../../`
 - [ ] No `any` types without justification
 - [ ] All `const` declarations (no `let` unless absolutely necessary, never `var`)
+
+---
+
+## Input / Output
+
+This skill defines no input parameters or structured output.
