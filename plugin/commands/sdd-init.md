@@ -107,10 +107,52 @@ If no: Exit gracefully.
 
 ### Phase 1: Environment Verification
 
-**INVOKE the `check-tools` skill** with:
-```yaml
-required: [node, npm, git, docker]
-optional: [jq, kubectl, helm]
+#### 1.0 Check Environment
+
+Check that required and optional tools are installed. Run all checks, then report results together.
+
+**Required tools** (exit if any missing):
+
+| Tool | Command | Version Extraction |
+|------|---------|-------------------|
+| node | `node --version` | Output directly (e.g., "v20.10.0") |
+| npm | `npm --version` | Output directly (e.g., "10.2.3") |
+| git | `git --version` | Parse "git version X.Y.Z" |
+| docker | `docker --version` | Parse "Docker version X.Y.Z" |
+
+**Optional tools** (warn if missing, continue):
+
+| Tool | Command | Version Extraction |
+|------|---------|-------------------|
+| jq | `jq --version` | Output directly (e.g., "jq-1.6") |
+| kubectl | `kubectl version --client -o json` | Parse JSON `.clientVersion.gitVersion` |
+| helm | `helm version --short` | Output directly (e.g., "v3.12.0") |
+
+**Detection rules:**
+- Non-zero exit code or timeout (>5s) → tool not installed
+- Check all tools before reporting (don't fail on first)
+
+**Output:**
+
+```
+Checking environment...
+
+  ✓ node (v20.10.0)
+  ✓ npm (v10.2.3)
+  ✓ git (v2.42.0)
+  ✓ docker (v24.0.6)
+  ⚠ jq not found (optional - needed for hooks)
+  ✓ kubectl (v1.28.0)
+  ⚠ helm not found (optional - needed for Kubernetes charts)
+```
+
+If required tools are missing, show installation instructions and **exit**:
+
+```
+  ✗ docker not found
+
+ERROR: Required tools missing:
+  docker: Install Docker Desktop from https://www.docker.com/products/docker-desktop
 ```
 
 #### 1.1 Plugin Update Check
