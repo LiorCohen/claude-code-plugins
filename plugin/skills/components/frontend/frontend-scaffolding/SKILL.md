@@ -104,7 +104,7 @@ scaffold_frontend(
 All templates are colocated in this skill's `templates/` directory:
 
 ```
-skills/frontend-scaffolding/templates/
+skills/components/frontend/frontend-scaffolding/templates/
 ├── package.json
 ├── tsconfig.json
 ├── tsconfig.node.json

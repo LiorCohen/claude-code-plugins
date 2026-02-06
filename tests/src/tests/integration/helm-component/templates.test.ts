@@ -9,7 +9,7 @@
 import { describe, expect, it } from 'vitest';
 import { SKILLS_DIR, joinPath, fileExists, isDirectory, readFile } from '@/lib';
 
-const HELM_TEMPLATES_DIR = joinPath(SKILLS_DIR, 'helm-scaffolding', 'templates');
+const HELM_TEMPLATES_DIR = joinPath(SKILLS_DIR, 'components', 'helm', 'helm-scaffolding', 'templates');
 
 /**
  * WHY: Chart.yaml is the required metadata file for any Helm chart.

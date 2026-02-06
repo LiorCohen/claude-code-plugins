@@ -367,11 +367,11 @@ const runScaffolding = async (config: ScaffoldingConfig): Promise<ScaffoldingRes
 
   // Template locations (colocated with skills)
   const projectTemplates = path.join(skillsDir, 'project-scaffolding', 'templates');
-  const backendTemplates = path.join(skillsDir, 'backend-scaffolding', 'templates');
-  const frontendTemplates = path.join(skillsDir, 'frontend-scaffolding', 'templates');
-  const contractTemplates = path.join(skillsDir, 'contract-scaffolding', 'templates');
-  const databaseTemplates = path.join(skillsDir, 'database-scaffolding', 'templates');
-  const configTemplates = path.join(skillsDir, 'config-scaffolding', 'templates');
+  const backendTemplates = path.join(skillsDir, 'components', 'backend', 'backend-scaffolding', 'templates');
+  const frontendTemplates = path.join(skillsDir, 'components', 'frontend', 'frontend-scaffolding', 'templates');
+  const contractTemplates = path.join(skillsDir, 'components', 'contract', 'contract-scaffolding', 'templates');
+  const databaseTemplates = path.join(skillsDir, 'components', 'database', 'database-scaffolding', 'templates');
+  const configTemplates = path.join(skillsDir, 'components', 'config', 'config-scaffolding', 'templates');
 
   // Group components by type
   const contractComponents = getComponentsByType(components, 'contract');

@@ -167,7 +167,7 @@ Servers live at `components/servers/<name>/`:
 All templates are colocated in this skill's `templates/` directory:
 
 ```
-skills/backend-scaffolding/templates/
+skills/components/backend/backend-scaffolding/templates/
 ├── package.json
 ├── tsconfig.json
 ├── .gitignore

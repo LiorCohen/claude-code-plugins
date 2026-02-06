@@ -76,7 +76,7 @@ Called programmatically by the scaffolding system during project creation via `s
 All templates are colocated in this skill's `templates/` directory:
 
 ```
-skills/contract-scaffolding/templates/
+skills/components/contract/contract-scaffolding/templates/
 ├── package.json
 └── openapi.yaml
 ```

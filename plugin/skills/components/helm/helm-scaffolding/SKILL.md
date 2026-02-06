@@ -174,7 +174,7 @@ components/helm_charts/umbrella/
 Templates are organized by deployment target:
 
 ```
-skills/helm-scaffolding/
+skills/components/helm/helm-scaffolding/
 ├── templates/                 # Legacy (single deployment)
 ├── templates-server/          # Server charts
 │   ├── Chart.yaml

@@ -169,7 +169,7 @@ Each environment has its own directory under `envs/`:
 All templates are colocated in this skill's `templates/` directory:
 
 ```
-skills/config-scaffolding/templates/
+skills/components/config/config-scaffolding/templates/
 ├── package.json
 ├── tsconfig.json
 ├── envs/
