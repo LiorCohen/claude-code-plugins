@@ -408,13 +408,14 @@ User: /tasks implement 19
 ```
 
 **Workflow:**
-1. Create a feature branch (e.g., `feature/task-19-<slug>`)
-2. Create a git worktree at `.worktrees/task-<id>/` on that branch
-3. Find task folder
-4. Move folder to `4-implementing/`
-5. Update `task.md` frontmatter: `status: implementing`
-6. Update INDEX.md
-7. Confirm with the worktree path (e.g., "Worktree created at `.worktrees/task-19/`")
+1. Find task folder
+2. Move folder to `4-implementing/`
+3. Update `task.md` frontmatter: `status: implementing`
+4. Update INDEX.md
+5. Commit the task transition on main (e.g., "Tasks: Move #19 to implementing")
+6. Create a feature branch (e.g., `feature/task-19-<slug>`)
+7. Create a git worktree at `.worktrees/task-<id>/` on that branch
+8. Confirm with the worktree path (e.g., "Worktree created at `.worktrees/task-19/`")
 
 **IMPORTANT:** Always create a side branch before implementing. Never implement directly on main. The worktree keeps main available in the primary working directory while implementation happens in the worktree.
 
@@ -429,6 +430,7 @@ User: /tasks review 19
 2. Move folder to `5-reviewing/`
 3. Update `task.md` frontmatter: `status: reviewing`
 4. Update INDEX.md
+5. Commit the task transition on main (e.g., "Tasks: Move #19 to reviewing")
 
 Use when implementation is complete and ready for review.
 
@@ -443,8 +445,9 @@ User: /tasks complete 7
 2. Move folder to `6-complete/`
 3. Update `task.md` frontmatter: `status: complete`, add `completed` date
 4. Update INDEX.md
-5. If a worktree exists at `.worktrees/task-<id>/`, remove it with `git worktree remove`
-6. Delete the feature branch if it has been merged
+5. Commit the task transition on main (e.g., "Tasks: Move #7 to complete")
+6. If a worktree exists at `.worktrees/task-<id>/`, remove it with `git worktree remove`
+7. Delete the feature branch if it has been merged
 
 ### Reject Task
 
