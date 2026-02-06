@@ -34,6 +34,14 @@
 - **NEVER push to remote** without explicit user approval
 - **ALWAYS use the `commit` skill** for commits (see Skills below)
 
+## Build Rules
+
+- **Always use root `package.json` scripts** — never `cd` into workspaces or run tools directly:
+  - `npm test` — run tests
+  - `npm run build:plugin` — build plugin system (`tsc + tsc-alias`)
+  - `npm run typecheck:plugin` — type-check without emitting
+- **NEVER run `npx tsc` directly** for `plugin/system/`. The build requires `tsc-alias` to resolve `@/` path aliases. Running `tsc` alone produces broken `dist/` files.
+
 ## Tools
 
 - **TypeScript LSP** - Configured in `.claude/cclsp.json`
