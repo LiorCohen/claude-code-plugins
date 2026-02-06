@@ -50,9 +50,10 @@ Each skill must be fully understandable on its own. An LLM reading a single skil
 
 1. **Delegate clearly** — When referencing another skill, state what you expect it to do (the contract), not how it works internally. The reader should understand the *role* of the delegated skill without reading it.
 2. **Don't duplicate** — Never copy definitions, patterns, or rules from another skill into yours. Duplication creates drift and bloats skills with out-of-context information. If a concept is owned by another skill, delegate to it.
-3. **No environment assumptions** — Do not assume a specific directory structure, tool version, or runtime context unless the skill explicitly documents it. If the skill requires a file to exist or a tool to be available, state that as a precondition.
-4. **Define your own terms** — If the skill introduces domain-specific vocabulary, define it on first use. Don't define terms that belong to other skills — delegate instead.
-5. **Complete examples** — Every example must be understandable without external context. Include the data shapes, field names, and structure needed to make the example self-contained.
+3. **No cross-skill file references** — Never reference or read files inside another skill's directory. A skill's internal files (templates, schemas, references) are private to that skill. If two skills need the same template or data, either consolidate them into one skill or extract the shared content into each skill's own directory. Cross-skill file references create hidden coupling that breaks when skills are moved, renamed, or restructured.
+4. **No environment assumptions** — Do not assume a specific directory structure, tool version, or runtime context unless the skill explicitly documents it. If the skill requires a file to exist or a tool to be available, state that as a precondition.
+5. **Define your own terms** — If the skill introduces domain-specific vocabulary, define it on first use. Don't define terms that belong to other skills — delegate instead.
+6. **Complete examples** — Every example must be understandable without external context. Include the data shapes, field names, and structure needed to make the example self-contained.
 
 ### Cross-references
 
@@ -102,11 +103,12 @@ Every skill that accepts parameters or produces structured output must define th
 ```text
 plugin/skills/my-skill/
 ├── SKILL.md
-├── input.schema.json       # What this skill accepts
-└── output.schema.json      # What this skill produces
+└── schemas/
+    ├── input.schema.json       # What this skill accepts
+    └── output.schema.json      # What this skill produces
 ```
 
-Schema files live alongside `SKILL.md` in the skill's directory. The `SKILL.md` references them but does not duplicate their contents.
+Schema files live in a `schemas/` subdirectory within the skill's directory. The `SKILL.md` references them but does not duplicate their contents.
 
 ### Schema file format
 
@@ -178,13 +180,13 @@ The `## Input` and `## Output` sections in `SKILL.md` should reference the schem
 ```markdown
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts an item name, processing mode, and optional tags.
 
 ## Output
 
-Schema: [`output.schema.json`](./output.schema.json)
+Schema: [`schemas/output.schema.json`](./schemas/output.schema.json)
 
 Returns a list of processed items, each with an id and a status (created, skipped, or failed).
 ```
@@ -245,10 +247,11 @@ Use when creating or reviewing a plugin skill:
 - [ ] `user-invocable` is explicitly `true` or `false`
 - [ ] Cross-references describe the delegation contract (what goes in, what comes out, where responsibility lives)
 - [ ] No duplicated definitions — concepts owned by other skills are delegated, not copied
+- [ ] No cross-skill file references — never read or link to files inside another skill's directory
 - [ ] No undocumented environment assumptions (directory structure, CLI tools, runtime)
 - [ ] Domain terms introduced by this skill are defined on first use
 - [ ] All examples are self-contained
-- [ ] `input.schema.json` / `output.schema.json` colocated (or `## Input / Output` notes "no input/output")
+- [ ] `schemas/input.schema.json` / `schemas/output.schema.json` in skill subdirectory (or `## Input / Output` notes "no input/output")
 - [ ] JSON Schemas use Draft 2020-12 and include `description` on each property
 - [ ] Code blocks specify language
 
