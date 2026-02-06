@@ -213,6 +213,23 @@ This skill defines no input parameters or structured output.
 
 ---
 
+## Layer Separation
+
+Skills and the `sdd-system` CLI operate at different layers. Skills are prompt-layer artifacts — markdown documents consumed by commands and agents in the LLM context. The CLI is a system-layer tool that performs deterministic operations (file creation, validation, type generation, config merging).
+
+**The CLI must never be aware of skills.** The invocation direction is one-way:
+
+```text
+Commands/Agents → Skills (prompt layer)
+Commands/Agents → CLI (system layer)
+Skills → CLI (skills may call CLI as a tool)
+CLI ↛ Skills (NEVER — CLI must not route through or invoke skill definitions)
+```
+
+A skill may document calling the CLI (e.g., "run `sdd-system spec validate`"). A skill must never document being invoked by the CLI (e.g., "runs via `sdd-system scaffolding project`"). If the CLI has a subcommand that implements what a skill describes, the skill should be refactored so that the command or skill orchestrates CLI primitives — not the other way around.
+
+---
+
 ## Skill Structure
 
 After the frontmatter, organize the skill body as follows:
@@ -248,6 +265,7 @@ Use when creating or reviewing a plugin skill:
 - [ ] Cross-references describe the delegation contract (what goes in, what comes out, where responsibility lives)
 - [ ] No duplicated definitions — concepts owned by other skills are delegated, not copied
 - [ ] No cross-skill file references — never read or link to files inside another skill's directory
+- [ ] No CLI-to-skill invocation — the skill is never invoked by the `sdd-system` CLI (skills may call the CLI, not the reverse)
 - [ ] No undocumented environment assumptions (directory structure, CLI tools, runtime)
 - [ ] Domain terms introduced by this skill are defined on first use
 - [ ] All examples are self-contained
@@ -258,6 +276,49 @@ Use when creating or reviewing a plugin skill:
 ## Input / Output
 
 This skill defines no input parameters or structured output.
+
+---
+
+## Skill Consumers Reference
+
+Skills are consumed by two types of callers: **commands** (user-invocable slash commands) and **agents** (subagent implementations). This section is the authoritative mapping — update it when adding or removing skills, commands, or agents.
+
+### Commands → Skills
+
+| Command | Skills Invoked |
+|---------|---------------|
+| `/sdd-init` | `project-scaffolding` |
+| `/sdd-change` | `workflow-state`, `component-discovery`, `spec-solicitation`, `spec-decomposition`, `external-spec-integration`, `planning` |
+| `/sdd-config` | (none — uses `sdd-system` CLI; references `config-scaffolding`, `config-standards`, `helm-standards` for context) |
+| `/sdd-settings` | (none — reads/writes `sdd-settings.yaml` directly) |
+| `/sdd-run` | (none — wraps `sdd-system` CLI) |
+
+### Agents → Skills
+
+| Agent | Skills Used |
+|-------|-------------|
+| `backend-dev` | `typescript-standards`, `backend-standards`, `unit-testing`, `postgresql` |
+| `frontend-dev` | `typescript-standards`, `frontend-standards`, `unit-testing` |
+| `tester` | `integration-testing`, `e2e-testing` |
+| `devops` | `postgresql` |
+| `api-designer` | (none) |
+| `reviewer` | (none) |
+| `db-advisor` | (none) |
+| `ci-dev` | (none) |
+
+### Unreferenced Skills
+
+Skills not directly referenced by any command or agent (used only by other skills or as standards context):
+
+- `change-creation` — invoked by `planning` and `spec-decomposition` for epic handling
+- `spec-writing` — consumed by `spec-solicitation` and `component-discovery`
+- `domain-population` — currently invoked via `sdd-system` CLI (violation — CLI should not invoke skills)
+- `spec-index` — currently invoked via `sdd-system` CLI (violation — CLI should not invoke skills)
+- `scaffolding` — currently invoked via `sdd-system` CLI (violation — CLI should not invoke skills)
+- `backend-scaffolding`, `frontend-scaffolding`, `contract-scaffolding`, `config-scaffolding`, `database-scaffolding`, `helm-scaffolding` — invoked by `scaffolding`
+- `commit-standards` — referenced by `cicd-standards`
+- `config-standards` — referenced by `helm-standards` and `database-standards`
+- `contract-standards`, `database-standards`, `helm-standards`, `cicd-standards`, `testing-standards`, `local-env` — standards/reference skills loaded contextually
 
 ---
 
