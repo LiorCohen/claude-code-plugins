@@ -33,63 +33,63 @@ mkdir -p .sdd && mv sdd-settings.yaml .sdd/ && git add -A && git commit -m "Migr
 
 ## Schema
 
+**Formal definition:** [`schemas/sdd-settings.schema.json`](./schemas/sdd-settings.schema.json) (JSON Schema Draft 2020-12)
+
+The schema defines three top-level sections: `sdd` (plugin metadata), `project` (project metadata), and `components` (list of typed components with discriminated settings). Component settings are typed per component type using `if/then` conditionals.
+
+### Example
+
 ```yaml
 sdd:
-  plugin_version: "5.8.0"      # SDD plugin version that created this project
-  initialized_at: "2026-01-27" # Date project was initialized
-  last_updated: "2026-01-27"   # Date settings were last modified
+  plugin_version: "6.2.1"
+  initialized_at: "2026-02-07"
+  last_updated: "2026-02-07"
 
 project:
   name: "my-app"
   description: "A task management SaaS application"
   domain: "Task Management"
-  type: "fullstack"            # fullstack | backend | frontend | custom
+  type: "fullstack"
 
 components:
-  # === CONFIG (mandatory singleton) ===
   - name: config
     type: config
     settings: {}
 
-  # === SERVER ===
   - name: main-server
     type: server
     settings:
-      server_type: hybrid        # api | worker | cron | hybrid
-      modes: [api, worker]       # For hybrid: 2+ modes required
-      databases: [primary-db]    # Database components this server uses
-      provides_contracts: [public-api]  # Contracts this server implements
-      consumes_contracts: []     # Contracts this server calls
-      helm: true                 # Whether this server needs a helm chart
+      server_type: hybrid
+      modes: [api, worker]
+      databases: [primary-db]
+      provides_contracts: [public-api]
+      consumes_contracts: []
+      helm: true
 
-  # === WEBAPP ===
   - name: admin-dashboard
     type: webapp
     settings:
-      contracts: [public-api]    # Contracts this webapp uses
+      contracts: [public-api]
       helm: true
 
-  # === HELM ===
   - name: main-server-api
     type: helm
     settings:
-      deploys: main-server       # Server/webapp component to deploy
-      deploy_type: server        # server | webapp
-      deploy_modes: [api]        # For servers: which modes to deploy
-      ingress: true              # External HTTP access
+      deploys: main-server
+      deploy_type: server
+      deploy_modes: [api]
+      ingress: true
 
-  # === DATABASE ===
   - name: primary-db
     type: database
     settings:
-      provider: postgresql       # Only postgresql for now
-      dedicated: false           # Needs own DB server
+      provider: postgresql
+      dedicated: false
 
-  # === CONTRACT ===
   - name: public-api
     type: contract
     settings:
-      visibility: internal       # public | internal
+      visibility: internal
 ```
 
 ## Settings vs Config

@@ -42,33 +42,9 @@
     },
     "components": {
       "type": "array",
-      "description": "Component definitions to configure",
+      "description": "Component definitions to configure. See sdd-settings.schema.json for full component type definitions.",
       "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Component name identifier"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "server",
-              "webapp",
-              "database",
-              "contract",
-              "helm",
-              "config",
-              "testing",
-              "cicd"
-            ],
-            "description": "Component type classification"
-          },
-          "settings": {
-            "type": "object",
-            "description": "Component-specific configuration settings"
-          }
-        }
+        "$ref": "sdd-settings.schema.json#/$defs/component"
       }
     }
   },
