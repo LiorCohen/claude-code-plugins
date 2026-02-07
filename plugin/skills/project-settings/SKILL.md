@@ -4,9 +4,23 @@ description: Manage project settings in .sdd/sdd-settings.yaml including compone
 user-invocable: false
 ---
 
-# Project Settings Skill
+# Project Settings
 
-> **Authoritative Source:** This skill is the single source of truth for the `.sdd/sdd-settings.yaml` schema, component settings, validation rules, and directory mappings. All other skills, agents, and commands MUST reference this skill rather than duplicating settings knowledge inline.
+Single source of truth for the `.sdd/sdd-settings.yaml` schema, component settings, validation rules, and directory mappings. All other skills, agents, and commands MUST reference this skill rather than duplicating settings knowledge inline.
+
+---
+
+## Input
+
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
+
+Accepts operation type and operation-specific parameters for managing sdd-settings.yaml.
+
+## Output
+
+Schema: [`schemas/output.schema.json`](./schemas/output.schema.json)
+
+Returns success status, file path, and current component configurations.
 
 ## Purpose
 
@@ -196,18 +210,6 @@ Components are organized by type:
 - **Hybrid modes**: If `server_type: hybrid`, `modes` must have 2+ entries
 - **Deploy modes**: `deploy_modes` must be subset of server's available modes
 
-## Input
-
-Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
-
-Accepts operation type and operation-specific parameters for managing sdd-settings.yaml.
-
-## Output
-
-Schema: [`schemas/output.schema.json`](./schemas/output.schema.json)
-
-Returns success status, file path, and current component configurations.
-
 ## Operations
 
 ### Operation: `create`
@@ -320,12 +322,12 @@ components:
 Other skills, agents, and commands that need settings knowledge should:
 
 1. **Add a skill reference** in their Skills section:
-   ```
+   ```markdown
    - `project-settings` — Settings schema, component types, directory mappings, and validation rules
    ```
 
 2. **Reference instead of duplicate** — when needing to describe settings schema, validation, or directory mappings, write:
-   ```
+   ```markdown
    Refer to the `project-settings` skill for the complete component settings schema, defaults, and validation rules.
    ```
 
