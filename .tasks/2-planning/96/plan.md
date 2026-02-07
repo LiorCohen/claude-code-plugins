@@ -120,7 +120,19 @@ Renumber all phases to start from 1 (no Phase 0). The current Phase 0 (project n
 
 **Also fix the Phase Tracking checklist** — the current sdd-init.md has a bug where the DO NOT section says "until Phase 5 is finished" but the highest phase was 4. Update the checklist to match the new numbering (Phases 1–5).
 
-### Phase 2.1: Plugin Installation Verification (HARD BLOCKER)
+### Phase 2.1: Platform Check (HARD BLOCKER)
+
+The SDD plugin requires a Unix environment. Check `process.platform`:
+- `darwin` or `linux` → continue
+- `win32` → check if running under WSL (look for `/proc/version` containing "Microsoft" or "WSL"). If WSL: continue as linux. If native Windows: **STOP** with:
+  ```
+  SDD requires a Unix environment (macOS or Linux).
+  On Windows, use WSL (Windows Subsystem for Linux): https://learn.microsoft.com/en-us/windows/wsl/install
+  ```
+
+This check is performed by the `check-tools` CLI command and included in its output as a `platform` field. sdd-init exits immediately if the platform is unsupported.
+
+### Phase 2.2: Plugin Installation Verification (HARD BLOCKER)
 
 This is the first check and it must pass before anything else. The plugin's absolute path is available via `${CLAUDE_PLUGIN_ROOT}` (set by Claude when the plugin loads). Steps:
 
@@ -135,11 +147,11 @@ This is the first check and it must pass before anything else. The plugin's abso
 
 **This is a hard blocker.** If the plugin is not installed, not built, or not functional after repair attempts, do NOT continue to other phases.
 
-### Phase 2.2: Plugin Update Check
+### Phase 2.3: Plugin Update Check
 
 Same as current — check for newer version, suggest upgrade.
 
-### Phase 2.3: .claude/settings.json Verification
+### Phase 2.4: .claude/settings.json Verification
 
 Check the project's `.claude/settings.json` for required entries:
 - `extraKnownMarketplaces` must include `{ "name": "sdd", "url": "https://github.com/LiorCohen/sdd" }`
@@ -147,7 +159,7 @@ Check the project's `.claude/settings.json` for required entries:
 
 If missing: create or merge the required entries (preserve existing settings).
 
-### Phase 2.4: Required & Optional Tools Check (via System CLI)
+### Phase 2.5: Required & Optional Tools Check (via System CLI)
 
 Run `sdd-system env check-tools --json` and interpret the result:
 - Display the human-readable tool summary
@@ -168,7 +180,7 @@ Run `sdd-system env check-tools --json` and interpret the result:
 
 This replaces the current prompt-based tool checking. One CLI call instead of 7+ individual version commands.
 
-### Phase 2.5: Permissions Check
+### Phase 2.6: Permissions Check
 
 Same as current. Note: permissions written to `.claude/settings.local.json` do NOT take effect mid-session (Claude caches permissions at startup). The restart requirement is communicated in Phase 5.
 
@@ -233,6 +245,8 @@ The minimal structure file tree in Phase 3 is the single source of truth for wha
 - [ ] `test_check_tools_detects_apt_on_linux` — mock `process.platform` as linux with apt-get available, verify packageManager is "apt-get"
 - [ ] `test_check_tools_fallback_when_no_package_manager` — no package manager found, verify packageManager is null and install hints use URLs
 - [ ] `test_check_tools_install_hints_match_package_manager` — verify each tool's installHint uses the detected package manager's command
+- [ ] `test_check_tools_blocks_native_windows` — mock `process.platform` as win32 without WSL, verify error result with WSL install instructions
+- [ ] `test_check_tools_allows_wsl` — mock `process.platform` as win32 with WSL markers, verify it continues as linux
 
 ## Verification
 
