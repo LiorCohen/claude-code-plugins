@@ -4,6 +4,7 @@
 
 ## Planning
 
+- [#93](2-planning/93/): Centralize sdd-settings ownership in project-settings skill
 - [#67](1-inbox/67/): Store user instructions in plans, specs, and .sdd/
 
 ---
@@ -61,7 +62,6 @@
 
 ## Inbox (unprioritized)
 
-- [#93](1-inbox/93/): Centralize sdd-settings ownership in project-settings skill
 - [#91](1-inbox/91/): Fix agents standards violations from audit report
 - [#80](1-inbox/80/): Plans should become YAML files
 - [#76](1-inbox/76/): Git worktrees for parallel spec/plan execution
