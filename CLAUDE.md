@@ -55,6 +55,7 @@
 - **plugin-testing-standards** - Follow when writing or modifying tests
 - **typescript-standards** - Follow when writing TypeScript code
 - **skills-standards** - Follow when creating or reviewing skills
+- **agents-standards** - Follow when creating or reviewing agents
 
 ## Repository Structure
 
@@ -69,7 +70,8 @@ sdd/
 │       ├── manifest-validation/      # Validate plugin manifests
 │       ├── plugin-testing-standards/ # Testing methodology for plugins
 │       ├── typescript-standards/     # TypeScript coding standards
-│       └── skills-standards/        # Standards for authoring skills
+│       ├── skills-standards/        # Standards for authoring skills
+│       └── agents-standards/       # Standards for authoring agents
 ├── .claude-plugin/
 │   └── marketplace.json              # Marketplace manifest
 ├── .tasks/                              # Task data

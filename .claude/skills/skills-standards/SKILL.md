@@ -375,11 +375,11 @@ Produce the report with these sections:
 
 **Never write audit reports inside `plugin/skills/`.** The plugin folder is for shipped skill files only — no reports, scratch files, or artifacts.
 
-Write the report to a task in `.tasks/` (create one via `/tasks add`). Save it as `report.md` inside the task folder:
+Create a task via `/tasks add "Fix skills standards violations from audit report"`. The task's purpose is to **fix the violations** — the audit report is supporting evidence, not the deliverable. Save the report as `report.md` inside the task folder:
 
 ```
 .tasks/1-inbox/<N>/
-├── task.md        # Task with key findings summary
+├── task.md        # Task to fix violations, with key findings summary
 └── report.md      # Full audit report
 ```
 
@@ -392,4 +392,4 @@ Run the audit directly (do not delegate to subagents):
 1. Glob for all `plugin/skills/**/SKILL.md` files
 2. Read each file completely
 3. Check every item from the Checklist above, plus the additional audit-specific checks
-4. Create a task via `/tasks add` and write the report as `report.md` in the task folder
+4. Create a task via `/tasks add "Fix skills standards violations from audit report"` and write the report as `report.md` in the task folder
