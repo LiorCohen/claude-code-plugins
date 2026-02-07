@@ -27,17 +27,11 @@ This command follows an approval-based workflow that verifies environment, creat
 
 | Phase | Purpose |
 |-------|---------|
-| 0     | Detect project name from current directory |
-| 1     | Environment verification (tools, plugin, permissions) |
-| 2     | Create minimal structure (config component only) |
-| 3     | Git init + commit |
-| 4     | Completion message |
-
-**What's NOT done during init (deferred to implementation):**
-- Domain population (glossary, entity definitions, use-cases)
-- Full component scaffolding
-- Creating `changes/` directory
-- Creating `specs/domain/` or `specs/architecture/`
+| 1     | Detect project name from current directory |
+| 2     | Environment verification (plugin, tools, settings, permissions) |
+| 3     | Create minimal structure (config component only) |
+| 4     | Git init + commit |
+| 5     | Completion message |
 
 ---
 
@@ -46,11 +40,11 @@ This command follows an approval-based workflow that verifies environment, creat
 **You MUST complete ALL phases before declaring initialization complete.** Use this checklist to track progress:
 
 ```
-[ ] Phase 0: Project name detected and confirmed
-[ ] Phase 1: Environment verified (tools, plugin, permissions)
-[ ] Phase 2: Minimal structure created
-[ ] Phase 3: Git repository initialized and committed
-[ ] Phase 4: Completion report displayed
+[ ] Phase 1: Project name detected and confirmed
+[ ] Phase 2: Environment verified (plugin, tools, settings, permissions)
+[ ] Phase 3: Minimal structure created
+[ ] Phase 4: Git repository initialized and committed
+[ ] Phase 5: Completion report displayed
 ```
 
 **DO NOT:**
@@ -60,9 +54,9 @@ This command follows an approval-based workflow that verifies environment, creat
 
 ---
 
-### Phase 0: Detect Project Name
+### Phase 1: Detect Project Name
 
-**No arguments needed.** Derive project name from the current directory:
+Derive project name from the current directory:
 
 ```
 Initializing SDD project...
@@ -105,57 +99,33 @@ If no: Exit gracefully.
 
 ---
 
-### Phase 1: Environment Verification
+### Phase 2: Environment Verification
 
-#### 1.0 Check Environment
+#### 2.1 Platform Check (HARD BLOCKER)
 
-Check that required and optional tools are installed. Run all checks, then report results together.
-
-**Required tools** (exit if any missing):
-
-| Tool | Command | Version Extraction |
-|------|---------|-------------------|
-| node | `node --version` | Output directly (e.g., "v20.10.0") |
-| npm | `npm --version` | Output directly (e.g., "10.2.3") |
-| git | `git --version` | Parse "git version X.Y.Z" |
-| docker | `docker --version` | Parse "Docker version X.Y.Z" |
-
-**Optional tools** (warn if missing, continue):
-
-| Tool | Command | Version Extraction |
-|------|---------|-------------------|
-| jq | `jq --version` | Output directly (e.g., "jq-1.6") |
-| kubectl | `kubectl version --client -o json` | Parse JSON `.clientVersion.gitVersion` |
-| helm | `helm version --short` | Output directly (e.g., "v3.12.0") |
-
-**Detection rules:**
-- Non-zero exit code or timeout (>5s) → tool not installed
-- Check all tools before reporting (don't fail on first)
-
-**Output:**
+The SDD plugin requires a Unix environment. This is checked by the `check-tools` CLI command (Phase 2.5) via its `platform` field. If the platform is unsupported (native Windows without WSL), **STOP** immediately:
 
 ```
-Checking environment...
-
-  ✓ node (v20.10.0)
-  ✓ npm (v10.2.3)
-  ✓ git (v2.42.0)
-  ✓ docker (v24.0.6)
-  ⚠ jq not found (optional - needed for hooks)
-  ✓ kubectl (v1.28.0)
-  ⚠ helm not found (optional - needed for Kubernetes charts)
+SDD requires a Unix environment (macOS or Linux).
+On Windows, use WSL (Windows Subsystem for Linux): https://learn.microsoft.com/en-us/windows/wsl/install
 ```
 
-If required tools are missing, show installation instructions and **exit**:
+#### 2.2 Plugin Installation Verification (HARD BLOCKER)
 
-```
-  ✗ docker not found
+This must pass before any other checks. The plugin's absolute path is available via `${CLAUDE_PLUGIN_ROOT}` (set by Claude when the plugin loads).
 
-ERROR: Required tools missing:
-  docker: Install Docker Desktop from https://www.docker.com/products/docker-desktop
-```
+1. Check `${CLAUDE_PLUGIN_ROOT}`. If set, use it as the plugin path. If not set, fall back to searching `~/.claude/plugins` recursively for the SDD plugin (look for `marketplace.json` or `plugin.json` marker files). If neither finds the plugin: **STOP** — display installation instructions and exit.
+2. Verify the plugin path exists and contains expected marker files (`plugin.json` or `.claude-plugin/marketplace.json`)
+3. Check build readiness:
+   - `${CLAUDE_PLUGIN_ROOT}/system/node_modules/` exists (dependencies installed)
+   - `${CLAUDE_PLUGIN_ROOT}/system/dist/` exists (plugin built)
+4. If dependencies missing: run `npm install` in `${CLAUDE_PLUGIN_ROOT}/system/`
+5. If not built: run `npm run build:plugin` from `${CLAUDE_PLUGIN_ROOT}`
+6. If repairs fail: **STOP** — display error details and exit
 
-#### 1.1 Plugin Update Check
+**This is a hard blocker.** If the plugin is not installed, not built, or not functional after repair attempts, do NOT continue to other phases.
+
+#### 2.3 Plugin Update Check
 
 ```
 Checking for plugin updates...
@@ -170,52 +140,46 @@ Would you like to stop and upgrade? (yes/no)
 If yes: Exit with instructions to run `claude plugins update sdd`
 If no: Continue with current version
 
-#### 1.2 Required Tools Check
+#### 2.4 .claude/settings.json Verification
 
+Check the project's `.claude/settings.json` for required entries:
+- `extraKnownMarketplaces` must include `{ "name": "sdd", "url": "https://github.com/LiorCohen/sdd" }`
+- `enabledPlugins` must include `"sdd@sdd"`
+
+If missing: create or merge the required entries (preserve existing settings).
+
+#### 2.5 Required Tools Check (via System CLI)
+
+Run `sdd-system env check-tools --json` and interpret the result:
+- Display the human-readable tool summary
+- If all tools installed: continue to next phase
+- If any tools are missing: list the missing tools with their install hints
+
+**On macOS (brew)** — offer to auto-install since `brew` doesn't require sudo:
 ```
-Checking required tools...
+Missing tools:
+  ✗ docker — brew install docker
+  ✗ jq — brew install jq
 
-  ✓ node (v20.10.0)
-  ✓ npm (v10.2.3)
-  ✓ git (v2.42.0)
-  ✓ docker (v24.0.6)
+How would you like to proceed?
+1. Install for me — I'll run: brew install docker jq
+2. I'll install them myself — tell me when you're ready and I'll re-check
 ```
+- Option 1: run the install commands, then re-run `check-tools` to verify
+- Option 2: wait for the user to install manually, then re-run `check-tools` when they say they're ready
 
-If any missing: Show installation instructions and **exit** (do not continue).
-
-#### 1.3 Optional Tools Check
-
+**On Linux/WSL** — do NOT offer auto-install (package managers require `sudo`, which Claude cannot run). Show the commands for the user to run:
 ```
-Checking optional tools...
+Missing tools:
+  ✗ docker — sudo apt-get install docker.io
+  ✗ jq — sudo apt-get install jq
 
-  ⚠ jq not found (needed for hooks)
-  ⚠ kubectl not found (needed for Kubernetes deployments)
-  ⚠ helm not found (needed for Kubernetes charts)
-
-These are optional - some features may be limited without them.
-```
-
-Continue even if optional tools are missing.
-
-#### 1.4 Plugin Build Check
-
-```
-Checking plugin installation...
-
-  ✓ Plugin installed at ~/.claude/plugins/sdd
-  ⚠ Plugin system not built
-
-Building plugin system...
-  Running npm install in ~/.claude/plugins/sdd/system/
-  ✓ Plugin system ready
+Please install the missing tools and tell me when you're ready. I'll re-check.
 ```
 
-If `~/.claude/plugins/sdd/system/node_modules` doesn't exist, run:
-```bash
-cd ~/.claude/plugins/sdd/system && npm install
-```
+All tools must be installed before proceeding. There is no skip option.
 
-#### 1.5 Permissions Check
+#### 2.6 Permissions Check
 
 ```
 Checking permissions...
@@ -237,15 +201,17 @@ You can configure permissions later by running:
 This will merge SDD recommended permissions into your .claude/settings.local.json
 ```
 
+Note: permissions written to `.claude/settings.local.json` do NOT take effect mid-session. The session restart requirement is communicated in Phase 5.
+
 ---
 
-### Phase 2: Create Minimal Structure
+### Phase 3: Create Minimal Structure
 
 **INVOKE the `project-scaffolding` skill** with:
 
 ```yaml
 mode: minimal
-project_name: <from Phase 0>
+project_name: <from Phase 1>
 target_dir: <current directory>
 ```
 
@@ -271,17 +237,11 @@ Create only:
 └── CLAUDE.md
 ```
 
-**NOT created during init (created on first change):**
-- `changes/` directory
-- `specs/domain/` subdirectories
-- `specs/architecture/` subdirectories
-- Any component besides config
-
 **sdd-settings.yaml format:** Use the minimal template from the `project-settings` skill (see its "Minimal Template" section).
 
 ---
 
-### Phase 3: Git Init + Commit
+### Phase 4: Git Init + Commit
 
 Initialize git repository (if not already in one):
 ```bash
@@ -308,7 +268,7 @@ EOF
 
 ---
 
-### Phase 4: Completion Message
+### Phase 5: Completion Message
 
 ```
 ═══════════════════════════════════════════════════════════════
@@ -320,12 +280,15 @@ Location: /path/to/my-app
 ENVIRONMENT:
   ✓ Plugin v5.11.0 (up to date)
   ✓ All required tools available
-  ⚠ kubectl, helm not installed (optional)
+  ✓ Permissions configured
 
 WHAT'S INCLUDED:
   ✓ SDD configuration (.sdd/sdd-settings.yaml)
   ✓ Config component (components/config/)
   ✓ Spec registry (specs/INDEX.md)
+
+IMPORTANT: Start a new Claude session before using SDD commands.
+  Settings and permissions configured during init require a session restart to take effect.
 
 NEXT STEPS:
 
@@ -337,43 +300,3 @@ NEXT STEPS:
 
   Components will be scaffolded on-demand when your changes need them.
 ```
-
----
-
-## Non-Destructive Behavior (CRITICAL)
-
-sdd-init NEVER overwrites existing files:
-
-- If `.sdd/sdd-settings.yaml` exists: switch to upgrade/repair mode
-- If `specs/INDEX.md` exists: skip (don't overwrite)
-- If `components/config/` exists: skip (don't overwrite)
-- Only add missing pieces, never modify existing content
-
----
-
-## Available Component Types
-
-Components are scaffolded on-demand when your first change needs them. Available types:
-
-| Type | Description |
-|------|-------------|
-| **Server** | Node.js/TypeScript backend with CMDO architecture |
-| **Webapp** | React/TypeScript frontend with MVVM pattern |
-| **Database** | PostgreSQL migrations, seeds, and management scripts |
-| **Contract** | OpenAPI specifications and type generation |
-| **Helm** | Kubernetes deployment charts |
-| **Testing** | Testkube test definitions |
-| **CI/CD** | GitHub Actions workflow definitions |
-
-When you run `/sdd-change new`, the system will scaffold needed components automatically.
-
----
-
-## Important Notes
-
-- **No arguments needed** - project name from current directory
-- **Minimal structure** - only config component scaffolded during init
-- **Environment verified** - tools, plugin, permissions checked upfront
-- **Safe to re-run** - never overwrites existing files
-- **Change-driven scaffolding** - components created when first needed via `/sdd-change new`
-- **To import an external spec:** Use `/sdd-change new --spec <path>` after initialization
