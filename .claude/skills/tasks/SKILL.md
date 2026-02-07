@@ -423,6 +423,10 @@ User: /tasks implement 19
 
 **IMPORTANT:** Always create a side branch before implementing. Never implement directly on main. The worktree keeps main available in the primary working directory while implementation happens in the worktree.
 
+**NEVER** merge the feature branch or delete the worktree during implementation. The worktree and branch persist until the task is completed via `/tasks complete`.
+
+**Final implementation commit:** The last commit of the implementation phase (before moving to review) must include the version bump and changelog entry. Use the `commit` skill's Steps 2–3 to bump the version and create the changelog entry for the task's changes.
+
 ### Submit for Review
 
 ```
@@ -438,6 +442,12 @@ User: /tasks review 19
 
 Use when implementation is complete and ready for review.
 
+**NEVER** merge the feature branch or delete the worktree during reviewing. The worktree and branch persist until the task is completed via `/tasks complete`.
+
+**Commit prefixing:** All commits made during the reviewing phase (e.g., fixes from code review) must be prefixed with the task reference (e.g., `Task #19: Fix validation edge case`).
+
+**Amend when possible:** If the previous commit on the feature branch has NOT been pushed to remote, review-phase commits should amend it and update the existing changelog entry. If it HAS been pushed, create a new commit and amend the changelog entry in-place (update the existing version entry, do not create a new one).
+
 ### Complete Task
 
 ```
@@ -446,18 +456,18 @@ User: /tasks complete 7
 
 **Workflow:**
 1. Find task folder
-2. Move folder to `6-complete/`
-3. Update `task.md` frontmatter: `status: complete`, add `completed` date
-4. Update INDEX.md
-5. Commit the task transition on main (e.g., "Tasks: Move #7 to complete")
-6. If a worktree exists at `.worktrees/task-<id>/`:
+2. If a worktree exists at `.worktrees/task-<id>/`:
    a. **Verify no work is lost** before removing:
       - Check for uncommitted changes in the worktree (`git -C .worktrees/task-<id> status`)
-      - Check for commits not merged into main (`git log main..<branch> --oneline`)
-      - If unmerged commits exist, merge the feature branch into main first
       - If uncommitted changes exist, **stop and warn the user** — do not proceed
-   b. Remove the worktree with `git worktree remove`
-7. Delete the feature branch only if it has been fully merged into main
+   b. Check for commits not merged into main (`git log main..<branch> --oneline`)
+      - If unmerged commits exist, merge the feature branch into main first
+   c. Remove the worktree with `git worktree remove`
+   d. Delete the feature branch only if it has been fully merged into main
+3. Move folder to `6-complete/`
+4. Update `task.md` frontmatter: `status: complete`, add `completed` date
+5. Update INDEX.md
+6. Commit the task transition on main (e.g., "Tasks: Complete #7")
 
 ### Reject Task
 
@@ -507,11 +517,12 @@ User: /tasks consolidate 28 into 27
 3. **Keep atomic** - One clear outcome per task
 4. **Worktree per task** - `/tasks implement` creates a worktree at `.worktrees/task-<id>/`, keeping main clean
 5. **Never lose work** - Before removing a worktree, always verify all commits are merged and no uncommitted changes exist
-6. **Consolidate related** - Don't duplicate effort
-7. **Preserve on consolidate** - Never lose original task content when consolidating
-8. **Update both** - Task folder AND INDEX.md must stay in sync
-9. **Add context** - When completing, summarize what was done
-10. **Date everything** - Completion dates help track velocity
+6. **Only `/tasks complete` cleans up** - Never merge the feature branch or delete the worktree during implementation or reviewing phases. Only `/tasks complete` may merge, remove the worktree, and delete the branch
+7. **Consolidate related** - Don't duplicate effort
+8. **Preserve on consolidate** - Never lose original task content when consolidating
+9. **Update both** - Task folder AND INDEX.md must stay in sync
+10. **Add context** - When completing, summarize what was done
+11. **Date everything** - Completion dates help track velocity
 
 ## Lifecycles
 
