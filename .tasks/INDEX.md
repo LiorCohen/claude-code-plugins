@@ -4,7 +4,6 @@
 
 ## Planning
 
-- [#93](2-planning/93/): Centralize sdd-settings ownership in project-settings skill
 - [#67](1-inbox/67/): Store user instructions in plans, specs, and .sdd/
 
 ---
@@ -17,7 +16,7 @@
 
 ## Implementing
 
-(none)
+- [#93](4-implementing/93/): Centralize sdd-settings ownership in project-settings skill
 
 ---
 
