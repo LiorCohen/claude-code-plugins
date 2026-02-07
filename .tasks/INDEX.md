@@ -22,7 +22,7 @@
 
 ## Reviewing
 
-- [#93](5-reviewing/93/): Centralize sdd-settings ownership in project-settings skill
+(none)
 
 ---
 
@@ -83,6 +83,7 @@
 
 ## Complete
 
+- [#93](6-complete/93/): Centralize sdd-settings ownership in project-settings skill ✓ (2026-02-07)
 - [#92](6-complete/92/): Merge ci-dev agent into devops agent ✓ (2026-02-07)
 - [#90](6-complete/90/): Fix skills standards violations from audit report ✓ (2026-02-07)
 - [#27](6-complete/27/): JSON Schema for skills + validation skill ✓ (2026-02-06)
