@@ -67,19 +67,10 @@ Writes integration and E2E tests.
 
 ### devops
 
-Handles infrastructure.
+Handles infrastructure and CI/CD pipelines.
 
-**When it's used:** When deployment configuration is needed
-**What it does:** Writes Helm charts, Kubernetes configs, container definitions
-
----
-
-### ci-dev
-
-Creates CI/CD pipelines.
-
-**When it's used:** When build automation is needed
-**What it does:** Writes GitHub Actions workflows, configures PR checks
+**When it's used:** When deployment configuration or build automation is needed
+**What it does:** Writes Helm charts, Kubernetes configs, container definitions, GitHub Actions workflows, PR checks
 
 ---
 
@@ -99,7 +90,7 @@ Agents use different models based on their task complexity:
 | Role | Model | Agents |
 |------|-------|--------|
 | Strategic | Opus | reviewer, db-advisor |
-| Implementation | Sonnet | api-designer, backend-dev, frontend-dev, tester, devops, ci-dev |
+| Implementation | Sonnet | api-designer, backend-dev, frontend-dev, tester, devops |
 
 Strategic agents handle decisions that require deep analysis and affect the whole project. Implementation agents execute defined tasks quickly and efficiently.
 

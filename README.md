@@ -55,7 +55,7 @@ Specs include frontmatter metadata, acceptance criteria in Given/When/Then forma
 
 ### Specialized Agents
 
-Instead of one general-purpose AI, SDD uses 8 specialized agents:
+Instead of one general-purpose AI, SDD uses 7 specialized agents:
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
@@ -63,8 +63,7 @@ Instead of one general-purpose AI, SDD uses 8 specialized agents:
 | backend-dev | sonnet | Node.js backend (CMDO architecture) |
 | frontend-dev | sonnet | React components (MVVM architecture) |
 | db-advisor | opus | Database performance review |
-| devops | sonnet | Kubernetes, Helm, Testkube |
-| ci-dev | sonnet | CI/CD pipelines |
+| devops | sonnet | Kubernetes, Helm, CI/CD, Testkube |
 | tester | sonnet | Integration and E2E test automation |
 | reviewer | opus | Code review and spec compliance |
 
