@@ -61,6 +61,7 @@
 
 ## Inbox (unprioritized)
 
+- [#92](1-inbox/92/): Merge ci-dev agent into devops agent
 - [#91](1-inbox/91/): Fix agents standards violations from audit report
 - [#80](1-inbox/80/): Plans should become YAML files
 - [#76](1-inbox/76/): Git worktrees for parallel spec/plan execution
