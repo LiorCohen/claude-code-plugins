@@ -2,13 +2,16 @@
 id: 63
 title: Consolidate overlapping skills
 priority: medium
-status: open
+status: rejected
 created: 2026-01-31
+rejected_reason: Addressed by #87 (colocated directory structure), #88 (remove product-discovery), #89 (skills standards audit)
 depends_on: []
 blocks: []
 ---
 
-# Task 63: Consolidate overlapping skills
+# Task 63: Consolidate overlapping skills ✗
+
+<!-- Original content preserved below -->
 
 ## Description
 

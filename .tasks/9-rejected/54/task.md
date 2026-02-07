@@ -2,11 +2,14 @@
 id: 54
 title: Missing postgresql-standards skill
 priority: inbox
-status: open
+status: rejected
 created: 2026-01-25
+rejected_reason: Already exists at components/database/postgresql/
 ---
 
-# Task 54: Missing postgresql-standards skill
+# Task 54: Missing postgresql-standards skill ✗
+
+<!-- Original content preserved below -->
 
 ## Description
 

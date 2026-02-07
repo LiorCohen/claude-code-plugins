@@ -2,11 +2,14 @@
 id: 52
 title: Clean up .gitkeep and placeholder content
 priority: inbox
-status: open
+status: rejected
 created: 2026-01-25
+rejected_reason: Obsolete — on-demand scaffolding (#78) eliminated pre-created directories and placeholders entirely
 ---
 
-# Task 52: Clean up .gitkeep and placeholder content during implementation
+# Task 52: Clean up .gitkeep and placeholder content ✗
+
+<!-- Original content preserved below -->
 
 ## Description
 

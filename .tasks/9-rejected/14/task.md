@@ -2,11 +2,14 @@
 id: 14
 title: Unclear when to run type generation
 priority: inbox
-status: open
+status: rejected
 created: 2026-01-25
+rejected_reason: Obsolete — workflow gating in v6.1.0 made this self-documenting; workflows determine when each step runs
 ---
 
-# Task 14: Unclear when to run type generation
+# Task 14: Unclear when to run type generation ✗
+
+<!-- Original content preserved below -->
 
 ## Description
 

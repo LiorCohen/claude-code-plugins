@@ -121,7 +121,7 @@
 - [#52](9-rejected/52/): Clean up .gitkeep and placeholder content — obsolete with on-demand scaffolding (#78)
 - [#54](9-rejected/54/): Missing postgresql-standards skill — already exists at components/database/postgresql/
 - [#63](9-rejected/63/): Consolidate overlapping skills — addressed by #87, #88, #89
-- [#83](7-rejected/83/): Apply zero session context to sdd-implement workflow — obsolete
+- [#83](7-rejected/83/): Apply zero session context to sdd-implement workflow — obsolete, superseded by #81 and #85
 
 ---
 
