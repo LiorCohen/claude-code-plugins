@@ -67,7 +67,7 @@ All infrastructure is driven by component settings in `.sdd/sdd-settings.yaml`. 
 
 Charts live at `components/helm_charts/<name>/`:
 
-```
+```text
 components/helm_charts/
 ├── main-server-api/          # API deployment
 │   ├── Chart.yaml
