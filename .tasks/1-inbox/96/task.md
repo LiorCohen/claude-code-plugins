@@ -18,6 +18,8 @@ Three issues with the current sdd-init command's Phase 1 (Environment Verificati
 
 Currently Phase 1.4 (Plugin Build Check) comes after tool checking (1.0–1.3). Plugin installation verification must be the **first thing** that happens. If the plugin is not installed, its dependencies aren't installed (`npm install`), or it hasn't been built (`npm run build`), we must **stop and dig deeper** — we cannot continue until the plugin is verified as installed, built, and ready for use.
 
+**Plugin search:** The plugin may not be directly at `~/.claude/plugins/sdd` — it could be in a subdirectory. Search `~/.claude/plugins` recursively to locate it.
+
 ### 2. Tool checking should use system CLI, not prompts
 
 Currently the command instructs Claude to run individual shell commands (`node --version`, `npm --version`, etc.) as prompts. Once plugin installation is verified, tool checking can be offloaded to the system CLI (e.g., `sdd-system env check-tools`). This is more reliable, faster, and removes unnecessary prompt-based version extraction.
