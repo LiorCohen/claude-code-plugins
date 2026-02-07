@@ -1,0 +1,170 @@
+---
+title: Fix sdd-init Phase 1 — plugin verification first, tool checks via system CLI
+created: 2026-02-07
+---
+
+# Plan: Fix sdd-init Phase 1
+
+## Problem Summary
+
+The sdd-init command's Phase 1 (Environment Verification) has three issues:
+
+1. **Plugin verification comes too late** — currently Phase 1.4, but nothing else works without the plugin. Must be first.
+2. **Tool checking is prompt-based** — Claude runs `node --version` etc. individually. This should be a single system CLI call.
+3. **Missing .claude/settings.json verification** — the project needs SDD marketplace and plugin entries to function.
+
+## Files to Create
+
+| File | Purpose |
+|------|---------|
+| `plugin/system/src/commands/env/check-tools.ts` | New CLI action: checks required/optional tools, returns structured JSON |
+| `tests/src/tests/unit/commands/env/check-tools.test.ts` | Unit tests for the check-tools command |
+
+## Files to Modify
+
+| File | Changes |
+|------|---------|
+| `plugin/system/src/commands/env/index.ts` | Add `check-tools` action to env namespace |
+| `plugin/system/src/cli.ts` | Update help text to document `env check-tools` |
+| `plugin/commands/sdd-init.md` | Restructure Phase 1: plugin verification first, tool checks via CLI, settings.json check |
+
+---
+
+## Change 1: New `env check-tools` CLI Action
+
+Add a `check-tools` action to the existing `env` namespace that:
+
+- Checks each tool by running its version command with a timeout (5s)
+- Categorizes tools as `required` or `optional`
+- Returns structured JSON via `CommandResult.data`
+
+**Required tools:** node, npm, git, docker
+**Optional tools:** jq, kubectl, helm
+
+**Output data shape:**
+
+```json
+{
+  "tools": [
+    { "name": "node", "required": true, "installed": true, "version": "v20.10.0" },
+    { "name": "docker", "required": true, "installed": false, "version": null },
+    { "name": "jq", "required": false, "installed": false, "version": null }
+  ],
+  "allRequiredInstalled": false,
+  "missingRequired": ["docker"],
+  "missingOptional": ["jq"]
+}
+```
+
+**Human-readable output** (non-JSON mode):
+```
+  ✓ node (v20.10.0)
+  ✓ npm (v10.2.3)
+  ✓ git (v2.42.0)
+  ✗ docker not found
+  ⚠ jq not found (optional)
+```
+
+**Version extraction:** Each tool has a specific command and parse strategy:
+- `node --version` → output directly
+- `npm --version` → output directly
+- `git --version` → parse "git version X.Y.Z"
+- `docker --version` → parse "Docker version X.Y.Z"
+- `jq --version` → output directly
+- `kubectl version --client -o json` → parse JSON `.clientVersion.gitVersion`
+- `helm version --short` → output directly
+
+**Tool execution:** Use `execSync` with `{ timeout: 5000 }` and catch errors. Non-zero exit or timeout = not installed.
+
+---
+
+## Change 2: Register `check-tools` in Env Namespace
+
+Update `env/index.ts`:
+- Add `'check-tools'` to the `ACTIONS` array
+- Add case in the switch statement to dispatch to the new module
+
+Update `cli.ts`:
+- Add `check-tools` to the env section of the help text
+
+---
+
+## Change 3: Restructure sdd-init Phase 1
+
+Rewrite Phase 1 in `sdd-init.md` with this new ordering:
+
+### Phase 1.0: Plugin Installation Verification (HARD BLOCKER)
+
+This is the first check and it must pass before anything else. Steps:
+
+1. Search `~/.claude/plugins` **recursively** for the SDD plugin (look for `plugin.json` or `marketplace.json` marker files — the plugin may be nested in subdirectories)
+2. If not found: **STOP** — display installation instructions and exit
+3. If found: verify the plugin path, then check:
+   - `system/node_modules/` exists (dependencies installed)
+   - `system/dist/` exists (plugin built)
+4. If dependencies missing: run `npm install` in the plugin's `system/` directory
+5. If not built: run `npm run build:plugin` from the plugin root
+6. If repairs fail: **STOP** — display error details and exit
+7. Record the plugin path for use in subsequent steps
+
+**This is a hard blocker.** If the plugin is not installed, not built, or not functional after repair attempts, do NOT continue to other phases.
+
+### Phase 1.1: Plugin Update Check
+
+Same as current — check for newer version, suggest upgrade.
+
+### Phase 1.2: .claude/settings.json Verification
+
+Check the project's `.claude/settings.json` for required entries:
+- `extraKnownMarketplaces` must include `{ "name": "sdd", "url": "https://github.com/LiorCohen/sdd" }`
+- `enabledPlugins` must include `"sdd@sdd"`
+
+If missing: create or merge the required entries (preserve existing settings).
+
+### Phase 1.3: Required & Optional Tools Check (via System CLI)
+
+Run `sdd-system env check-tools --json` and interpret the result:
+- If `allRequiredInstalled` is false: show missing tools with install instructions and **exit**
+- If optional tools are missing: show warnings and **continue**
+- Display the human-readable tool summary
+
+This replaces the current prompt-based tool checking (Phases 1.0–1.3). One CLI call instead of 7+ individual version commands.
+
+### Phase 1.4: Permissions Check
+
+Same as current Phase 1.5.
+
+---
+
+## Dependencies
+
+- Change 1 (check-tools CLI) must be implemented before Change 3 (sdd-init.md restructure) since the command references it
+- Change 2 (registration) must accompany Change 1
+
+## Tests
+
+### Unit Tests
+
+- [ ] `test_check_tools_returns_structured_result` — verify CommandResult shape with data containing tools array
+- [ ] `test_check_tools_detects_installed_tool` — mock execSync to return version, verify installed: true and version extracted
+- [ ] `test_check_tools_detects_missing_tool` — mock execSync to throw, verify installed: false
+- [ ] `test_check_tools_timeout_treated_as_not_installed` — mock timeout error, verify installed: false
+- [ ] `test_check_tools_parses_node_version` — input "v20.10.0", expect "v20.10.0"
+- [ ] `test_check_tools_parses_git_version` — input "git version 2.42.0", expect "2.42.0"
+- [ ] `test_check_tools_parses_docker_version` — input "Docker version 24.0.6, build ...", expect "24.0.6"
+- [ ] `test_check_tools_parses_kubectl_version` — input JSON, expect gitVersion value
+- [ ] `test_check_tools_allRequiredInstalled_true_when_all_present` — all required tools installed
+- [ ] `test_check_tools_allRequiredInstalled_false_when_any_missing` — one required tool missing
+- [ ] `test_check_tools_missingOptional_lists_only_optional` — optional missing doesn't affect allRequiredInstalled
+- [ ] `test_check_tools_json_output_mode` — verify --json flag produces valid JSON CommandResult
+- [ ] `test_check_tools_human_readable_output` — verify non-JSON output uses checkmark/warning/cross symbols
+
+## Verification
+
+- [ ] `sdd-system env check-tools` runs and reports tool status
+- [ ] `sdd-system env check-tools --json` returns structured JSON
+- [ ] sdd-init.md Phase 1 starts with plugin verification as a hard blocker
+- [ ] sdd-init.md Phase 1 uses `sdd-system env check-tools` instead of individual version commands
+- [ ] sdd-init.md Phase 1 checks `.claude/settings.json` for SDD marketplace and plugin entries
+- [ ] All existing tests pass (`npm test`)
+- [ ] Plugin builds successfully (`npm run build:plugin`)
