@@ -29,13 +29,13 @@ Plans are created as part of the `/sdd-change` workflow:
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts change ID, path to approved SPEC.md, and workflow ID.
 
 ## Output
 
-Schema: [`output.schema.json`](./output.schema.json)
+Schema: [`schemas/output.schema.json`](./schemas/output.schema.json)
 
 Returns path to created PLAN.md and review status.
 

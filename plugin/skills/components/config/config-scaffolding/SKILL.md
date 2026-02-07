@@ -198,7 +198,7 @@ When settings change (via `/sdd-settings`), the config component is automaticall
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts the full list of project components whose settings drive dynamic config section generation.
 

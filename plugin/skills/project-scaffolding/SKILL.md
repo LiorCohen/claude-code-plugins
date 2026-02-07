@@ -159,13 +159,13 @@ Domain knowledge (glossary, personas, use cases) is populated when you create ch
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts scaffolding mode, project name, target directory, and optional description and domain.
 
 ## Output
 
-Schema: [`output.schema.json`](./output.schema.json)
+Schema: [`schemas/output.schema.json`](./schemas/output.schema.json)
 
 Returns success status and list of created files.
 

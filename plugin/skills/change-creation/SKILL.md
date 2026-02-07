@@ -44,13 +44,13 @@ Plans are generated dynamically based on:
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts change metadata (name, type, title, domain), optional workflow context, and content from spec solicitation or external integration.
 
 ## Output
 
-Schema: [`output.schema.json`](./output.schema.json)
+Schema: [`schemas/output.schema.json`](./schemas/output.schema.json)
 
 Returns paths to created SPEC.md and PLAN.md files, and whether the index was updated.
 

@@ -239,7 +239,7 @@ background-worker:
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts component name, server type, and optional settings for databases, contracts, and Helm chart generation.
 

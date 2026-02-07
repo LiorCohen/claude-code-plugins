@@ -435,7 +435,7 @@ Only modify if the feature requires:
 
 ## Config Schema
 
-Server components require configuration from `components/config/`. The [backend-scaffolding](../backend-scaffolding/SKILL.md) skill generates the initial server structure including a minimal config schema with `port`, `host`, and `logLevel` fields.
+Server components require configuration from `components/config/`. The `backend-scaffolding` skill generates the initial server structure including a minimal config schema with `port`, `host`, and `logLevel` fields.
 
 ---
 

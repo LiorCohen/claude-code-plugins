@@ -73,7 +73,7 @@ type Greeting = components['schemas']['Greeting'];
 
 ## Usage
 
-Runs during project creation via `sdd-system scaffolding project`.
+Generates the contract component directory with an OpenAPI spec and type generation scripts. Invoked by the `scaffolding` skill during project creation.
 
 ## Templates Location
 
@@ -87,7 +87,7 @@ skills/components/contract/contract-scaffolding/templates/
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts contract name and optional project metadata for OpenAPI spec generation.
 

@@ -17,13 +17,13 @@ Use templates below as starting points.
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts spec type, change type, title, domain, and optional issue reference.
 
 ## Output
 
-Schema: [`output.schema.json`](./output.schema.json)
+Schema: [`schemas/output.schema.json`](./schemas/output.schema.json)
 
 Returns complete SPEC.md markdown and validation results for required fields, sections, and format.
 

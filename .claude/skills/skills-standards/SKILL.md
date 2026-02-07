@@ -312,9 +312,9 @@ Skills not directly referenced by any command or agent (used only by other skill
 
 - `change-creation` — invoked by `planning` and `spec-decomposition` for epic handling
 - `spec-writing` — consumed by `spec-solicitation` and `component-discovery`
-- `domain-population` — currently invoked via `sdd-system` CLI (violation — CLI should not invoke skills)
-- `spec-index` — currently invoked via `sdd-system` CLI (violation — CLI should not invoke skills)
-- `scaffolding` — currently invoked via `sdd-system` CLI (violation — CLI should not invoke skills)
+- `domain-population` — invoked by `project-scaffolding` for initial domain spec creation
+- `spec-index` — invoked by commands for spec indexing and validation
+- `scaffolding` — invoked by `/sdd-init` for project creation
 - `backend-scaffolding`, `frontend-scaffolding`, `contract-scaffolding`, `config-scaffolding`, `database-scaffolding`, `helm-scaffolding` — invoked by `scaffolding`
 - `commit-standards` — referenced by `cicd-standards`
 - `config-standards` — referenced by `helm-standards` and `database-standards`

@@ -12,15 +12,15 @@ Orchestrates project scaffolding by delegating to component-specific scaffolding
 
 This skill coordinates multiple component scaffolding skills:
 
-| Skill | Purpose | Templates Location |
-|-------|---------|-------------------|
-| `project-scaffolding` | Root files, specs | `skills/project-scaffolding/templates/` |
-| `config-scaffolding` | Config component (mandatory) | `skills/components/config/config-scaffolding/templates/` |
-| `backend-scaffolding` | Server components (CMDO) | `skills/components/backend/backend-scaffolding/templates/` |
-| `frontend-scaffolding` | Webapp components (MVVM) | `skills/components/frontend/frontend-scaffolding/templates/` |
-| `contract-scaffolding` | OpenAPI contract | `skills/components/contract/contract-scaffolding/templates/` |
-| `database-scaffolding` | PostgreSQL database | `skills/components/database/database-scaffolding/templates/` |
-| `helm-scaffolding` | Helm charts for K8s deployment | `skills/components/helm/helm-scaffolding/templates/` |
+| Skill | Purpose |
+|-------|---------|
+| `project-scaffolding` | Root files, specs |
+| `config-scaffolding` | Config component (mandatory) |
+| `backend-scaffolding` | Server components (CMDO) |
+| `frontend-scaffolding` | Webapp components (MVVM) |
+| `contract-scaffolding` | OpenAPI contract |
+| `database-scaffolding` | PostgreSQL database |
+| `helm-scaffolding` | Helm charts for K8s deployment |
 
 ## When to Use
 
@@ -28,23 +28,21 @@ Use this skill when you need to create the SDD project structure after the user 
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts project name, target directory, component list, and optional description, domain, and skills directory.
 
 ## Output
 
-Schema: [`output.schema.json`](./output.schema.json)
+Schema: [`schemas/output.schema.json`](./schemas/output.schema.json)
 
 Returns success status, list of scaffolded components, and next steps.
 
 ## Usage
 
-After gathering project configuration in `/sdd-init`, call the scaffold script:
+After gathering project configuration in `/sdd-init`, call `sdd-system scaffolding project` with a config JSON file containing the project settings. The config must include:
 
-```bash
-# 1. Create a config JSON file
-cat > /tmp/sdd-scaffold-config.json << 'EOF'
+```json
 {
     "project_name": "<user-provided-name>",
     "project_description": "<user-provided-description>",
@@ -60,13 +58,6 @@ cat > /tmp/sdd-scaffold-config.json << 'EOF'
     ],
     "skills_dir": "<path-to-plugin>/skills"
 }
-EOF
-
-# 2. Run the scaffold command
-node --enable-source-maps <path-to-plugin>/system/dist/cli.js scaffolding project --config /tmp/sdd-scaffold-config.json
-
-# 3. Clean up config file
-rm /tmp/sdd-scaffold-config.json
 ```
 
 ## Config Fields
@@ -235,51 +226,6 @@ The script executes in this order:
 6. **Database scaffolding** - Migrations, seeds, scripts (if selected)
 7. **Helm scaffolding** - Kubernetes deployment charts (for each instance)
 8. **Infrastructure** - Testing, CI/CD (inline, if selected)
-
-## Template Locations
-
-Templates are colocated with their scaffolding skills:
-
-```text
-skills/
-├── project-scaffolding/
-│   ├── SKILL.md
-│   └── templates/
-│       ├── project/          # README.md, CLAUDE.md, package.json
-│       └── specs/            # INDEX.md, SNAPSHOT.md, glossary.md
-├── components/
-│   ├── backend/
-│   │   └── backend-scaffolding/
-│   │       ├── SKILL.md
-│   │       └── templates/            # Server component files
-│   ├── config/
-│   │   └── config-scaffolding/
-│   │       ├── SKILL.md
-│   │       └── templates/
-│   │           ├── package.json      # Workspace package
-│   │           ├── tsconfig.json     # TypeScript config
-│   │           ├── envs/             # Environment configs
-│   │           ├── schemas/          # JSON schemas
-│   │           └── types/            # TypeScript types
-│   ├── contract/
-│   │   └── contract-scaffolding/
-│   │       ├── SKILL.md
-│   │       └── templates/            # openapi.yaml, package.json
-│   ├── database/
-│   │   └── database-scaffolding/
-│   │       ├── SKILL.md
-│   │       └── templates/            # migrations/, seeds/
-│   ├── frontend/
-│   │   └── frontend-scaffolding/
-│   │       ├── SKILL.md
-│   │       └── templates/            # Webapp component files
-│   └── helm/
-│       └── helm-scaffolding/
-│           ├── SKILL.md
-│           └── templates/            # Chart.yaml, values.yaml, templates/
-└── scaffolding/
-    └── SKILL.md              # This file (orchestrator)
-```
 
 ## After Scaffolding
 
