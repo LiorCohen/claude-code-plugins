@@ -13,6 +13,7 @@
  *   forward    Port-forward services for local access
  *   config     Generate local environment config file
  *   infra      Install/reinstall observability infrastructure
+ *   check-tools  Check required development tools
  */
 
 import type { CommandResult, GlobalOptions } from '@/lib/args';
@@ -31,6 +32,7 @@ const ACTIONS = [
   'forward',
   'config',
   'infra',
+  'check-tools',
 ] as const;
 
 type EnvironmentAction = (typeof ACTIONS)[number];
@@ -114,6 +116,10 @@ export const handleEnvironment = async (
     case 'infra': {
       const { infra } = await import('./infra');
       return infra(args, options);
+    }
+    case 'check-tools': {
+      const { checkTools } = await import('./check-tools');
+      return checkTools(args, options);
     }
     default:
       return { success: false, error: `Unknown action: ${action}` };

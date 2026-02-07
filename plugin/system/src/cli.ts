@@ -86,6 +86,7 @@ Namespaces:
     forward     Port-forward services for local access
     config      Generate local environment config
     infra       Install/reinstall observability stack
+    check-tools Check required development tools
 
   permissions   Permission management
     configure   Merge SDD recommended permissions into project settings
