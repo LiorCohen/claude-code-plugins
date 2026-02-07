@@ -6,6 +6,8 @@ user-invocable: false
 
 # Project Settings Skill
 
+> **Authoritative Source:** This skill is the single source of truth for the `.sdd/sdd-settings.yaml` schema, component settings, validation rules, and directory mappings. All other skills, agents, and commands MUST reference this skill rather than duplicating settings knowledge inline.
+
 ## Purpose
 
 Manage the `.sdd/sdd-settings.yaml` file that stores project configuration and component settings. Component settings are structural decisions that drive scaffolding, config initialization, and deployment.
@@ -262,6 +264,62 @@ Get the actual directory names for all components.
   - Good: `order-service`, `analytics-db`, `customer-portal`, `task-api`
   - Avoid: `api`, `public`, `primary`, `main`, `server`
 - Exception: `config` (singleton)
+
+## Minimal Template (for project initialization)
+
+Used by the `project-scaffolding` skill during `/sdd-init`:
+
+```yaml
+# ============================================================================
+# SDD PROJECT SETTINGS - DO NOT EDIT MANUALLY
+# ============================================================================
+# This file is generated and maintained by SDD commands.
+# To modify settings, use: /sdd-settings
+# ============================================================================
+
+sdd:
+  plugin_version: "{{PLUGIN_VERSION}}"
+  initialized_at: "{{CURRENT_DATE}}"
+  last_updated: "{{CURRENT_DATE}}"
+
+project:
+  name: "{{PROJECT_NAME}}"
+  # description and domain are populated as you build features
+  # description: "A task management application"
+  # domain: "Task Management"
+
+# Components are added here as they are scaffolded via /sdd-change new
+# The first change targeting a component type triggers scaffolding.
+#
+# Example after scaffolding a server:
+#   - name: my-app-server
+#     type: server
+#     settings:
+#       server_type: api
+#       databases: []
+#       provides_contracts: []
+
+components:
+  - name: config
+    type: config
+    settings: {}
+```
+
+## How to Reference This Skill
+
+Other skills, agents, and commands that need settings knowledge should:
+
+1. **Add a skill reference** in their Skills section:
+   ```
+   - `project-settings` — Settings schema, component types, directory mappings, and validation rules
+   ```
+
+2. **Reference instead of duplicate** — when needing to describe settings schema, validation, or directory mappings, write:
+   ```
+   Refer to the `project-settings` skill for the complete component settings schema, defaults, and validation rules.
+   ```
+
+3. **Reading the file is fine** — agents and skills that need to READ `.sdd/sdd-settings.yaml` at runtime should do so directly. The goal is to avoid duplicating the schema definition, not the file access.
 
 ## Related Commands
 

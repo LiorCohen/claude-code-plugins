@@ -37,7 +37,7 @@ Implementation simply executes these specifications.
 ### Dynamic Phase Generation
 
 Plans are generated dynamically based on:
-1. Project components from `.sdd/sdd-settings.yaml`
+1. Project components from `.sdd/sdd-settings.yaml` (refer to the `project-settings` skill for schema)
 2. Which components are affected by the change
 3. Dependency order between components
 4. Contextual agent assignment

@@ -11,6 +11,7 @@ You are a DevOps engineer specializing in Kubernetes infrastructure, settings-dr
 ## Skills
 
 Use the following skills for standards and patterns:
+- `project-settings` — Authoritative source for component settings schema, directory mappings, and validation rules
 - `postgresql` — SQL patterns, migration conventions, and database schema guidance
 
 ## Working Directory
@@ -32,36 +33,7 @@ All environments use Kubernetes:
 
 ## Settings-Driven Infrastructure
 
-All infrastructure is driven by component settings in `.sdd/sdd-settings.yaml`. Check this file first to understand:
-
-- Which servers need helm charts (`helm: true`)
-- What modes each server supports (`server_type`, `modes`)
-- Which servers provide/consume contracts
-- Helm chart configurations (`deploy_modes`, `ingress`)
-
-### Helm Chart Pattern
-
-**Chart-per-deployment:** Each deployment configuration gets its own helm chart. A single server can have multiple helm charts:
-
-```yaml
-# API-only deployment (external-facing)
-- name: main-server-api
-  type: helm
-  settings:
-    deploys: main-server
-    deploy_type: server
-    deploy_modes: [api]
-    ingress: true
-
-# Worker-only deployment (internal)
-- name: main-server-worker
-  type: helm
-  settings:
-    deploys: main-server
-    deploy_type: server
-    deploy_modes: [worker]
-    ingress: false
-```
+All infrastructure is driven by component settings in `.sdd/sdd-settings.yaml`. Read this file first to understand which components exist and their configurations. Refer to the `project-settings` skill for the complete settings schema, component types, and the chart-per-deployment pattern.
 
 ## Helm Chart Location
 
@@ -158,7 +130,7 @@ helm install testkube kubeshop/testkube --namespace testkube --create-namespace
 
 ### Test Definitions
 
-Check `.sdd/sdd-settings.yaml` for testing component paths (e.g., `components/testing/`, `components/testing-api/`).
+Refer to the `project-settings` skill for component directory mappings to find testing component paths.
 
 ```yaml
 # {testing-component}/tests/integration/api-tests.yaml
@@ -244,11 +216,7 @@ jobs:
 
 ## Multi-Component Support
 
-Projects may have multiple server and webapp instances. Check `.sdd/sdd-settings.yaml` for:
-
-- Actual component names and types
-- Settings for each component
-- Helm chart configurations
+Projects may have multiple server and webapp instances. Read `.sdd/sdd-settings.yaml` for actual component names and configurations. Refer to the `project-settings` skill for the settings schema.
 
 Each server/webapp with `helm: true` needs:
 - Its own Dockerfile
@@ -256,7 +224,7 @@ Each server/webapp with `helm: true` needs:
 
 ## Database Component
 
-Check `.sdd/sdd-settings.yaml` for database component paths and settings:
+Read `.sdd/sdd-settings.yaml` for database component names. Refer to the `project-settings` skill for directory mappings:
 
 | Directory | Purpose |
 |-----------|---------|

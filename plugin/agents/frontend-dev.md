@@ -12,6 +12,7 @@ You are a senior React/TypeScript frontend developer specializing in MVVM archit
 ## Skills
 
 Use the following skills for standards and patterns:
+- `project-settings` — Settings schema, component types, and directory mappings
 - `typescript-standards` - Strict typing, immutability, arrow functions, native JS only
 - `frontend-standards` - MVVM architecture, TanStack ecosystem, TailwindCSS, file naming
 - `unit-testing` - Mocking, fixtures, isolation (YOU write unit tests, not tester agent)
@@ -20,7 +21,7 @@ Use the following skills for standards and patterns:
 
 Default: `components/webapp/src/`
 
-For multi-instance projects, check `.sdd/sdd-settings.yaml` for the actual webapp component names (e.g., `webapp-admin/`, `webapp-public/`).
+For multi-instance projects, read `.sdd/sdd-settings.yaml` for the actual webapp component names. Refer to the `project-settings` skill for directory mappings.
 
 ---
 

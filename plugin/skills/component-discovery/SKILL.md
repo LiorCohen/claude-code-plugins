@@ -110,48 +110,10 @@ Schema: [`schemas/output.schema.json`](./schemas/output.schema.json)
 
 Returns detected project type and a list of components with names, types, and settings.
 
-## Component Settings
+## Skills
 
-### Server Settings
-
-| Setting | Type | Default | Description |
-|---------|------|---------|-------------|
-| `server_type` | `api\|worker\|cron\|hybrid` | `api` | Communication pattern(s) |
-| `modes` | `(api\|worker\|cron)[]` | — | For hybrid: 2+ modes |
-| `databases` | string[] | `[]` | Database components used |
-| `provides_contracts` | string[] | `[]` | Contracts implemented |
-| `consumes_contracts` | string[] | `[]` | Contracts called |
-| `helm` | boolean | `true` | Generate helm chart |
-
-### Webapp Settings
-
-| Setting | Type | Default | Description |
-|---------|------|---------|-------------|
-| `contracts` | string[] | `[]` | Contracts used |
-| `helm` | boolean | `true` | Generate helm chart |
-
-### Helm Settings
-
-| Setting | Type | Default | Description |
-|---------|------|---------|-------------|
-| `deploys` | string | — | Component to deploy (required) |
-| `deploy_type` | `server\|webapp` | — | Type being deployed (required) |
-| `deploy_modes` | `(api\|worker\|cron)[]` | — | For servers: which modes |
-| `ingress` | boolean | `true` | External HTTP access |
-| `assets` | `bundled\|entrypoint` | `bundled` | For webapps only |
-
-### Database Settings
-
-| Setting | Type | Default | Description |
-|---------|------|---------|-------------|
-| `provider` | `postgresql` | `postgresql` | Database provider |
-| `dedicated` | boolean | `false` | Needs own DB server |
-
-### Contract Settings
-
-| Setting | Type | Default | Description |
-|---------|------|---------|-------------|
-| `visibility` | `public\|internal` | `internal` | External consumers allowed |
+Use the following skills for reference:
+- `project-settings` — Authoritative source for component settings schema, types, defaults, validation rules, and directory mappings
 
 ## Available Components
 
@@ -239,13 +201,7 @@ This allows independent scaling of API and worker processes.
 
 ### Step 5: Settings Validation
 
-Before returning, validate:
-
-1. **Database references**: Each server's `databases` must reference existing database components
-2. **Contract references**: `provides_contracts`, `consumes_contracts`, and `contracts` must reference existing contract components
-3. **Helm references**: `deploys` must reference a component with `helm: true`
-4. **Hybrid modes**: If `server_type: hybrid`, `modes` must have 2+ entries
-5. **Deploy modes**: Helm `deploy_modes` must be subset of server's available modes
+Before returning, validate the discovered configuration against the rules defined in the `project-settings` skill (cross-reference validation for databases, contracts, helm, hybrid modes, and deploy modes).
 
 ### Step 6: Return Configuration
 

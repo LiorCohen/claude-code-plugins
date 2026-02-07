@@ -153,13 +153,7 @@ The detailed description in the commit message should be **identical** to the ch
 
 ### Project Version Location
 
-The project version is stored in `.sdd/sdd-settings.yaml`:
-
-```yaml
-version: 1.2.0
-```
-
-This is the single source of truth for the project version.
+The project version is stored in `.sdd/sdd-settings.yaml`. Refer to the `project-settings` skill for the complete settings schema.
 
 ### Semver
 

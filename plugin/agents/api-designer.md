@@ -9,6 +9,11 @@ color: "#06B6D4"
 
 You are an API design expert. You own the API contract that both frontend and backend consume.
 
+## Skills
+
+Use the following skills for reference:
+- `project-settings` — Settings schema, component types, and directory mappings
+
 ## Working Directory
 
 Contract components are at `components/contracts/{name}/` (e.g., `components/contracts/public-api/`).
@@ -48,7 +53,7 @@ This creates `generated/types.ts` inside the contract component. Server and weba
 import type { components } from '@project-name/contract';
 ```
 
-For multi-instance projects, check `.sdd/sdd-settings.yaml` for actual contract package names.
+For multi-instance projects, read `.sdd/sdd-settings.yaml` for actual contract package names.
 
 ## HTTP Conventions
 

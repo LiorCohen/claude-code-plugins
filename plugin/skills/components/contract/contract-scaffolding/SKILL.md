@@ -18,7 +18,7 @@ Use when creating a contract component. Contract components support multiple ins
 
 ## What It Creates
 
-The directory path is `components/contracts/{name}/` based on the component name in `.sdd/sdd-settings.yaml`.
+The directory path is `components/contracts/{name}/` based on the component name in `.sdd/sdd-settings.yaml` (refer to the `project-settings` skill for directory mappings).
 
 ```text
 components/contracts/{name}/
@@ -93,6 +93,7 @@ Accepts contract name and optional project metadata for OpenAPI spec generation.
 
 ## Related Skills
 
+- `project-settings` — Authoritative source for contract component settings schema and directory mappings.
 - `typescript-standards` — Generated TypeScript types must follow these coding conventions. Defines strict typing, readonly patterns, and import standards.
 
 ## Integration with Other Components
