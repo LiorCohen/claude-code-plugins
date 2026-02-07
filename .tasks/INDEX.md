@@ -10,7 +10,7 @@
 
 ## Ready
 
-(none)
+- [#90](3-ready/90/): Fix skills standards violations from audit report
 
 ---
 
@@ -61,7 +61,6 @@
 
 ## Inbox (unprioritized)
 
-- [#90](1-inbox/90/): Skills standards audit across all 34 plugin skills
 - [#80](1-inbox/80/): Plans should become YAML files
 - [#76](1-inbox/76/): Git worktrees for parallel spec/plan execution
 - [#74](1-inbox/74/): Task performance scoring system
