@@ -77,6 +77,8 @@ Add a `check-tools` action to the existing `env` namespace that:
 
 **Tool execution:** Use `execSync` with `{ timeout: 5000 }` and catch errors. Non-zero exit or timeout = not installed.
 
+**Install hints:** When reporting missing tools, use generic install suggestions (e.g., `brew install docker` or "Install Docker from https://docs.docker.com/get-docker/") — do not prescribe Docker Desktop specifically. The CLI just needs the `docker` binary on PATH regardless of source.
+
 ---
 
 ## Change 2: Register `check-tools` in Env Namespace
