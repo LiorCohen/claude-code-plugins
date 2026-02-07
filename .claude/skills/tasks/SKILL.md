@@ -333,7 +333,7 @@ User: /tasks
 User: /tasks list
 ```
 
-**Action:** Read INDEX.md and display the index, grouped by section. Always show all tasks in each section with their full titles - never abbreviate or summarize the inbox or other sections. Skip empty sections and omit Completed, Rejected, and Consolidated sections (these are archival).
+**Action:** Read INDEX.md and display the index, grouped by section. Always show all tasks in each section with their full titles - never abbreviate or summarize the inbox or other sections. Skip empty sections and omit Completed, Rejected, and Consolidated sections (these are archival). Render each task reference (`#XX`) as a markdown link pointing to its `task.md` file relative to the repo root, e.g., `[#67](.tasks/1-inbox/67/task.md)`.
 
 ### View Single Task
 
@@ -478,10 +478,12 @@ User: /tasks reject 15 "Out of scope for MVP"
 
 **Workflow:**
 1. Find task folder
-2. Move folder to `7-rejected/`
-3. Update `task.md` frontmatter: `status: rejected`
-4. If reason provided, add to `task.md`
-5. Update INDEX.md
+2. **Determine the reason for rejection.** A reason is always required:
+   - If the user says "obsolete", check completed tasks to identify which task(s) made it obsolete. Reference them in the reason (e.g., "Obsolete — superseded by #81")
+   - If the reason is unclear, **ask the user** before proceeding
+3. Move folder to `7-rejected/`
+4. Update `task.md` frontmatter: `status: rejected`, `rejected_reason: <reason>`
+5. Update INDEX.md (include the reason summary after the title, e.g., `— obsolete, superseded by #81`)
 6. Commit the transition (e.g., "Tasks: Reject #15")
 
 ### Consolidate Tasks
