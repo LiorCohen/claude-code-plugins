@@ -155,3 +155,31 @@ runs:
       input_tokens: 2295
       output_tokens: 700
       total_tokens: 2995
+  - timestamp: "2026-02-07T08:32:10.032Z"
+    plugin_version: "6.1.8"
+    test_file: "tests/src/tests/workflows/sdd-change-new-external.test.ts"
+    test_name: "change-new-external-spec"
+    turn_count: 51
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 53
+        output_tokens: 772
+        total_tokens: 825
+    total:
+      input_tokens: 53
+      output_tokens: 772
+      total_tokens: 825
+  - timestamp: "2026-02-07T08:35:58.959Z"
+    plugin_version: "6.1.8"
+    test_file: "tests/src/tests/workflows/sdd-change-new-external.test.ts"
+    test_name: "change-new-external-spec"
+    turn_count: 51
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 53
+        output_tokens: 607
+        total_tokens: 660
+    total:
+      input_tokens: 53
+      output_tokens: 607
+      total_tokens: 660

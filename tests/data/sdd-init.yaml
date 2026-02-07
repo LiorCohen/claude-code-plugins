@@ -281,3 +281,17 @@ runs:
       input_tokens: 45
       output_tokens: 648
       total_tokens: 693
+  - timestamp: "2026-02-07T08:34:34.612Z"
+    plugin_version: "6.1.8"
+    test_file: "tests/src/tests/workflows/sdd-init.test.ts"
+    test_name: "init-minimal"
+    turn_count: 47
+    usage:
+      claude-opus-4-5-20251101:
+        input_tokens: 49
+        output_tokens: 621
+        total_tokens: 670
+    total:
+      input_tokens: 49
+      output_tokens: 621
+      total_tokens: 670
