@@ -279,49 +279,6 @@ This skill defines no input parameters or structured output.
 
 ---
 
-## Skill Consumers Reference
-
-Skills are consumed by two types of callers: **commands** (user-invocable slash commands) and **agents** (subagent implementations). This section is the authoritative mapping — update it when adding or removing skills, commands, or agents.
-
-### Commands → Skills
-
-| Command | Skills Invoked |
-|---------|---------------|
-| `/sdd-init` | `project-scaffolding` |
-| `/sdd-change` | `workflow-state`, `component-discovery`, `spec-solicitation`, `spec-decomposition`, `external-spec-integration`, `planning` |
-| `/sdd-config` | (none — uses `sdd-system` CLI; references `config-scaffolding`, `config-standards`, `helm-standards` for context) |
-| `/sdd-settings` | (none — reads/writes `sdd-settings.yaml` directly) |
-| `/sdd-run` | (none — wraps `sdd-system` CLI) |
-
-### Agents → Skills
-
-| Agent | Skills Used |
-|-------|-------------|
-| `backend-dev` | `typescript-standards`, `backend-standards`, `unit-testing`, `postgresql` |
-| `frontend-dev` | `typescript-standards`, `frontend-standards`, `unit-testing` |
-| `tester` | `integration-testing`, `e2e-testing` |
-| `devops` | `postgresql` |
-| `api-designer` | (none) |
-| `reviewer` | (none) |
-| `db-advisor` | (none) |
-| `ci-dev` | (none) |
-
-### Unreferenced Skills
-
-Skills not directly referenced by any command or agent (used only by other skills or as standards context):
-
-- `change-creation` — invoked by `planning` and `spec-decomposition` for epic handling
-- `spec-writing` — consumed by `spec-solicitation` and `component-discovery`
-- `domain-population` — currently invoked via `sdd-system` CLI (violation — CLI should not invoke skills)
-- `spec-index` — currently invoked via `sdd-system` CLI (violation — CLI should not invoke skills)
-- `scaffolding` — currently invoked via `sdd-system` CLI (violation — CLI should not invoke skills)
-- `backend-scaffolding`, `frontend-scaffolding`, `contract-scaffolding`, `config-scaffolding`, `database-scaffolding`, `helm-scaffolding` — invoked by `scaffolding`
-- `commit-standards` — referenced by `cicd-standards`
-- `config-standards` — referenced by `helm-standards` and `database-standards`
-- `contract-standards`, `database-standards`, `helm-standards`, `cicd-standards`, `testing-standards`, `local-env` — standards/reference skills loaded contextually
-
----
-
 ## Audit Procedure
 
 Run this audit against all plugin skills to produce a fresh violations report. Recursively find every `SKILL.md` under `plugin/skills/`, then check each skill against the categories below.

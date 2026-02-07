@@ -118,7 +118,6 @@ Use the following skills for standards and patterns:
 1. **Brief summary per skill** — After the skill name, include a short phrase describing what the agent uses it for. The reader should understand the role of each skill without loading it.
 2. **Don't duplicate skill content** — Never copy rules, patterns, or checklists from a skill into the agent. The agent loads the skill at runtime.
 3. **Only reference skills that exist** — Every skill name in the agent must correspond to an actual `SKILL.md` somewhere under `plugin/skills/` (scan recursively — skills may be nested, e.g. `plugin/skills/components/backend/backend-standards/`). Referencing nonexistent skills creates silent failures — the agent will have no standards to follow.
-4. **Match the consumer reference** — The `agents-standards` audit verifies that agent-to-skill references match the Skill Consumers Reference in `skills-standards`. When adding or removing a skill reference, update both the agent and the consumer reference.
 
 ---
 
@@ -143,10 +142,9 @@ During audit (see Audit Procedure below), check each agent against:
 
 1. **Skill existence** — Does every referenced skill have a `SKILL.md` somewhere under `plugin/skills/` (recursive scan)?
 2. **Skill summary accuracy** — Does the one-line summary in the agent match what the skill actually does?
-3. **Consumer reference sync** — Does the Skill Consumers Reference in `skills-standards` list this agent with the correct skills?
-4. **Working directory validity** — Does the documented working directory pattern match the current project structure conventions?
-5. **Tool consistency** — Does the `tools` list match the agent's actual needs? (Read-only agents should not have `Write`; agents that run commands need `Bash`.)
-6. **Inter-agent consistency** — Do responsibility boundaries between agents conflict or leave gaps?
+3. **Working directory validity** — Does the documented working directory pattern match the current project structure conventions?
+4. **Tool consistency** — Does the `tools` list match the agent's actual needs? (Read-only agents should not have `Write`; agents that run commands need `Bash`.)
+5. **Inter-agent consistency** — Do responsibility boundaries between agents conflict or leave gaps?
 
 ---
 
@@ -199,7 +197,6 @@ Use when creating or reviewing a plugin agent:
 - [ ] All examples are self-contained
 - [ ] Code blocks specify language
 - [ ] `## Rules` is the last section
-- [ ] Agent-to-skill references match the Skill Consumers Reference in `skills-standards`
 
 ---
 
@@ -212,11 +209,10 @@ Run this audit against all plugin agents to produce a fresh violations report. F
 For each agent file, check every item in the **Checklist** section above. Additionally:
 
 1. **Skill existence** — For every skill referenced in the agent's `## Skills` section, verify that a matching `SKILL.md` exists under `plugin/skills/` by globbing recursively (`plugin/skills/**/SKILL.md`) and matching on the skill's `name` frontmatter field. Skills may be nested in subdirectories (e.g. `plugin/skills/components/backend/backend-standards/SKILL.md`).
-2. **Consumer reference sync** — Cross-check against the Agents → Skills table in the `skills-standards` Skill Consumers Reference. Flag mismatches in either direction (agent references a skill not listed in the table, or table lists a skill the agent doesn't reference).
-3. **User interaction scan (direct)** — Search agent content for phrases indicating user interaction: "ask the user", "confirm with", "user preference", "prompt the user", "wait for", "the user should", "check with the user". Flag any matches.
-4. **User interaction scan (transitive)** — For every skill referenced by the agent, read the skill's `SKILL.md` and search for the same user interaction phrases. A skill that assumes multi-turn conversation, presents options to a user, or waits for user responses is incompatible with agent context. Flag the skill name, the quoted phrase, and which agent loads it.
-5. **Inter-agent overlap** — Check that no two agents claim ownership of the same directory, responsibility, or domain without explicit delegation.
-6. **Staleness indicators** — Check all items in the Staleness section above.
+2. **User interaction scan (direct)** — Search agent content for phrases indicating user interaction: "ask the user", "confirm with", "user preference", "prompt the user", "wait for", "the user should", "check with the user". Flag any matches.
+3. **User interaction scan (transitive)** — For every skill referenced by the agent, read the skill's `SKILL.md` and search for the same user interaction phrases. A skill that assumes multi-turn conversation, presents options to a user, or waits for user responses is incompatible with agent context. Flag the skill name, the quoted phrase, and which agent loads it.
+4. **Inter-agent overlap** — Check that no two agents claim ownership of the same directory, responsibility, or domain without explicit delegation.
+5. **Staleness indicators** — Check all items in the Staleness section above.
 
 ### Report format
 
@@ -245,9 +241,6 @@ Produce the report with these sections:
 ## User Interaction Violations (Transitive)
 <!-- Quoted phrases in referenced skills that imply user interaction.
      Format: Agent → Skill → quoted phrase -->
-
-## Consumer Reference Sync
-<!-- Mismatches between agent files and skills-standards consumer table -->
 
 ## Per-Agent Violations
 <!-- One subsection per failing agent, with quoted violations -->
@@ -278,8 +271,7 @@ Run the audit directly (do not delegate to subagents):
 2. Read each file completely
 3. Check every item from the Checklist above, plus the additional audit-specific checks
 4. For skill existence checks, glob `plugin/skills/**/SKILL.md` (recursive) and match each referenced skill name against the `name` frontmatter field of found skills
-5. Cross-check against the Skill Consumers Reference in `skills-standards`
-6. Create a task via `/tasks add "Fix agents standards violations from audit report"` and write the report as `report.md` in the task folder
+5. Create a task via `/tasks add "Fix agents standards violations from audit report"` and write the report as `report.md` in the task folder
 
 ## Input / Output
 
