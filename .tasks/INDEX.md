@@ -16,13 +16,13 @@
 
 ## Implementing
 
-- [#93](4-implementing/93/): Centralize sdd-settings ownership in project-settings skill
+(none)
 
 ---
 
 ## Reviewing
 
-(none)
+- [#93](5-reviewing/93/): Centralize sdd-settings ownership in project-settings skill
 
 ---
 
