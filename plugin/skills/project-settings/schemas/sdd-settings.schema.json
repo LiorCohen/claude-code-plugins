@@ -131,6 +131,28 @@
               "settings": { "$ref": "#/$defs/contract_settings" }
             }
           }
+        },
+        {
+          "if": { "properties": { "type": { "const": "testing" } } },
+          "then": {
+            "properties": {
+              "settings": {
+                "type": "object",
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "cicd" } } },
+          "then": {
+            "properties": {
+              "settings": {
+                "type": "object",
+                "additionalProperties": false
+              }
+            }
+          }
         }
       ]
     },
