@@ -96,17 +96,16 @@ Rewrite Phase 1 in `sdd-init.md` with this new ordering:
 
 ### Phase 1.0: Plugin Installation Verification (HARD BLOCKER)
 
-This is the first check and it must pass before anything else. Steps:
+This is the first check and it must pass before anything else. The plugin's absolute path is available via `${CLAUDE_PLUGIN_ROOT}` (set by Claude when the plugin loads). Steps:
 
-1. Search `~/.claude/plugins` **recursively** for the SDD plugin (look for `plugin.json` or `marketplace.json` marker files — the plugin may be nested in subdirectories)
-2. If not found: **STOP** — display installation instructions and exit
-3. If found: verify the plugin path, then check:
-   - `system/node_modules/` exists (dependencies installed)
-   - `system/dist/` exists (plugin built)
-4. If dependencies missing: run `npm install` in the plugin's `system/` directory
-5. If not built: run `npm run build:plugin` from the plugin root
+1. Verify `${CLAUDE_PLUGIN_ROOT}` is set. If not: **STOP** — the plugin is not installed. Display installation instructions and exit.
+2. Verify the plugin path exists and contains expected marker files (`plugin.json` or `.claude-plugin/marketplace.json`)
+3. Check build readiness:
+   - `${CLAUDE_PLUGIN_ROOT}/system/node_modules/` exists (dependencies installed)
+   - `${CLAUDE_PLUGIN_ROOT}/system/dist/` exists (plugin built)
+4. If dependencies missing: run `npm install` in `${CLAUDE_PLUGIN_ROOT}/system/`
+5. If not built: run `npm run build:plugin` from `${CLAUDE_PLUGIN_ROOT}`
 6. If repairs fail: **STOP** — display error details and exit
-7. Record the plugin path for use in subsequent steps
 
 **This is a hard blocker.** If the plugin is not installed, not built, or not functional after repair attempts, do NOT continue to other phases.
 
