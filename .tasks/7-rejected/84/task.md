@@ -2,13 +2,16 @@
 id: 84
 title: Apply zero session context to sdd-init workflow
 priority: medium
-status: open
+status: rejected
 created: 2026-02-05
+rejected_reason: Obsolete — same zero-session-context pattern as #83, superseded by workflow redesign in #81 and #85
 depends_on: [81]
 blocks: []
 ---
 
-# Task 84: Apply zero session context to sdd-init workflow
+# Task 84: Apply zero session context to sdd-init workflow ✗
+
+<!-- Original content preserved below -->
 
 ## Description
 

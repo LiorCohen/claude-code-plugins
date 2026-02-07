@@ -36,7 +36,6 @@
 ## Medium Priority
 
 - [#86](1-inbox/86/): Consider component-catalog skill for component type definitions
-- [#84](1-inbox/84/): Apply zero session context to sdd-init workflow
 - [#82](1-inbox/82/): Reorganize archive into .sdd directory
 - [#79](1-inbox/79/): Use project-name-derived component names in on-demand scaffolding
 - [#70](1-inbox/70/): Git checkpoint workflow for AI-assisted development
@@ -122,6 +121,7 @@
 - [#54](7-rejected/54/): Missing postgresql-standards skill — already exists at components/database/postgresql/
 - [#63](7-rejected/63/): Consolidate overlapping skills — addressed by #87, #88, #89
 - [#83](7-rejected/83/): Apply zero session context to sdd-implement workflow — obsolete, superseded by #81 and #85
+- [#84](7-rejected/84/): Apply zero session context to sdd-init workflow — obsolete, superseded by #81 and #85
 
 ---
 
