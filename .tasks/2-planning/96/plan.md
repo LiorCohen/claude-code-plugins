@@ -46,10 +46,12 @@ Add a `check-tools` action to the existing `env` namespace that:
 
 ```json
 {
+  "platform": "darwin",
+  "packageManager": "brew",
   "tools": [
-    { "name": "node", "required": true, "installed": true, "version": "v20.10.0" },
-    { "name": "docker", "required": true, "installed": false, "version": null },
-    { "name": "jq", "required": false, "installed": false, "version": null }
+    { "name": "node", "required": true, "installed": true, "version": "v20.10.0", "installHint": null },
+    { "name": "docker", "required": true, "installed": false, "version": null, "installHint": "brew install docker" },
+    { "name": "jq", "required": false, "installed": false, "version": null, "installHint": "brew install jq" }
   ],
   "allRequiredInstalled": false,
   "missingRequired": ["docker"],
@@ -77,17 +79,27 @@ Add a `check-tools` action to the existing `env` namespace that:
 
 **Tool execution:** Use `execSync` with `{ timeout: 5000 }` and catch errors. Non-zero exit or timeout = not installed.
 
-**Install hints:** Each tool should include an install suggestion using brew or the system's package manager. The CLI command should store these hints per tool and include them in both human-readable and JSON output when a tool is missing:
+**Package manager detection:** The CLI command should detect the system's package manager at runtime and use it for install hints. Detection order:
 
-| Tool | Install hint |
-|------|-------------|
-| node | `brew install node` or https://nodejs.org |
-| npm | Included with node |
-| git | `brew install git` or `xcode-select --install` |
-| docker | `brew install docker` or https://docs.docker.com/get-docker/ |
-| jq | `brew install jq` |
-| kubectl | `brew install kubectl` |
-| helm | `brew install helm` |
+| Platform | Detection | Package manager |
+|----------|-----------|-----------------|
+| macOS | `process.platform === 'darwin'` | `brew` (verify with `which brew`) |
+| Linux/WSL | `process.platform === 'linux'` | `apt-get` (Debian/Ubuntu), `dnf` (Fedora/RHEL), `yum` (CentOS) — check which exists |
+| Fallback | None found | Show URL-based hints only |
+
+The detected package manager is included in the JSON output (`packageManager` field) so sdd-init can use it to construct install commands.
+
+**Install hints per tool:** Each tool stores a mapping of package manager → install command. The CLI selects the right one based on the detected package manager:
+
+| Tool | brew (macOS) | apt-get (Debian/Ubuntu) | Fallback URL |
+|------|-------------|------------------------|--------------|
+| node | `brew install node` | `sudo apt-get install nodejs` | https://nodejs.org |
+| npm | Included with node | Included with nodejs | Included with node |
+| git | `brew install git` | `sudo apt-get install git` | https://git-scm.com |
+| docker | `brew install docker` | `sudo apt-get install docker.io` | https://docs.docker.com/get-docker/ |
+| jq | `brew install jq` | `sudo apt-get install jq` | https://jqlang.github.io/jq/ |
+| kubectl | `brew install kubectl` | `sudo apt-get install kubectl` | https://kubernetes.io/docs/tasks/tools/ |
+| helm | `brew install helm` | `sudo apt-get install helm` | https://helm.sh/docs/intro/install/ |
 
 ---
 
