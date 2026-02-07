@@ -27,6 +27,7 @@
 ---
 
 ## High Priority
+- [#96](1-inbox/96/): Fix sdd-init Phase 1 — plugin verification first, tool checks via system CLI
 - [#95](1-inbox/95/): Fix commands standards violations from audit report
 - [#17](1-inbox/17/): Plans should follow TDD with test review first
 - [#91](1-inbox/91/): Fix agents standards violations from audit report
