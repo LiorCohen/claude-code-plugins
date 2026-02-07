@@ -114,11 +114,11 @@ Update `cli.ts`:
 
 ---
 
-## Change 3: Restructure sdd-init Phase 1
+## Change 3: Restructure sdd-init Phases
 
-Rewrite Phase 1 in `sdd-init.md` with this new ordering:
+Renumber all phases to start from 1 (no Phase 0). The current Phase 0 (project name detection) becomes Phase 1, and the current Phase 1 (environment verification) is restructured as Phase 2 with new sub-steps:
 
-### Phase 1.0: Plugin Installation Verification (HARD BLOCKER)
+### Phase 2.1: Plugin Installation Verification (HARD BLOCKER)
 
 This is the first check and it must pass before anything else. The plugin's absolute path is available via `${CLAUDE_PLUGIN_ROOT}` (set by Claude when the plugin loads). Steps:
 
@@ -133,11 +133,11 @@ This is the first check and it must pass before anything else. The plugin's abso
 
 **This is a hard blocker.** If the plugin is not installed, not built, or not functional after repair attempts, do NOT continue to other phases.
 
-### Phase 1.1: Plugin Update Check
+### Phase 2.2: Plugin Update Check
 
 Same as current — check for newer version, suggest upgrade.
 
-### Phase 1.2: .claude/settings.json Verification
+### Phase 2.3: .claude/settings.json Verification
 
 Check the project's `.claude/settings.json` for required entries:
 - `extraKnownMarketplaces` must include `{ "name": "sdd", "url": "https://github.com/LiorCohen/sdd" }`
@@ -145,7 +145,7 @@ Check the project's `.claude/settings.json` for required entries:
 
 If missing: create or merge the required entries (preserve existing settings).
 
-### Phase 1.3: Required & Optional Tools Check (via System CLI)
+### Phase 2.4: Required & Optional Tools Check (via System CLI)
 
 Run `sdd-system env check-tools --json` and interpret the result:
 - Display the human-readable tool summary
@@ -164,13 +164,23 @@ Run `sdd-system env check-tools --json` and interpret the result:
   - Option 2: wait for the user to install manually, then re-run `check-tools` when they say they're ready
   - Option 3: only available if no required tools are missing (i.e., only optional tools). Continue with warnings. If required tools are missing, this option is not offered.
 
-This replaces the current prompt-based tool checking (Phases 1.0–1.3). One CLI call instead of 7+ individual version commands.
+This replaces the current prompt-based tool checking. One CLI call instead of 7+ individual version commands.
 
-### Phase 1.4: Permissions Check
+### Phase 2.5: Permissions Check
 
-Same as current Phase 1.5. Note: permissions written to `.claude/settings.local.json` do NOT take effect mid-session (Claude caches permissions at startup). The restart requirement is communicated in Phase 4.
+Same as current. Note: permissions written to `.claude/settings.local.json` do NOT take effect mid-session (Claude caches permissions at startup). The restart requirement is communicated in Phase 5.
 
-### Phase 4: Completion Message Update
+### Phase 5: Completion Message Update
+
+**Full phase renumbering for sdd-init.md:**
+
+| Old | New | Purpose |
+|-----|-----|---------|
+| Phase 0 | Phase 1 | Detect project name |
+| Phase 1 | Phase 2 | Environment verification (restructured) |
+| Phase 2 | Phase 3 | Create minimal structure |
+| Phase 3 | Phase 4 | Git init + commit |
+| Phase 4 | Phase 5 | Completion message |
 
 The completion message must include a **session restart notice** if permissions or settings were configured during init. Claude Code does not reload permissions mid-session — the user must start a new session before using any SDD commands.
 
