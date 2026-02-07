@@ -5,13 +5,12 @@
 ## Planning
 
 - [#67](2-planning/67/): Store user instructions in plans, specs, and .sdd/
-- [#96](2-planning/96/): Fix sdd-init Phase 1 — plugin verification first, tool checks via system CLI
 
 ---
 
 ## Ready
 
-(none)
+- [#96](3-ready/96/): Fix sdd-init Phase 1 — plugin verification first, tool checks via system CLI
 
 ---
 
