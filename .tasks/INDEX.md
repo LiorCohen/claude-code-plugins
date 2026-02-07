@@ -16,13 +16,13 @@
 
 ## Implementing
 
-- [#96](4-implementing/96/): Fix sdd-init Phase 1 — plugin verification first, tool checks via system CLI
+(none)
 
 ---
 
 ## Reviewing
 
-(none)
+- [#96](5-reviewing/96/): Fix sdd-init Phase 1 — plugin verification first, tool checks via system CLI
 
 ---
 

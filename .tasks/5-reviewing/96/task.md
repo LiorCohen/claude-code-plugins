@@ -2,7 +2,7 @@
 id: 96
 title: Fix sdd-init Phase 1 — plugin verification first, tool checks via system CLI
 priority: high
-status: implementing
+status: reviewing
 created: 2026-02-07
 depends_on: []
 blocks: []
