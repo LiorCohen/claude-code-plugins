@@ -168,7 +168,18 @@ This replaces the current prompt-based tool checking (Phases 1.0–1.3). One CLI
 
 ### Phase 1.4: Permissions Check
 
-Same as current Phase 1.5.
+Same as current Phase 1.5. Note: permissions written to `.claude/settings.local.json` do NOT take effect mid-session (Claude caches permissions at startup). The restart requirement is communicated in Phase 4.
+
+### Phase 4: Completion Message Update
+
+The completion message must include a **session restart notice** if permissions or settings were configured during init. Claude Code does not reload permissions mid-session — the user must start a new session before using any SDD commands.
+
+```
+IMPORTANT: Start a new Claude session before using SDD commands.
+  Settings and permissions configured during init require a session restart to take effect.
+```
+
+This notice should appear prominently in the NEXT STEPS section of the completion message.
 
 ---
 
