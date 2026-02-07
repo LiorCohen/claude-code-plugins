@@ -277,9 +277,9 @@ Get the actual directory names for all components.
   - Avoid: `api`, `public`, `primary`, `main`, `server`
 - Exception: `config` (singleton)
 
-## Minimal Template (for project initialization)
+## Minimal Template
 
-Used by the `project-scaffolding` skill during `/sdd-init`:
+Template for initializing a new `.sdd/sdd-settings.yaml`:
 
 ```yaml
 # ============================================================================
@@ -317,24 +317,3 @@ components:
     settings: {}
 ```
 
-## How to Reference This Skill
-
-Other skills, agents, and commands that need settings knowledge should:
-
-1. **Add a skill reference** in their Skills section:
-   ```markdown
-   - `project-settings` — Settings schema, component types, directory mappings, and validation rules
-   ```
-
-2. **Reference instead of duplicate** — when needing to describe settings schema, validation, or directory mappings, write:
-   ```markdown
-   Refer to the `project-settings` skill for the complete component settings schema, defaults, and validation rules.
-   ```
-
-3. **Reading the file is fine** — agents and skills that need to READ `.sdd/sdd-settings.yaml` at runtime should do so directly. The goal is to avoid duplicating the schema definition, not the file access.
-
-## Related Commands
-
-- `/sdd-settings` - View and modify settings interactively
-- `/sdd-init` - Initialize project with settings
-- `/sdd-config` - Manage runtime configuration
