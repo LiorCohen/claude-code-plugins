@@ -148,6 +148,45 @@ During audit (see Audit Procedure below), check each agent against:
 
 ---
 
+## Drift Risk Scoring
+
+Some agents are structurally more likely to drift than others. During audit or review, score each agent to prioritize monitoring effort. Higher scores mean more drift surfaces — not that the agent is broken today, but that it is more likely to break tomorrow.
+
+### Risk factors
+
+| Risk Factor | Points | Rationale |
+|-------------|--------|-----------|
+| Each formal skill reference (in `## Skills`) | +1 | More dependencies = more surfaces that can change |
+| Each inline skill reference (not in `## Skills`) | +2 | Informal references are harder to audit and easier to miss during updates |
+| Each hardcoded file path | +1 | Paths change during refactors; the agent won't know |
+| Each reference to another agent's internals | +3 | Cross-agent knowledge is the most fragile coupling — the other agent doesn't know it's being depended on |
+| Each duplicated concept from a skill | +3 | Duplicated content drifts silently; the skill evolves but the copy doesn't |
+| Each environment assumption without documented precondition | +1 | Implicit assumptions break silently in new environments |
+| References own callers or invocation context | +2 | Callers change independently; the agent doesn't control who invokes it |
+
+### Risk tiers
+
+| Score | Tier | Action |
+|-------|------|--------|
+| 0–2 | **Low** | Standard audit cadence |
+| 3–5 | **Moderate** | Review when any referenced skill or directory changes |
+| 6+ | **High** | Prioritize in every audit; consider simplifying the agent to reduce coupling |
+
+### In the audit report
+
+Include a drift risk summary table:
+
+```markdown
+## Drift Risk Scores
+
+| Agent | Score | Tier | Top Factors |
+|-------|-------|------|-------------|
+| backend-dev | 4 | Moderate | 3 skill refs (+3), 1 inline ref (+2) |
+| devops | 6 | High | 1 inline ref (+2), 2 hardcoded paths (+2), no skills section (+2) |
+```
+
+---
+
 ## Agent Structure
 
 After the frontmatter, organize the agent body as follows:

@@ -254,6 +254,45 @@ One-line summary paragraph.    <- What this skill does, when to apply it
 
 ---
 
+## Drift Risk Scoring
+
+Some skills are structurally more likely to drift than others. During audit or review, score each skill to prioritize monitoring effort. Higher scores mean more drift surfaces — not that the skill is broken today, but that it is more likely to break tomorrow.
+
+### Risk factors
+
+| Risk Factor | Points | Rationale |
+|-------------|--------|-----------|
+| Each cross-skill delegation | +1 | More delegations = more surfaces that can change |
+| Each vague delegation (no contract specified) | +2 | Vague references drift silently — the delegated skill evolves but the caller's assumption doesn't |
+| Each hardcoded file path | +1 | Paths change during refactors; the skill won't know |
+| Each duplicated definition from another skill | +3 | Highest risk — duplicated content drifts silently while the source of truth evolves |
+| Each CLI command reference | +1 | CLI interfaces change across versions; the skill may reference stale subcommands or flags |
+| Each environment assumption without documented precondition | +1 | Implicit assumptions break silently in new environments |
+| Each cross-skill file reference | +3 | Hidden coupling that breaks on restructure — the referenced skill doesn't know it has external readers |
+
+### Risk tiers
+
+| Score | Tier | Action |
+|-------|------|--------|
+| 0–2 | **Low** | Standard audit cadence |
+| 3–5 | **Moderate** | Review when any delegated skill or referenced CLI command changes |
+| 6+ | **High** | Prioritize in every audit; consider splitting the skill or inlining the dependency |
+
+### In the audit report
+
+Include a drift risk summary table:
+
+```markdown
+## Drift Risk Scores
+
+| Skill | Score | Tier | Top Factors |
+|-------|-------|------|-------------|
+| scaffolding | 5 | Moderate | 3 delegations (+3), 2 CLI refs (+2) |
+| change-creation | 7 | High | 4 delegations (+4), 1 vague ref (+2), 1 hardcoded path (+1) |
+```
+
+---
+
 ## Checklist
 
 Use when creating or reviewing a plugin skill:
