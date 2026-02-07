@@ -121,7 +121,7 @@ Why this change was made (for significant changes).
 **When to run:** If changes affect plugin functionality (commands, agents, skills, directory structure, workflows).
 
 **What to check:**
-1. Invoke the `docs-writer` agent to audit documentation against current plugin state
+1. Invoke the `docs-standards` agent to audit documentation against current plugin state
 2. Review any inconsistencies found
 3. Fix documentation issues before proceeding to commit
 
@@ -287,7 +287,7 @@ Task-related work? → Use tasks skill for status updates → Stage all → Comm
 9. **Amending pushed commits** - NEVER amend commits that have been pushed to remote
 10. **Multiple changelog entries per commit** - Each commit = one changelog entry. Split if needed
 11. **Incorrect task status** - Use the `tasks` skill for all task status changes; don't manually edit task files
-12. **Outdated documentation** - Plugin changes may require docs updates; run docs-writer agent to check
+12. **Outdated documentation** - Plugin changes may require docs updates; run docs-standards agent to check
 
 ## One Commit = One Changelog Entry
 

@@ -1,9 +1,8 @@
 ---
-name: product-expert
+name: plugin-product-standards
 description: Technical product expert specializing in platform engineering, DevOps, and AI dev tools. Critically reviews the SDD plugin for DX issues, inconsistencies, and gaps.
-tools: Read, Grep, Glob, Task
+allowed-tools: Read, Grep, Glob, Task
 model: opus
-color: "#7C3AED"
 ---
 
 # Technical Product Expert

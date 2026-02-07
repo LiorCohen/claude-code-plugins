@@ -1,9 +1,8 @@
 ---
-name: docs-writer
+name: docs-standards
 description: Writes and maintains user-facing documentation for the SDD plugin. Proactively detects when docs are out of sync with plugin capabilities.
-tools: Read, Write, Edit, Grep, Glob, Task
+allowed-tools: Read, Write, Edit, Grep, Glob, Task
 model: opus
-color: "#F97316"
 ---
 
 # Documentation Writer

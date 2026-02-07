@@ -9,9 +9,8 @@ sdd/
 ├── .claude-plugin/
 │   └── marketplace.json          # Marketplace manifest
 ├── .claude/
-│   ├── agents/                   # Marketplace-level agents
-│   │   └── docs-writer.md       # Documentation maintenance agent
 │   └── skills/                   # Marketplace-level skills
+│       ├── docs-standards/      # Documentation maintenance skill
 │       ├── commit/               # Commit workflow
 │       ├── plugin-testing-standards/ # Plugin testing methodology
 │       └── typescript-standards/ # TypeScript coding standards
