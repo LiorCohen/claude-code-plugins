@@ -77,7 +77,17 @@ Add a `check-tools` action to the existing `env` namespace that:
 
 **Tool execution:** Use `execSync` with `{ timeout: 5000 }` and catch errors. Non-zero exit or timeout = not installed.
 
-**Install hints:** When reporting missing tools, use generic install suggestions (e.g., `brew install docker` or "Install Docker from https://docs.docker.com/get-docker/") — do not prescribe Docker Desktop specifically. The CLI just needs the `docker` binary on PATH regardless of source.
+**Install hints:** Each tool should include an install suggestion using brew or the system's package manager. The CLI command should store these hints per tool and include them in both human-readable and JSON output when a tool is missing:
+
+| Tool | Install hint |
+|------|-------------|
+| node | `brew install node` or https://nodejs.org |
+| npm | Included with node |
+| git | `brew install git` or `xcode-select --install` |
+| docker | `brew install docker` or https://docs.docker.com/get-docker/ |
+| jq | `brew install jq` |
+| kubectl | `brew install kubectl` |
+| helm | `brew install helm` |
 
 ---
 
