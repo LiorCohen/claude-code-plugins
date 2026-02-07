@@ -27,7 +27,6 @@
 ---
 
 ## High Priority
-- [#83](1-inbox/83/): Apply zero session context to sdd-implement workflow
 - [#17](1-inbox/17/): Plans should follow TDD with test review first
 - [#59](1-inbox/59/): Audit and update all agents for compatibility
 
@@ -122,6 +121,7 @@
 - [#52](9-rejected/52/): Clean up .gitkeep and placeholder content — obsolete with on-demand scaffolding (#78)
 - [#54](9-rejected/54/): Missing postgresql-standards skill — already exists at components/database/postgresql/
 - [#63](9-rejected/63/): Consolidate overlapping skills — addressed by #87, #88, #89
+- [#83](7-rejected/83/): Apply zero session context to sdd-implement workflow — obsolete
 
 ---
 
