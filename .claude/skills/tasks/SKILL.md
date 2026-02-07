@@ -556,10 +556,10 @@ User: /tasks audit
 - `blocks` references are reciprocal (if A blocks B, B should depend on A)
 - No circular dependencies
 
-**Output format:** Write the report to `.temp/tasks-audit-<date>.md` and display a summary to the user. Group findings by severity:
+**Output format:** Write the report to `.temp/tasks-audit-<datetime>.md` (e.g., `tasks-audit-2026-02-07_14-30.md`) and display a summary to the user. Group findings by severity:
 
 ```markdown
-# Tasks Audit — YYYY-MM-DD
+# Tasks Audit — YYYY-MM-DD_HH-MM
 
 ## Errors (must fix)
 - [ ] #14: Frontmatter `status: open` but task is in `9-rejected/` directory

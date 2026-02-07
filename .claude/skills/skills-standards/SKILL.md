@@ -334,7 +334,7 @@ For each `SKILL.md`, check every item in the **Checklist** section above. Additi
 Produce the report with these sections:
 
 ```markdown
-# Skills Standards Audit — YYYY-MM-DD
+# Skills Standards Audit — YYYY-MM-DD_HH-MM
 
 ## Summary
 
@@ -373,12 +373,12 @@ Produce the report with these sections:
 
 After presenting the report, **ask the user** whether to create a task to track the fixes or whether the report is temporary (e.g., for quick review or one-off investigation). If the user wants a task:
 
-Create a task via `/tasks add "Fix skills standards violations from audit report"`. The task's purpose is to **fix the violations** — the audit report is supporting evidence, not the deliverable. Save the report as `report.md` inside the task folder:
+Create a task via `/tasks add "Fix skills standards violations from audit report"`. The task's purpose is to **fix the violations** — the audit report is supporting evidence, not the deliverable. Save the report with a timestamped filename inside the task folder:
 
 ```
 .tasks/1-inbox/<N>/
-├── task.md        # Task to fix violations, with key findings summary
-└── report.md      # Full audit report
+├── task.md                                    # Task to fix violations, with key findings summary
+└── skills-audit-YYYY-MM-DD_HH-MM.md           # Full audit report (e.g., skills-audit-2026-02-07_14-30.md)
 ```
 
 If the user declines, present the report inline without creating any files or tasks.
