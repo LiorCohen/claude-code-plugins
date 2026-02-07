@@ -136,9 +136,21 @@ If missing: create or merge the required entries (preserve existing settings).
 ### Phase 1.3: Required & Optional Tools Check (via System CLI)
 
 Run `sdd-system env check-tools --json` and interpret the result:
-- If `allRequiredInstalled` is false: show missing tools with install instructions and **exit**
-- If optional tools are missing: show warnings and **continue**
 - Display the human-readable tool summary
+- If any tools are missing (required or optional): list the missing tools with their install hints, then **offer to install them**:
+  ```
+  Missing tools:
+    ✗ docker — brew install docker
+    ⚠ jq — brew install jq (optional)
+
+  Would you like me to install the missing tools? I'll run:
+    brew install docker jq
+
+  (yes/no)
+  ```
+  - If yes: run the install commands, then re-run `check-tools` to verify
+  - If no and required tools are missing: **exit** — cannot continue without required tools
+  - If no and only optional tools are missing: **continue** with warnings
 
 This replaces the current prompt-based tool checking (Phases 1.0–1.3). One CLI call instead of 7+ individual version commands.
 
