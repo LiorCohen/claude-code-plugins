@@ -12,6 +12,7 @@ The sdd-init command's Phase 1 (Environment Verification) has three issues:
 1. **Plugin verification comes too late** — currently Phase 1.4, but nothing else works without the plugin. Must be first.
 2. **Tool checking is prompt-based** — Claude runs `node --version` etc. individually. This should be a single system CLI call.
 3. **Missing .claude/settings.json verification** — the project needs SDD marketplace and plugin entries to function.
+4. **Redundant "NOT done during init" lists** — the command enumerates what it doesn't do instead of just defining what it does. The minimal structure in Phase 2 already makes this clear.
 
 ## Files to Create
 
@@ -133,6 +134,16 @@ This replaces the current prompt-based tool checking (Phases 1.0–1.3). One CLI
 ### Phase 1.4: Permissions Check
 
 Same as current Phase 1.5.
+
+---
+
+## Change 4: Remove Redundant "NOT done" Lists
+
+Remove from `sdd-init.md`:
+- The "What's NOT done during init (deferred to implementation)" block in the Workflow table area
+- The "NOT created during init" block under Phase 2
+
+The minimal structure file tree in Phase 2 is the single source of truth for what gets created. If it's not in the tree, it's not created — no need to say so twice.
 
 ---
 
