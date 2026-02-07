@@ -116,7 +116,9 @@ Update `cli.ts`:
 
 ## Change 3: Restructure sdd-init Phases
 
-Renumber all phases to start from 1 (no Phase 0). The current Phase 0 (project name detection) becomes Phase 1, and the current Phase 1 (environment verification) is restructured as Phase 2 with new sub-steps:
+Renumber all phases to start from 1 (no Phase 0). The current Phase 0 (project name detection) becomes Phase 1, and the current Phase 1 (environment verification) is restructured as Phase 2 with new sub-steps.
+
+**Also fix the Phase Tracking checklist** — the current sdd-init.md has a bug where the DO NOT section says "until Phase 5 is finished" but the highest phase was 4. Update the checklist to match the new numbering (Phases 1–5).
 
 ### Phase 2.1: Plugin Installation Verification (HARD BLOCKER)
 
@@ -199,8 +201,9 @@ Remove from `sdd-init.md`:
 - The "What's NOT done during init (deferred to implementation)" block in the Workflow table area
 - The "NOT created during init" block under Phase 2
 - The "Available Component Types" section — component types are the concern of `sdd-change new` and the `project-scaffolding` skill, not sdd-init
+- The "Important Notes" section — restates information already covered in the command body (no arguments, minimal structure, safe to re-run, etc.)
 
-The minimal structure file tree in Phase 2 is the single source of truth for what gets created. Anything outside sdd-init's scope belongs in the commands/skills that own it.
+The minimal structure file tree in Phase 3 is the single source of truth for what gets created. Anything outside sdd-init's scope belongs in the commands/skills that own it.
 
 ---
 
@@ -226,13 +229,18 @@ The minimal structure file tree in Phase 2 is the single source of truth for wha
 - [ ] `test_check_tools_missingOptional_lists_only_optional` — optional missing doesn't affect allRequiredInstalled
 - [ ] `test_check_tools_json_output_mode` — verify --json flag produces valid JSON CommandResult
 - [ ] `test_check_tools_human_readable_output` — verify non-JSON output uses checkmark/warning/cross symbols
+- [ ] `test_check_tools_detects_brew_on_darwin` — mock `process.platform` as darwin, verify packageManager is "brew"
+- [ ] `test_check_tools_detects_apt_on_linux` — mock `process.platform` as linux with apt-get available, verify packageManager is "apt-get"
+- [ ] `test_check_tools_fallback_when_no_package_manager` — no package manager found, verify packageManager is null and install hints use URLs
+- [ ] `test_check_tools_install_hints_match_package_manager` — verify each tool's installHint uses the detected package manager's command
 
 ## Verification
 
 - [ ] `sdd-system env check-tools` runs and reports tool status
 - [ ] `sdd-system env check-tools --json` returns structured JSON
-- [ ] sdd-init.md Phase 1 starts with plugin verification as a hard blocker
-- [ ] sdd-init.md Phase 1 uses `sdd-system env check-tools` instead of individual version commands
-- [ ] sdd-init.md Phase 1 checks `.claude/settings.json` for SDD marketplace and plugin entries
+- [ ] sdd-init.md Phase 2 starts with plugin verification as a hard blocker
+- [ ] sdd-init.md Phase 2 uses `sdd-system env check-tools` instead of individual version commands
+- [ ] sdd-init.md Phase 2 checks `.claude/settings.json` for SDD marketplace and plugin entries
+- [ ] sdd-init.md Phase Tracking checklist matches new phase numbering (1–5)
 - [ ] All existing tests pass (`npm test`)
 - [ ] Plugin builds successfully (`npm run build:plugin`)
