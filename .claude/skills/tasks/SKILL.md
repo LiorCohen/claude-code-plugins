@@ -353,7 +353,8 @@ User: /tasks add <description>
 1. Determine next task number (highest N + 1 across all status dirs)
 2. Create folder `1-inbox/<N>/` with `task.md`
 3. Add entry to INDEX.md under Inbox
-4. Confirm with task number
+4. Commit the transition (e.g., "Tasks: Add #63")
+5. Confirm with task number
 
 New tasks always go to inbox first. User can prioritize later.
 
@@ -369,6 +370,7 @@ User: /tasks prioritize 15 low
 1. Find task folder
 2. Update `task.md` frontmatter `priority` field
 3. Move task entry to correct section in INDEX.md
+4. Commit the transition (e.g., "Tasks: Prioritize #15 as high")
 
 **Note:** Priority only affects INDEX.md grouping, not file location.
 
@@ -384,6 +386,7 @@ User: /tasks plan 19
 3. Update `task.md` frontmatter: `status: planning`
 4. Create `plan.md` in the task folder
 5. Update INDEX.md
+6. Commit the transition (e.g., "Tasks: Move #19 to planning")
 
 Use when starting to create a plan for a task.
 
@@ -398,6 +401,7 @@ User: /tasks ready 19
 2. Move folder to `3-ready/`
 3. Update `task.md` frontmatter: `status: ready`
 4. Update INDEX.md
+5. Commit the transition (e.g., "Tasks: Move #19 to ready")
 
 Use when a task has a complete plan and is ready to implement.
 
@@ -468,6 +472,7 @@ User: /tasks reject 15 "Out of scope for MVP"
 3. Update `task.md` frontmatter: `status: rejected`
 4. If reason provided, add to `task.md`
 5. Update INDEX.md
+6. Commit the transition (e.g., "Tasks: Reject #15")
 
 ### Consolidate Tasks
 
@@ -484,6 +489,7 @@ User: /tasks consolidate 28 into 27
    - **Preserve ALL original content** (description, acceptance criteria, etc.)
 4. Update task 27 `task.md` with consolidated context (add ## Consolidated section referencing #28)
 5. Update INDEX.md
+6. Commit the transition (e.g., "Tasks: Consolidate #28 into #27")
 
 ---
 
@@ -496,15 +502,16 @@ User: /tasks consolidate 28 into 27
 
 ## Best Practices
 
-1. **Inbox first** - New tasks go to inbox, prioritize later
-2. **Keep atomic** - One clear outcome per task
-3. **Worktree per task** - `/tasks implement` creates a worktree at `.worktrees/task-<id>/`, keeping main clean
-4. **Never lose work** - Before removing a worktree, always verify all commits are merged and no uncommitted changes exist
-5. **Consolidate related** - Don't duplicate effort
-6. **Preserve on consolidate** - Never lose original task content when consolidating
-7. **Update both** - Task folder AND INDEX.md must stay in sync
-8. **Add context** - When completing, summarize what was done
-9. **Date everything** - Completion dates help track velocity
+1. **Commit every transition** - Every state change (add, plan, ready, implement, review, complete, reject, consolidate, prioritize) must be committed immediately. Never leave task changes uncommitted. Use the `Tasks:` prefix for commit messages (e.g., "Tasks: Move #19 to planning")
+2. **Inbox first** - New tasks go to inbox, prioritize later
+3. **Keep atomic** - One clear outcome per task
+4. **Worktree per task** - `/tasks implement` creates a worktree at `.worktrees/task-<id>/`, keeping main clean
+5. **Never lose work** - Before removing a worktree, always verify all commits are merged and no uncommitted changes exist
+6. **Consolidate related** - Don't duplicate effort
+7. **Preserve on consolidate** - Never lose original task content when consolidating
+8. **Update both** - Task folder AND INDEX.md must stay in sync
+9. **Add context** - When completing, summarize what was done
+10. **Date everything** - Completion dates help track velocity
 
 ## Lifecycles
 
