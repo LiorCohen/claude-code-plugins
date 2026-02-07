@@ -4,10 +4,10 @@ title: Organize plugin skills directory by cohesion
 priority: low
 status: consolidated
 created: 2026-01-25
-consolidated_into: 63
+consolidated_into: 87
 ---
 
-# Task 48: Organize plugin skills directory by cohesion → consolidated into #63
+# Task 48: Organize plugin skills directory by cohesion → consolidated into #87
 
 <!-- Original content preserved below -->
 

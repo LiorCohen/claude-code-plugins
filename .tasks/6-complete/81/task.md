@@ -5,7 +5,7 @@ priority: high
 status: complete
 created: 2026-02-05
 completed: 2026-02-05
-depends_on: [82]
+depends_on: []
 blocks: [83, 84]
 ---
 

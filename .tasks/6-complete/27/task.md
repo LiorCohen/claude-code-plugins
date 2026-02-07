@@ -2,11 +2,12 @@
 id: 27
 title: JSON Schema for skills + validation skill
 priority: medium
-status: open
+status: complete
 created: 2026-01-25
+completed: 2026-02-06
 ---
 
-# Task 27: JSON Schema for skills + validation skill
+# Task 27: JSON Schema for skills + validation skill ✓
 
 ## Description
 

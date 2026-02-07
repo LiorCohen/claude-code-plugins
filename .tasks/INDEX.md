@@ -4,7 +4,7 @@
 
 ## Planning
 
-- [#67](1-inbox/67/): Store user instructions in plans, specs, and .sdd/
+- [#67](2-planning/67/): Store user instructions in plans, specs, and .sdd/
 
 ---
 
@@ -29,6 +29,7 @@
 ## High Priority
 - [#17](1-inbox/17/): Plans should follow TDD with test review first
 - [#59](1-inbox/59/): Audit and update all agents for compatibility
+- [#91](1-inbox/91/): Fix agents standards violations from audit report
 
 ---
 
@@ -55,20 +56,19 @@
 - [#10](1-inbox/10/): Missing /sdd-help command
 - [#22](1-inbox/22/): Add critic agent to marketplace
 - [#26](1-inbox/26/): Better session separators/visual indicators
+- [#20](1-inbox/20/): Plugin installation debugging skill + workflow fix
 
 ---
 
 ## Inbox (unprioritized)
 
 - [#94](1-inbox/94/): local-env is missing settings
-- [#91](1-inbox/91/): Fix agents standards violations from audit report
 - [#80](1-inbox/80/): Plans should become YAML files
 - [#76](1-inbox/76/): Git worktrees for parallel spec/plan execution
 - [#74](1-inbox/74/): Task performance scoring system
 - [#72](1-inbox/72/): Fix broken test benchmarks
 - [#69](1-inbox/69/): Fix sdd-init workflow test timeout
 - [#12](1-inbox/12/): User onboarding and process state tracking
-- [#20](1-inbox/20/): Plugin installation debugging skill + workflow fix
 - [#21](1-inbox/21/): Project sanity verification command
 - [#23](1-inbox/23/): Autocomplete for SDD command arguments
 - [#33](1-inbox/33/): Tests are not useful - need better test creation approach
@@ -117,10 +117,10 @@
 
 ## Rejected
 
-- [#14](9-rejected/14/): Unclear when to run type generation — obsolete with workflow gating (v6.1.0)
-- [#52](9-rejected/52/): Clean up .gitkeep and placeholder content — obsolete with on-demand scaffolding (#78)
-- [#54](9-rejected/54/): Missing postgresql-standards skill — already exists at components/database/postgresql/
-- [#63](9-rejected/63/): Consolidate overlapping skills — addressed by #87, #88, #89
+- [#14](7-rejected/14/): Unclear when to run type generation — obsolete with workflow gating (v6.1.0)
+- [#52](7-rejected/52/): Clean up .gitkeep and placeholder content — obsolete with on-demand scaffolding (#78)
+- [#54](7-rejected/54/): Missing postgresql-standards skill — already exists at components/database/postgresql/
+- [#63](7-rejected/63/): Consolidate overlapping skills — addressed by #87, #88, #89
 - [#83](7-rejected/83/): Apply zero session context to sdd-implement workflow — obsolete, superseded by #81 and #85
 
 ---
@@ -147,5 +147,5 @@
 - [#58](8-consolidated/58/) → #62
 - [#61](8-consolidated/61/) → #62
 - [#13](8-consolidated/13/) → #12
-- [#48](8-consolidated/48/) → #63
+- [#48](8-consolidated/48/) → #87
 - [#57](8-consolidated/57/) → #44

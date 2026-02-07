@@ -1,7 +1,7 @@
 ---
 id: 20
 title: Plugin installation debugging skill + workflow fix
-priority: inbox
+priority: low
 status: open
 created: 2026-01-25
 ---
