@@ -161,7 +161,10 @@ If missing: create or merge the required entries (preserve existing settings).
 
 Run `sdd-system env check-tools --json` and interpret the result:
 - Display the human-readable tool summary
-- If any tools are missing: list the missing tools with their install hints, then present two options:
+- If all tools installed: continue to next phase
+- If any tools are missing: list the missing tools with their install hints
+
+**On macOS (brew)** — offer to auto-install since `brew` doesn't require sudo:
   ```
   Missing tools:
     ✗ docker — brew install docker
@@ -173,7 +176,17 @@ Run `sdd-system env check-tools --json` and interpret the result:
   ```
   - Option 1: run the install commands, then re-run `check-tools` to verify
   - Option 2: wait for the user to install manually, then re-run `check-tools` when they say they're ready
-  - All tools must be installed before proceeding. There is no skip option.
+
+**On Linux/WSL** — do NOT offer auto-install (package managers require `sudo`, which Claude cannot run). Show the commands for the user to run:
+  ```
+  Missing tools:
+    ✗ docker — sudo apt-get install docker.io
+    ✗ jq — sudo apt-get install jq
+
+  Please install the missing tools and tell me when you're ready. I'll re-check.
+  ```
+
+All tools must be installed before proceeding. There is no skip option.
 
 This replaces the current prompt-based tool checking. One CLI call instead of 7+ individual version commands.
 
