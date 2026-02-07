@@ -172,13 +172,14 @@ Same as current Phase 1.5.
 
 ---
 
-## Change 4: Remove Redundant "NOT done" Lists
+## Change 4: Remove Redundant Sections
 
 Remove from `sdd-init.md`:
 - The "What's NOT done during init (deferred to implementation)" block in the Workflow table area
 - The "NOT created during init" block under Phase 2
+- The "Available Component Types" section — component types are the concern of `sdd-change new` and the `project-scaffolding` skill, not sdd-init
 
-The minimal structure file tree in Phase 2 is the single source of truth for what gets created. If it's not in the tree, it's not created — no need to say so twice.
+The minimal structure file tree in Phase 2 is the single source of truth for what gets created. Anything outside sdd-init's scope belongs in the commands/skills that own it.
 
 ---
 
