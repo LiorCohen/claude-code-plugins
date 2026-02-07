@@ -22,7 +22,7 @@
 
 ## Reviewing
 
-- [#96](5-reviewing/96/): Fix sdd-init Phase 1 — plugin verification first, tool checks via system CLI
+(none)
 
 ---
 
@@ -81,6 +81,7 @@
 
 ## Complete
 
+- [#96](6-complete/96/): Fix sdd-init Phase 1 — plugin verification first, tool checks via system CLI ✓ (2026-02-07)
 - [#93](6-complete/93/): Centralize sdd-settings ownership in project-settings skill ✓ (2026-02-07)
 - [#92](6-complete/92/): Merge ci-dev agent into devops agent ✓ (2026-02-07)
 - [#90](6-complete/90/): Fix skills standards violations from audit report ✓ (2026-02-07)
