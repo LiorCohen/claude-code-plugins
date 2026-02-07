@@ -2,11 +2,14 @@
 id: 59
 title: Audit and update all agents for compatibility
 priority: high
-status: open
+status: rejected
 created: 2026-01-29
+rejected_reason: "Obsolete — audit was completed, actionable findings tracked in #91"
 ---
 
-# Task 59: Audit and update all agents for compatibility
+# Task 59: Audit and update all agents for compatibility ✗
+
+<!-- Original content preserved below -->
 
 ## Description
 

@@ -28,7 +28,6 @@
 
 ## High Priority
 - [#17](1-inbox/17/): Plans should follow TDD with test review first
-- [#59](1-inbox/59/): Audit and update all agents for compatibility
 - [#91](1-inbox/91/): Fix agents standards violations from audit report
 
 ---
@@ -122,6 +121,7 @@
 - [#63](7-rejected/63/): Consolidate overlapping skills — addressed by #87, #88, #89
 - [#83](7-rejected/83/): Apply zero session context to sdd-implement workflow — obsolete, superseded by #81 and #85
 - [#84](7-rejected/84/): Apply zero session context to sdd-init workflow — obsolete, superseded by #81 and #85
+- [#59](7-rejected/59/): Audit and update all agents for compatibility — obsolete, audit completed, findings in #91
 
 ---
 
