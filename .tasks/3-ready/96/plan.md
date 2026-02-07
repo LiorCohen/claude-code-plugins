@@ -18,7 +18,7 @@ The sdd-init command's Phase 1 (Environment Verification) has three issues:
 
 | File | Purpose |
 |------|---------|
-| `plugin/system/src/commands/env/check-tools.ts` | New CLI action: checks required/optional tools, returns structured JSON |
+| `plugin/system/src/commands/env/check-tools.ts` | New CLI action: checks required tools, returns structured JSON |
 | `tests/src/tests/unit/commands/env/check-tools.test.ts` | Unit tests for the check-tools command |
 
 ## Files to Modify
@@ -36,11 +36,10 @@ The sdd-init command's Phase 1 (Environment Verification) has three issues:
 Add a `check-tools` action to the existing `env` namespace that:
 
 - Checks each tool by running its version command with a timeout (5s)
-- Categorizes tools as `required` or `optional`
+- All tools are required
 - Returns structured JSON via `CommandResult.data`
 
-**Required tools:** node, npm, git, docker
-**Optional tools:** jq, kubectl, helm
+**Required tools:** node, npm, git, docker, jq, kubectl, helm
 
 **Output data shape:**
 
@@ -49,13 +48,12 @@ Add a `check-tools` action to the existing `env` namespace that:
   "platform": "darwin",
   "packageManager": "brew",
   "tools": [
-    { "name": "node", "required": true, "installed": true, "version": "v20.10.0", "installHint": null },
-    { "name": "docker", "required": true, "installed": false, "version": null, "installHint": "brew install docker" },
-    { "name": "jq", "required": false, "installed": false, "version": null, "installHint": "brew install jq" }
+    { "name": "node", "installed": true, "version": "v20.10.0", "installHint": null },
+    { "name": "docker", "installed": false, "version": null, "installHint": "brew install docker" },
+    { "name": "jq", "installed": false, "version": null, "installHint": "brew install jq" }
   ],
-  "allRequiredInstalled": false,
-  "missingRequired": ["docker"],
-  "missingOptional": ["jq"]
+  "allInstalled": false,
+  "missing": ["docker", "jq"]
 }
 ```
 
@@ -65,7 +63,7 @@ Add a `check-tools` action to the existing `env` namespace that:
   ✓ npm (v10.2.3)
   ✓ git (v2.42.0)
   ✗ docker not found
-  ⚠ jq not found (optional)
+  ✗ jq not found
 ```
 
 **Version extraction:** Each tool has a specific command and parse strategy:
@@ -159,24 +157,23 @@ Check the project's `.claude/settings.json` for required entries:
 
 If missing: create or merge the required entries (preserve existing settings).
 
-### Phase 2.5: Required & Optional Tools Check (via System CLI)
+### Phase 2.5: Required Tools Check (via System CLI)
 
 Run `sdd-system env check-tools --json` and interpret the result:
 - Display the human-readable tool summary
-- If any tools are missing (required or optional): list the missing tools with their install hints, then present three options:
+- If any tools are missing: list the missing tools with their install hints, then present two options:
   ```
   Missing tools:
     ✗ docker — brew install docker
-    ⚠ jq — brew install jq (optional)
+    ✗ jq — brew install jq
 
   How would you like to proceed?
   1. Install for me — I'll run: brew install docker jq
   2. I'll install them myself — tell me when you're ready and I'll re-check
-  3. Skip — continue without missing tools (only if all required tools are present)
   ```
   - Option 1: run the install commands, then re-run `check-tools` to verify
   - Option 2: wait for the user to install manually, then re-run `check-tools` when they say they're ready
-  - Option 3: only available if no required tools are missing (i.e., only optional tools). Continue with warnings. If required tools are missing, this option is not offered.
+  - All tools must be installed before proceeding. There is no skip option.
 
 This replaces the current prompt-based tool checking. One CLI call instead of 7+ individual version commands.
 
@@ -236,11 +233,11 @@ The minimal structure file tree in Phase 3 is the single source of truth for wha
 - [ ] `test_check_tools_parses_git_version` — input "git version 2.42.0", expect "2.42.0"
 - [ ] `test_check_tools_parses_docker_version` — input "Docker version 24.0.6, build ...", expect "24.0.6"
 - [ ] `test_check_tools_parses_kubectl_version` — input JSON, expect gitVersion value
-- [ ] `test_check_tools_allRequiredInstalled_true_when_all_present` — all required tools installed
-- [ ] `test_check_tools_allRequiredInstalled_false_when_any_missing` — one required tool missing
-- [ ] `test_check_tools_missingOptional_lists_only_optional` — optional missing doesn't affect allRequiredInstalled
+- [ ] `test_check_tools_allInstalled_true_when_all_present` — all tools installed
+- [ ] `test_check_tools_allInstalled_false_when_any_missing` — one tool missing
+- [ ] `test_check_tools_missing_lists_all_missing` — verify missing array contains all uninstalled tools
 - [ ] `test_check_tools_json_output_mode` — verify --json flag produces valid JSON CommandResult
-- [ ] `test_check_tools_human_readable_output` — verify non-JSON output uses checkmark/warning/cross symbols
+- [ ] `test_check_tools_human_readable_output` — verify non-JSON output uses checkmark/cross symbols
 - [ ] `test_check_tools_detects_brew_on_darwin` — mock `process.platform` as darwin, verify packageManager is "brew"
 - [ ] `test_check_tools_detects_apt_on_linux` — mock `process.platform` as linux with apt-get available, verify packageManager is "apt-get"
 - [ ] `test_check_tools_fallback_when_no_package_manager` — no package manager found, verify packageManager is null and install hints use URLs
