@@ -172,11 +172,11 @@ export type DatabaseConfig = Readonly<{
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts database name and optional project name for migration and seed template generation.
 
 ## Related Skills
 
-- [postgresql](../postgresql/SKILL.md) — Delegate to this for SQL patterns, Docker/K8s deployment, schema management, and performance tuning. Provides migration SQL templates, seed data patterns, and introspection queries.
-- [backend-scaffolding](../../backend/backend-scaffolding/SKILL.md) — Generates the server component that contains the DAL layer querying this database. The server's repository layer imports database connection config and executes queries against the schema defined here.
+- `postgresql` — Delegate to this for SQL patterns, Docker/K8s deployment, schema management, and performance tuning. Provides migration SQL templates, seed data patterns, and introspection queries.
+- `backend-scaffolding` — Generates the server component that contains the DAL layer querying this database. The server's repository layer imports database connection config and executes queries against the schema defined here.

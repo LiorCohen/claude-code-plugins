@@ -186,13 +186,13 @@ Components are organized by type:
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts operation type and operation-specific parameters for managing sdd-settings.yaml.
 
 ## Output
 
-Schema: [`output.schema.json`](./output.schema.json)
+Schema: [`schemas/output.schema.json`](./schemas/output.schema.json)
 
 Returns success status, file path, and current component configurations.
 

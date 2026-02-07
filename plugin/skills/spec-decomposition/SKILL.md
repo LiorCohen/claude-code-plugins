@@ -12,7 +12,7 @@ Analyze a specification document to identify natural change boundaries and retur
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts decomposition mode, spec content, and mode-specific parameters for outline, section, or hierarchical decomposition.
 
@@ -373,7 +373,7 @@ If `mode` is omitted, perform full analysis on the entire `spec_content`. This i
 
 ## Output
 
-Schema: [`output.schema.json`](./output.schema.json)
+Schema: [`schemas/output.schema.json`](./schemas/output.schema.json)
 
 Returns mode-specific results: outline sections, or hierarchical epic/feature groupings with dependency graph.
 

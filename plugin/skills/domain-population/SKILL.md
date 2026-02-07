@@ -42,7 +42,7 @@ cat > /tmp/sdd-domain-config.json << 'EOF'
 EOF
 
 # 2. Run the domain population command
-node --enable-source-maps <path-to-plugin>/system/dist/cli.js scaffolding domain --config /tmp/sdd-domain-config.json
+sdd-system scaffolding domain --config /tmp/sdd-domain-config.json
 
 # 3. Clean up config file
 rm /tmp/sdd-domain-config.json
@@ -50,13 +50,13 @@ rm /tmp/sdd-domain-config.json
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts target directory, domain name, product description, and optional personas, workflows, and entities.
 
 ## Output
 
-Schema: [`output.schema.json`](./output.schema.json)
+Schema: [`schemas/output.schema.json`](./schemas/output.schema.json)
 
 Returns success status and list of updated domain spec files.
 

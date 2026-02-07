@@ -43,7 +43,7 @@ components/database[-{name}]/
 
 ## Config Schema
 
-Database components require connection configuration from `components/config/`. The [database-scaffolding](../database-scaffolding/SKILL.md) skill generates the initial database structure including a minimal config schema with `host`, `port`, `database`, `user`, and `password` fields.
+Database components require connection configuration from `components/config/`. The `database-scaffolding` skill generates the initial database structure including a minimal config schema with `host`, `port`, `database`, `user`, and `password` fields.
 
 ---
 
@@ -233,7 +233,7 @@ npm run psql  # Verify schema
 
 ### Step 5: Update Server DAL
 
-The backend DAL layer must follow [backend-standards](../../backend/backend-standards/SKILL.md) — it defines CMDO architecture with strict layer separation, including repository patterns for database queries, connection pooling rules, and typed result mapping.
+The backend DAL layer must follow `backend-standards` — it defines CMDO architecture with strict layer separation, including repository patterns for database queries, connection pooling rules, and typed result mapping.
 
 ---
 

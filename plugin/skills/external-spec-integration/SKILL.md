@@ -44,13 +44,13 @@ When a user provides an external specification via `/sdd-change new --spec`:
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts path to external spec file, target directory, workflow ID, and optional domain.
 
 ## Output
 
-Schema: [`output.schema.json`](./output.schema.json)
+Schema: [`schemas/output.schema.json`](./schemas/output.schema.json)
 
 Returns archived spec path, workflow ID, hierarchical flag, and list of created workflow items.
 

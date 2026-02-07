@@ -172,7 +172,7 @@ webapp-{name}:
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts webapp name, project metadata, and optional contract list for API client generation.
 

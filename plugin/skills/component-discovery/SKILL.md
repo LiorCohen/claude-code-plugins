@@ -32,7 +32,7 @@ It only analyzes and documents. Implementation decides when to actually create c
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts change name, type, existing components, and optionally classified requirements from external spec processing.
 
@@ -106,7 +106,7 @@ requirements than from text descriptions alone.
 
 ## Output
 
-Schema: [`output.schema.json`](./output.schema.json)
+Schema: [`schemas/output.schema.json`](./schemas/output.schema.json)
 
 Returns detected project type and a list of components with names, types, and settings.
 

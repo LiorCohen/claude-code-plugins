@@ -38,7 +38,7 @@ components/contract[-{name}]/
 
 ## Config Schema
 
-Contract components do not require application config from `components/config/`. They are build-time artifacts, not runtime services. The [contract-scaffolding](../contract-scaffolding/SKILL.md) skill generates an `openapi.yaml`, `package.json` with type generation scripts, and a `generated/` directory for TypeScript types.
+Contract components do not require application config from `components/config/`. They are build-time artifacts, not runtime services. The `contract-scaffolding` skill generates an `openapi.yaml`, `package.json` with type generation scripts, and a `generated/` directory for TypeScript types.
 
 ---
 
@@ -282,7 +282,7 @@ npm run generate:types
 
 ### Step 4: Implement in Server
 
-Server endpoint implementation must follow [backend-standards](../../backend/backend-standards/SKILL.md) — it defines the CMDO handler → orchestrator → repository layering that contract endpoints are built upon.
+Server endpoint implementation must follow `backend-standards` — it defines the CMDO handler → orchestrator → repository layering that contract endpoints are built upon.
 
 ---
 

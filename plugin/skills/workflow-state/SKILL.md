@@ -694,13 +694,13 @@ Checkpoints are created automatically on workflow state changes:
 
 ## Input
 
-Schema: [`input.schema.json`](./input.schema.json)
+Schema: [`schemas/input.schema.json`](./schemas/input.schema.json)
 
 Accepts operation type and operation-specific parameters for workflow lifecycle management.
 
 ## Output
 
-Schema: [`output.schema.json`](./output.schema.json)
+Schema: [`schemas/output.schema.json`](./schemas/output.schema.json)
 
 Returns workflow ID, current phase, and progress tracking.
 
