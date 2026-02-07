@@ -163,7 +163,17 @@ Use the `tasks` skill to ensure proper task status management. The tasks skill i
 
 ### Step 6: Generate Commit Message
 
-Format:
+**Task-context detection:** Before generating the message, check if the current branch is a feature branch for a task (e.g., `feature/task-19-*`). If so, and the task is in `4-implementing/` or `5-reviewing/`, prefix the commit message with the task reference:
+
+```
+Task #19: [Action] [Component]: [Description]
+```
+
+**Version bumps on feature branches:**
+- **During implementation:** The final commit before moving to review must include the version bump and changelog entry (run Steps 2–3). Earlier implementation commits skip Steps 2–3.
+- **During reviewing:** If the previous commit has NOT been pushed, amend it and update the changelog entry. If it HAS been pushed, create a new commit but amend the existing changelog entry in-place (update the version entry, do not create a new one). Never create a second version bump — only update the one created during implementation.
+
+**Default format** (when not on a task feature branch):
 ```
 [Action] [Component]: [Description], bump to [version]
 
