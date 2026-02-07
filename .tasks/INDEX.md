@@ -4,7 +4,6 @@
 
 ## Planning
 
-- [#92](2-planning/92/): Merge ci-dev agent into devops agent
 - [#67](1-inbox/67/): Store user instructions in plans, specs, and .sdd/
 
 ---
@@ -17,7 +16,7 @@
 
 ## Implementing
 
-(none)
+- [#92](4-implementing/92/): Merge ci-dev agent into devops agent
 
 ---
 
