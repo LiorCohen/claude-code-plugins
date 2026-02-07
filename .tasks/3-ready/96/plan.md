@@ -217,15 +217,32 @@ This notice should appear prominently in the NEXT STEPS section of the completio
 
 ---
 
-## Change 4: Remove Redundant Sections
+## Change 4: Remove Duplications and Redundancies
 
-Remove from `sdd-init.md`:
-- The "What's NOT done during init (deferred to implementation)" block in the Workflow table area
-- The "NOT created during init" block under Phase 2
-- The "Available Component Types" section — component types are the concern of `sdd-change new` and the `project-scaffolding` skill, not sdd-init
-- The "Important Notes" section — restates information already covered in the command body (no arguments, minimal structure, safe to re-run, etc.)
+The current sdd-init.md has significant content duplication. Every piece of information must appear exactly once, in the place where it's most actionable.
 
-The minimal structure file tree in Phase 3 is the single source of truth for what gets created. Anything outside sdd-init's scope belongs in the commands/skills that own it.
+**Sections to remove entirely:**
+
+| Section | Why |
+|---------|-----|
+| "What's NOT done during init" (Workflow area) | Redundant — the Phase 3 file tree is the single source of truth for what gets created |
+| "NOT created during init" (under Phase 2) | Same duplication — restates the above |
+| "Available Component Types" | Not sdd-init's concern — belongs to `sdd-change new` and `project-scaffolding` |
+| "Important Notes" | Restates things already in the command body (no arguments, minimal structure, safe to re-run, etc.) |
+| "Non-Destructive Behavior (CRITICAL)" | Duplicates Phase 1's Existing Project Check which already covers upgrade/repair mode |
+
+**Duplications eliminated by Change 3 (phase restructure):**
+
+| Duplication | Resolution |
+|-------------|------------|
+| Tool checking in 1.0, 1.2, and 1.3 (same tools listed 3 times) | Replaced by single Phase 2.5 CLI call |
+| "No arguments needed" (Usage, Phase 0, Important Notes) | Keep only in Usage section; Phase 1 heading says "Detect Project Name" which is self-explanatory |
+
+**"Safe to re-run" consolidation:**
+
+Currently stated in 3 places (Phase 0 line 104, Non-Destructive Behavior section, Important Notes). After removing the latter two sections, only the Phase 1 existing project check remains — which is the right place since it describes the actual behavior.
+
+**Rule:** After all changes are applied, every fact in sdd-init.md must appear exactly once. If a piece of information appears in a phase's implementation, it does not also need a summary section restating it.
 
 ---
 
