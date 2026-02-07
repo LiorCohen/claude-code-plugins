@@ -10,13 +10,13 @@
 
 ## Ready
 
-- [#90](3-ready/90/): Fix skills standards violations from audit report
+(none)
 
 ---
 
 ## Implementing
 
-(none)
+- [#90](4-implementing/90/): Fix skills standards violations from audit report
 
 ---
 

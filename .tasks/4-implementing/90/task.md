@@ -2,7 +2,7 @@
 id: 90
 title: Fix skills standards violations from audit report
 priority: medium
-status: ready
+status: implementing
 created: 2026-02-06
 depends_on: []
 blocks: []
