@@ -12,7 +12,7 @@ blocks: []
 
 ## Description
 
-Two issues with the current sdd-init command's Phase 1 (Environment Verification):
+Three issues with the current sdd-init command's Phase 1 (Environment Verification):
 
 ### 1. Plugin installation must be verified FIRST
 
@@ -22,6 +22,26 @@ Currently Phase 1.4 (Plugin Build Check) comes after tool checking (1.0–1.3). 
 
 Currently the command instructs Claude to run individual shell commands (`node --version`, `npm --version`, etc.) as prompts. Once plugin installation is verified, tool checking can be offloaded to the system CLI (e.g., `sdd-system env check-tools`). This is more reliable, faster, and removes unnecessary prompt-based version extraction.
 
+### 3. Ensure project's .claude/settings.json has plugin configuration
+
+The project's `.claude/settings.json` must contain the SDD marketplace and plugin entries:
+
+```json
+{
+  "extraKnownMarketplaces": [
+    {
+      "name": "sdd",
+      "url": "https://github.com/LiorCohen/sdd"
+    }
+  ],
+  "enabledPlugins": [
+    "sdd@sdd"
+  ]
+}
+```
+
+This should be verified as part of Phase 1 and created/updated if missing.
+
 ## Acceptance Criteria
 
 - [ ] Phase 1 reordered: plugin installation verification is the first check (before any tool checks)
@@ -30,4 +50,6 @@ Currently the command instructs Claude to run individual shell commands (`node -
 - [ ] New system CLI command added (e.g., `sdd-system env check-tools`) that checks required and optional tools
 - [ ] System CLI command returns structured JSON with tool name, installed status, version, and required/optional flag
 - [ ] sdd-init.md updated to invoke system CLI for tool checking instead of prompt-based version commands
+- [ ] Phase 1 verifies `.claude/settings.json` contains `extraKnownMarketplaces` and `enabledPlugins` for SDD
+- [ ] If missing, sdd-init creates/updates `.claude/settings.json` with the required entries
 - [ ] Tests added for the new system CLI command
