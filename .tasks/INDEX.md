@@ -16,7 +16,7 @@
 
 ## Implementing
 
-- [#90](4-implementing/90/): Fix skills standards violations from audit report
+(none)
 
 ---
 
@@ -82,6 +82,7 @@
 
 ## Complete
 
+- [#90](6-complete/90/): Fix skills standards violations from audit report ✓ (2026-02-07)
 - [#27](6-complete/27/): JSON Schema for skills + validation skill ✓ (2026-02-06)
 - [#89](6-complete/89/): Skills standards audit report ✓ (2026-02-06)
 - [#88](6-complete/88/): Remove product-discovery skill ✓ (2026-02-06)
