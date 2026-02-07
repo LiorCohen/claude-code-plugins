@@ -1,7 +1,7 @@
 ---
 id: 93
 title: Centralize sdd-settings ownership in project-settings skill
-status: planning
+status: implementing
 created: 2026-02-07
 ---
 
