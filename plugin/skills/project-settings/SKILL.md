@@ -164,6 +164,14 @@ components:
 
 Config component has no settings (it's a singleton).
 
+### Testing Settings
+
+Testing component has no settings. Structure is driven by testing standards skills.
+
+### CI/CD Settings
+
+CI/CD component has no settings. Structure is driven by the cicd-standards skill.
+
 ## Directory Structure
 
 Components are organized by type:
@@ -175,6 +183,8 @@ Components are organized by type:
 | helm | `components/helm_charts/<name>/` |
 | database | `components/databases/<name>/` |
 | contract | `components/contracts/<name>/` |
+| testing | `components/testing/<name>/` |
+| cicd | `components/cicds/<name>/` |
 | config | `components/config/` (singleton) |
 
 ## Validation Rules
