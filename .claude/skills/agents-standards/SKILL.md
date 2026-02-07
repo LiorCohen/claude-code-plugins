@@ -292,6 +292,8 @@ Produce the report with these sections:
 
 **Never write audit reports inside `plugin/agents/`.** The plugin folder is for shipped agent files only — no reports, scratch files, or artifacts.
 
+After presenting the report, **ask the user** whether to create a task to track the fixes or whether the report is temporary (e.g., for quick review or one-off investigation). If the user wants a task:
+
 Create a task via `/tasks add "Fix agents standards violations from audit report"`. The task's purpose is to **fix the violations** — the audit report is supporting evidence, not the deliverable. Save the report as `report.md` inside the task folder:
 
 ```
@@ -299,6 +301,8 @@ Create a task via `/tasks add "Fix agents standards violations from audit report
 ├── task.md        # Task to fix violations, with key findings summary
 └── report.md      # Full audit report
 ```
+
+If the user declines, present the report inline without creating any files or tasks.
 
 ### How to run
 
@@ -310,7 +314,8 @@ Run the audit directly (do not delegate to subagents):
 2. Read each file completely
 3. Check every item from the Checklist above, plus the additional audit-specific checks
 4. For skill existence checks, glob `plugin/skills/**/SKILL.md` (recursive) and match each referenced skill name against the `name` frontmatter field of found skills
-5. Create a task via `/tasks add "Fix agents standards violations from audit report"` and write the report as `report.md` in the task folder
+5. Present the report to the user
+6. Ask the user whether to create a task (via `/tasks add "Fix agents standards violations from audit report"`) or keep the report temporary
 
 ## Input / Output
 
