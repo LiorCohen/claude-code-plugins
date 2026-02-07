@@ -592,16 +592,17 @@ User: /tasks audit
 ## Best Practices
 
 1. **Commit every transition** - Every state change (add, plan, ready, implement, review, complete, reject, consolidate, prioritize) must be committed immediately. Never leave task changes uncommitted. Use the `Tasks:` prefix for commit messages (e.g., "Tasks: Move #19 to planning")
-2. **Inbox first** - New tasks go to inbox, prioritize later
-3. **Keep atomic** - One clear outcome per task
-4. **Worktree per task** - `/tasks implement` creates a worktree at `.worktrees/task-<id>/`, keeping main clean
-5. **Never lose work** - Before removing a worktree, always verify all commits are merged and no uncommitted changes exist
-6. **Only `/tasks complete` cleans up** - Never merge the feature branch or delete the worktree during implementation or reviewing phases. Only `/tasks complete` may merge, remove the worktree, and delete the branch
-7. **Consolidate related** - Don't duplicate effort
-8. **Preserve on consolidate** - Never lose original task content when consolidating
-9. **Update both** - Task folder AND INDEX.md must stay in sync
-10. **Add context** - When completing, summarize what was done
-11. **Date everything** - Completion dates help track velocity
+2. **Verify clean state after every command** - After every `/tasks` command completes, run `git status` to confirm no uncommitted changes remain in `.tasks/`. If any exist, stage and commit them before returning to the user
+3. **Inbox first** - New tasks go to inbox, prioritize later
+4. **Keep atomic** - One clear outcome per task
+5. **Worktree per task** - `/tasks implement` creates a worktree at `.worktrees/task-<id>/`, keeping main clean
+6. **Never lose work** - Before removing a worktree, always verify all commits are merged and no uncommitted changes exist
+7. **Only `/tasks complete` cleans up** - Never merge the feature branch or delete the worktree during implementation or reviewing phases. Only `/tasks complete` may merge, remove the worktree, and delete the branch
+8. **Consolidate related** - Don't duplicate effort
+9. **Preserve on consolidate** - Never lose original task content when consolidating
+10. **Update both** - Task folder AND INDEX.md must stay in sync
+11. **Add context** - When completing, summarize what was done
+12. **Date everything** - Completion dates help track velocity
 
 ## Lifecycles
 
