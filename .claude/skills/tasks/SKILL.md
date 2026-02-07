@@ -503,6 +503,83 @@ User: /tasks consolidate 28 into 27
 5. Update INDEX.md
 6. Commit the transition (e.g., "Tasks: Consolidate #28 into #27")
 
+### Audit Backlog
+
+```
+User: /tasks audit
+```
+
+**Action:** Scan all task directories and INDEX.md, check for compliance issues, identify possibly obsolete tasks, and present a report with action items.
+
+**Checks to perform:**
+
+#### 1. Structural Integrity
+- Every status directory contains only numbered task folders
+- Every task folder contains a `task.md` file
+- No orphan folders (folders without `task.md`)
+- No task folders exist outside recognized status directories
+
+#### 2. Frontmatter Compliance
+- All required fields present (`id`, `title`, `status`, `created`)
+- `id` matches the folder name
+- `status` matches the directory the task lives in (e.g., `1-inbox/` → `open`, `7-rejected/` → `rejected`)
+- Rejected tasks have `rejected_reason`
+- Consolidated tasks have `consolidated_into`
+- Completed tasks have `completed` date
+- `priority` is a valid value (`low`, `medium`, `high`) or absent
+- `depends_on` and `blocks` reference task IDs that exist
+
+#### 3. INDEX.md Sync
+- Every non-archived task (inbox, planning, ready, implementing, reviewing) appears in INDEX.md
+- Every entry in INDEX.md points to a task folder that exists
+- Tasks appear in the correct INDEX.md section for their status/priority
+- Rejected entries include a reason summary
+- Consolidated entries include the target task reference
+
+#### 4. Title and Heading Consistency
+- Frontmatter `title` matches the `# Task N:` heading in the body
+- Completed tasks have `✓` suffix in heading
+- Rejected tasks have `✗` suffix in heading
+- Consolidated tasks have `→ consolidated into #N` suffix in heading
+
+#### 5. Possibly Obsolete Tasks
+- For each open task (inbox, planning, ready), compare against completed tasks:
+  - Does a completed task's description overlap significantly with this open task?
+  - Does a completed task explicitly address the same problem?
+  - Has the area this task targets been redesigned or replaced?
+- Check `depends_on` references: if a dependency was rejected or consolidated, the task may need updating
+- Flag tasks with stale priorities or outdated descriptions based on recent completions
+
+#### 6. Dependency Integrity
+- `depends_on` references point to tasks that exist
+- `depends_on` does not reference rejected or consolidated tasks (may indicate staleness)
+- `blocks` references are reciprocal (if A blocks B, B should depend on A)
+- No circular dependencies
+
+**Output format:** Write the report to `.temp/tasks-audit-<date>.md` and display a summary to the user. Group findings by severity:
+
+```markdown
+# Tasks Audit — YYYY-MM-DD
+
+## Errors (must fix)
+- [ ] #14: Frontmatter `status: open` but task is in `9-rejected/` directory
+- [ ] INDEX.md references #99 but no task folder exists
+
+## Warnings (should fix)
+- [ ] #83: Rejected without `rejected_reason` in frontmatter
+- [ ] #16: `depends_on: [15]` but #15 was consolidated into #64
+
+## Possibly Obsolete
+- [ ] #70: "Git checkpoint workflow" — may be superseded by #49 (Auto-commit hook ✓)
+- [ ] #33: "Tests are not useful" — may be addressed by #68 (Plans focus on WHAT ✓)
+
+## Info
+- 27 open tasks, 16 completed, 4 rejected, 15 consolidated
+- Oldest open task: #3 (created 2026-01-20)
+```
+
+**IMPORTANT:** The "Possibly Obsolete" section requires judgement. Read the description of each open task and compare against completed tasks to identify potential overlap. When uncertain, flag it with a `?` and brief rationale so the user can decide. Never auto-reject — only flag for review.
+
 ---
 
 ## Task Numbering
