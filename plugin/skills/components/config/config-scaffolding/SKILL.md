@@ -6,7 +6,7 @@ user-invocable: false
 
 # Config Scaffolding Skill
 
-Scaffolds the mandatory config component for centralized configuration management. Config sections are generated based on **component settings** defined in `.sdd/sdd-settings.yaml`.
+Scaffolds the mandatory config component for centralized configuration management. Config sections are generated based on component settings from `.sdd/sdd-settings.yaml` (refer to the `project-settings` skill for the authoritative schema).
 
 ## When to Use
 

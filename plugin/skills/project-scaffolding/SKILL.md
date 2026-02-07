@@ -101,41 +101,7 @@ Use during:
 
 ## Minimal sdd-settings.yaml Template
 
-```yaml
-# ============================================================================
-# SDD PROJECT SETTINGS - DO NOT EDIT MANUALLY
-# ============================================================================
-# This file is generated and maintained by SDD commands.
-# To modify settings, use: /sdd-settings
-# ============================================================================
-
-sdd:
-  plugin_version: "{{PLUGIN_VERSION}}"
-  initialized_at: "{{CURRENT_DATE}}"
-  last_updated: "{{CURRENT_DATE}}"
-
-project:
-  name: "{{PROJECT_NAME}}"
-  # description and domain are populated as you build features
-  # description: "A task management application"
-  # domain: "Task Management"
-
-# Components are added here as they are scaffolded via /sdd-change new
-# The first change targeting a component type triggers scaffolding.
-#
-# Example after scaffolding a server:
-#   - name: my-app-server
-#     type: server
-#     settings:
-#       server_type: api
-#       databases: []
-#       provides_contracts: []
-
-components:
-  - name: config
-    type: config
-    settings: {}
-```
+Use the minimal template defined in the `project-settings` skill (see its "Minimal Template" section). That skill is the authoritative source for the sdd-settings.yaml schema and template format.
 
 ## Minimal specs/INDEX.md Template
 

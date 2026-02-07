@@ -6,7 +6,12 @@ user-invocable: false
 
 # Helm Scaffolding Skill
 
-Scaffolds Helm charts for deploying SDD components to Kubernetes. Charts are generated based on **component settings** defined in `.sdd/sdd-settings.yaml`.
+Scaffolds Helm charts for deploying SDD components to Kubernetes. Charts are generated based on component settings from `.sdd/sdd-settings.yaml`.
+
+## Skills
+
+Use the following skills for reference:
+- `project-settings` — Authoritative source for helm component settings schema (deploys, deploy_type, deploy_modes, ingress, assets)
 
 ## When to Use
 
@@ -18,49 +23,7 @@ Use when creating Helm chart components. Creates Helm charts that integrate with
 
 ## Settings-Driven Scaffolding
 
-Helm charts are scaffolded based on their settings in `.sdd/sdd-settings.yaml`:
-
-```yaml
-components:
-  # Helm chart for a server
-  - name: main-server-api
-    type: helm
-    settings:
-      deploys: main-server      # Server component to deploy
-      deploy_type: server
-      deploy_modes: [api]       # Which modes (for hybrid servers)
-      ingress: true             # External HTTP access
-
-  # Helm chart for a webapp
-  - name: admin-dashboard
-    type: helm
-    settings:
-      deploys: admin-dashboard  # Webapp component to deploy
-      deploy_type: webapp
-      ingress: true
-      assets: bundled           # bundled | entrypoint
-```
-
-### Settings Impact on Scaffolding
-
-**Server helm charts:**
-
-| Setting | Impact |
-|---------|--------|
-| `deploy_modes: [api]` | Single deployment with HTTP port |
-| `deploy_modes: [worker]` | Single deployment without HTTP port |
-| `deploy_modes: [api, worker]` | Separate deployments per mode (independent scaling) |
-| `deploy_modes: [cron]` | CronJob instead of Deployment |
-| `ingress: true` | Adds `ingress.yaml` for external access |
-| `ingress: false` | No ingress (internal service only) |
-
-**Webapp helm charts:**
-
-| Setting | Impact |
-|---------|--------|
-| `ingress: true` | Adds `ingress.yaml` |
-| `assets: bundled` | Full app files in nginx container |
-| `assets: entrypoint` | Only index.html, assets from CDN |
+Helm charts are scaffolded based on their settings in `.sdd/sdd-settings.yaml`. Refer to the `project-settings` skill for the complete helm settings schema and defaults.
 
 ### Template Selection Logic
 

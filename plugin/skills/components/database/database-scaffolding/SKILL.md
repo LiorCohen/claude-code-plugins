@@ -10,7 +10,7 @@ Creates database component structure for PostgreSQL-based projects.
 
 ## What It Creates
 
-The directory path depends on the component name as defined in `.sdd/sdd-settings.yaml`: `components/{type}-{name}/` (when type and name differ). Database components support multiple instances (e.g., `database-app-db/`, `database-analytics-db/`).
+The directory path depends on the component name as defined in `.sdd/sdd-settings.yaml` (refer to the `project-settings` skill for directory mappings). Database components support multiple instances (e.g., `database-app-db/`, `database-analytics-db/`).
 
 ```text
 components/database[-<name>]/
@@ -178,5 +178,6 @@ Accepts database name and optional project name for migration and seed template 
 
 ## Related Skills
 
+- `project-settings` — Authoritative source for database component settings schema and directory mappings.
 - `postgresql` — Delegate to this for SQL patterns, Docker/K8s deployment, schema management, and performance tuning. Provides migration SQL templates, seed data patterns, and introspection queries.
 - `backend-scaffolding` — Generates the server component that contains the DAL layer querying this database. The server's repository layer imports database connection config and executes queries against the schema defined here.

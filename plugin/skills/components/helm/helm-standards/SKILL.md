@@ -6,67 +6,16 @@ user-invocable: false
 
 # Helm Standards Skill
 
-Standards for Helm charts in SDD projects. Charts are generated based on **component settings** defined in `.sdd/sdd-settings.yaml`.
+Standards for Helm charts in SDD projects. Charts are generated based on component settings from `.sdd/sdd-settings.yaml`.
 
-## Settings-Driven Chart Generation
+## Skills
 
-Helm charts are scaffolded based on helm component settings:
+Use the following skills for reference:
+- `project-settings` — Authoritative source for helm component settings schema, validation rules, and the chart-per-deployment pattern
 
-```yaml
-# .sdd/sdd-settings.yaml
-components:
-  - name: main-server-api
-    type: helm
-    settings:
-      deploys: main-server      # Server component to deploy
-      deploy_type: server
-      deploy_modes: [api]       # Modes to deploy (for hybrid servers)
-      ingress: true             # External HTTP access
-```
+## Chart-per-Deployment Pattern
 
-### Chart-per-Server Pattern
-
-Each deployment configuration gets its own helm chart. A single server can have multiple helm charts with different configurations:
-
-```yaml
-# API-only deployment (external-facing)
-- name: main-server-api
-  type: helm
-  settings:
-    deploys: main-server
-    deploy_type: server
-    deploy_modes: [api]
-    ingress: true
-
-# Worker-only deployment (internal)
-- name: main-server-worker
-  type: helm
-  settings:
-    deploys: main-server
-    deploy_type: server
-    deploy_modes: [worker]
-    ingress: false
-
-# Hybrid deployment (api + worker in same pod)
-- name: main-server-hybrid
-  type: helm
-  settings:
-    deploys: main-server
-    deploy_type: server
-    deploy_modes: [api, worker]
-    ingress: true
-```
-
-### Settings Impact on Chart Structure
-
-| Setting | Chart Impact |
-|---------|-------------|
-| `deploy_modes: [api]` | Single Deployment with HTTP port |
-| `deploy_modes: [worker]` | Single Deployment without HTTP port |
-| `deploy_modes: [api, worker]` | Separate Deployments (independent scaling) |
-| `deploy_modes: [cron]` | CronJob instead of Deployment |
-| `ingress: true` | Includes `ingress.yaml` |
-| `ingress: false` | No ingress (internal service only) |
+Each deployment configuration gets its own helm chart. A single server can have multiple helm charts (e.g., one for API mode with ingress, one for worker mode without). Refer to the `project-settings` skill for the complete helm settings schema and how `deploy_modes`, `ingress`, and `assets` affect chart structure.
 
 ## Prerequisites
 

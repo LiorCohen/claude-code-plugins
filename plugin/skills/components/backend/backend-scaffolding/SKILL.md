@@ -6,7 +6,7 @@ user-invocable: false
 
 # Backend Scaffolding Skill
 
-Creates a Node.js/TypeScript backend component following the CMDO (Config, Model, DAL, Operator) architecture. Scaffolding is driven by **component settings** defined in `.sdd/sdd-settings.yaml`.
+Creates a Node.js/TypeScript backend component following the CMDO (Config, Model, DAL, Operator) architecture. Scaffolding is driven by **component settings** defined in `.sdd/sdd-settings.yaml` (refer to the `project-settings` skill for the authoritative schema).
 
 ## When to Use
 
@@ -14,32 +14,7 @@ Use when creating server components. Supports multiple named instances (e.g., `m
 
 ## Settings-Driven Scaffolding
 
-Server components are scaffolded based on their settings in `.sdd/sdd-settings.yaml`:
-
-```yaml
-components:
-  - name: main-server
-    type: server
-    settings:
-      server_type: api           # api | worker | cron | hybrid
-      databases: [primary-db]    # Database components this server uses
-      provides_contracts: [public-api]  # Contracts this server implements
-      consumes_contracts: []     # Contracts this server calls
-      helm: true                 # Whether this server needs a helm chart
-```
-
-### Settings Impact on Scaffolding
-
-| Setting | Impact |
-|---------|--------|
-| `server_type: api` | Scaffolds HTTP server lifecycle in Operator |
-| `server_type: worker` | Scaffolds queue consumer lifecycle in Operator |
-| `server_type: cron` | Scaffolds scheduler lifecycle in Operator |
-| `server_type: hybrid` | Scaffolds multiple lifecycles based on `modes` |
-| `databases: [...]` | Scaffolds DAL layer per database, adds DB config section |
-| `provides_contracts: [...]` | Scaffolds HTTP route handlers per contract |
-| `consumes_contracts: [...]` | Generates API clients for calling other services |
-| `helm: false` | Skips helm chart scaffolding for this server |
+Server components are scaffolded based on their settings in `.sdd/sdd-settings.yaml`. Refer to the `project-settings` skill for the complete server settings schema and defaults.
 
 ### Conditional Scaffolding Logic
 
@@ -245,6 +220,7 @@ Accepts component name, server type, and optional settings for databases, contra
 
 ## Related Skills
 
+- `project-settings` — Authoritative source for server component settings schema, defaults, and validation rules.
 - `backend-standards` — Generated server code must follow these standards. Defines CMDO architecture with handler → orchestrator → repository layering, strict layer separation, and dependency injection.
 - `typescript-standards` — Generated TypeScript files must follow these coding conventions. Defines strict typing, readonly patterns, branded types, and import standards.
 - `unit-testing` — Generated test files must follow these patterns. Defines Vitest setup, mocking strategies, and isolation conventions for backend services.

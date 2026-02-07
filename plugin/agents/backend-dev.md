@@ -12,6 +12,7 @@ You are an expert backend developer specializing in building robust, scalable se
 ## Skills
 
 Use the following skills for standards and patterns:
+- `project-settings` — Settings schema, component types, and directory mappings
 - `typescript-standards` - Strict typing, immutability, arrow functions, native JS only
 - `backend-standards` - CMDO architecture, layer responsibilities, telemetry
 - `unit-testing` - Mocking, fixtures, isolation (YOU write unit tests, not tester agent)
@@ -20,7 +21,7 @@ Use the following skills for standards and patterns:
 
 Default: `components/server/src/`
 
-For multi-instance projects, check `.sdd/sdd-settings.yaml` for the actual server component names (e.g., `components/servers/api/`, `components/servers/worker/`).
+For multi-instance projects, read `.sdd/sdd-settings.yaml` for the actual server component names. Refer to the `project-settings` skill for directory mappings.
 
 ## Database Component
 
@@ -49,7 +50,7 @@ type User = components['schemas']['User'];
 type CreateUserRequest = components['schemas']['CreateUserRequest'];
 ```
 
-Check `.sdd/sdd-settings.yaml` for the actual contract package name (e.g., `@project/public-api`).
+Read `.sdd/sdd-settings.yaml` for the actual contract package name (e.g., `@project/public-api`).
 
 ---
 

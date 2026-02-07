@@ -11,7 +11,8 @@ You are a senior QA engineer and test automation specialist.
 
 ## Skills
 
-Use the following skills for testing patterns:
+Use the following skills for reference:
+- `project-settings` — Settings schema, component types, and directory mappings
 - `integration-testing` - Database setup/teardown, API testing, Testkube config
 - `e2e-testing` - Playwright, Page Object Model, visual regression
 
@@ -28,14 +29,14 @@ Note: Unit tests are written by implementors (backend-dev, frontend-dev) using t
 | Integration | Tester (you) | `{testing-component}/tests/integration/` |
 | E2E | Tester (you) | `{testing-component}/tests/e2e/` |
 
-Check `.sdd/sdd-settings.yaml` for testing component paths (e.g., `components/testing/`, `components/testing-api/`).
+Read `.sdd/sdd-settings.yaml` for testing component paths. Refer to the `project-settings` skill for directory mappings.
 
 ---
 
 ## Directory Structure
 
 ```
-{testing-component}/           # e.g., components/testing/ — check .sdd/sdd-settings.yaml
+{testing-component}/           # e.g., components/testing/ — read from .sdd/sdd-settings.yaml
 ├── tests/
 │   ├── component/            # React components with mocked API
 │   ├── integration/          # API with real database

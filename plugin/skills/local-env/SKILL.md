@@ -90,27 +90,10 @@ The telemetry namespace contains:
 
 ## Integration with Settings
 
-The deploy command reads `.sdd/sdd-settings.yaml` to:
+The deploy command reads `.sdd/sdd-settings.yaml` (refer to the `project-settings` skill for schema) to:
 1. Get the app `name` (used as the Kubernetes namespace)
 2. Find all `type: database` components to set up
 3. Find all `type: helm` components to deploy
-
-```yaml
-name: acme-backend  # Used as the Kubernetes namespace
-
-components:
-  - name: primary-db
-    type: database
-    settings:
-      provider: postgresql
-
-  - name: main-server-api
-    type: helm
-    settings:
-      deploys: main-server
-      deploy_type: server
-      ingress: true
-```
 
 Running `env deploy`:
 1. Sets up `primary-db` PostgreSQL in the `acme-backend` namespace
