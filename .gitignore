@@ -7,8 +7,8 @@
 # Test outputs
 test-apps/
 
-# Claude prompts
-prompts/
+# Claude temp files
+.temp/
 
 # Worktrees
 .worktrees/

@@ -58,6 +58,12 @@
 - **agents-standards** - Follow when creating or reviewing agents
 - **commands-standards** - Follow when creating or reviewing commands
 
+## Temporary Files
+
+- **Use `.temp/` at the repo root** for any temporary files that skills or agents need the user to read (e.g., dry-run outputs, previews, reports)
+- `.temp/` is gitignored — never commit its contents
+- Do NOT write temporary files to `/tmp`, `prompts/`, or other locations
+
 ## Repository Structure
 
 ```
@@ -76,6 +82,7 @@ sdd/
 │       └── commands-standards/     # Standards for authoring commands
 ├── .claude-plugin/
 │   └── marketplace.json              # Marketplace manifest
+├── .temp/                               # Temp files for skills/agents (gitignored)
 ├── .tasks/                              # Task data
 │   ├── INDEX.md                         # Task index (links to issues/)
 │   ├── issues/                          # Individual task files by status
